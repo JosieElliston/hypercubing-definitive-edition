@@ -25,11 +25,9 @@ def mc3d():
 
 
 def elevencell():
-    # Nan Ma's Magic 11-Cell layout: 11 colored discs, without the icosahedron wireframes, on
-    # the program's lavender. Its dark colors look odd on a transparent background.
-    # The lavender must fill the whole square. macOS 26 clips a full-bleed icon to its own
-    # rounded shape, but if the icon is already a rounded square, Finder adds a glass
-    # highlight to each disc (the Dock doesn't).
+    # Nan Ma's Magic 11-Cell layout: 11 colored discs, without the icosahedron wireframes.
+    # No background, and black outlines, to match the other icons (most are outlined art on
+    # transparency); the outlines also keep the darkest discs from blending into a dark page.
     # Centers and colors are sampled from a screenshot (1540x1272, disc radius about 143 px).
     discs = [("#570d5d", 573, 185), ("#c8c840", 907, 185), ("#5cc93b", 401, 450),
              ("#bb271a", 741, 503), ("#bb27c5", 1079, 450), ("#be6625", 258, 730),
@@ -39,11 +37,11 @@ def elevencell():
     xs = [x for _, x, _ in discs]; ys = [y for _, _, y in discs]
     cx = (min(xs) + max(xs)) / 2; cy = (min(ys) + max(ys)) / 2
     span = max(max(xs) - min(xs), max(ys) - min(ys)) + 2 * r
-    k = 54 / span
-    s = HEAD + '<rect width="64" height="64" fill="#d7d7fc"/>\n'
+    k = 60 / span
+    s = HEAD
     for color, x, y in discs:
         s += (f'<circle cx="{32 + (x - cx) * k:.2f}" cy="{32 + (y - cy) * k:.2f}" '
-              f'r="{r * k:.2f}" fill="{color}"/>\n')
+              f'r="{r * k:.2f}" fill="{color}" stroke="#000" stroke-width="1.6"/>\n')
     return s + "</svg>\n"
 
 
