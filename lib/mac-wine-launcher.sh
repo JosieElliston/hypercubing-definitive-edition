@@ -7,7 +7,7 @@ CONTENTS="$(cd "$(dirname "$0")/.." && pwd)"
 ROOT="$(cd "$CONTENTS/../.." && pwd)"
 ENGINE="$ROOT/Support/engine"
 # shellcheck source=/dev/null
-. "$CONTENTS/Resources/program.conf"   # defines NAME (folder under C:\Program Files), EXE, optional KEEP
+. "$CONTENTS/Resources/program.conf"   # NAME (also its folder in C:\Program Files), EXE, optional KEEP
 
 DATA="$HOME/Library/Application Support/Hypercubing"
 export WINEPREFIX="$DATA/prefix"

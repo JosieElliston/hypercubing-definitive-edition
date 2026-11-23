@@ -4,10 +4,11 @@
 set -u
 CONTENTS="$(cd "$(dirname "$0")/.." && pwd)"
 ROOT="$(cd "$CONTENTS/../.." && pwd)"
+RES="$CONTENTS/Resources"   # JAVA_ARGS refers to bundled files as $RES/...
 # shellcheck source=/dev/null
-. "$CONTENTS/Resources/program.conf"   # APPNAME, JAVA_ARGS (array)
+. "$RES/program.conf"   # NAME, JAVA_ARGS (array); see "Payloads" in build.sh
 DATA="$HOME/Library/Application Support/Hypercubing"
-WORK="$DATA/$APPNAME"
+WORK="$DATA/$NAME"
 mkdir -p "$DATA/logs" "$WORK"
 # Copy bundled data files (Contents/Resources/data) when the bundled version changes, for programs
 # that keep files next to their jar. User-created files survive (no --delete).
@@ -18,5 +19,5 @@ if [ -d "$CONTENTS/Resources/data" ] && [ "$(cat "$WORK/.hde-stamp" 2>/dev/null)
 fi
 # Programs that write files relative to the working directory write them here, not into the bundle.
 cd "$WORK" || exit 1
-exec "$ROOT/Support/jre/bin/java" -Xdock:name="$APPNAME" \
-  -Xdock:icon="$CONTENTS/Resources/app.icns" "${JAVA_ARGS[@]}" "$@" >"$DATA/logs/$APPNAME.log" 2>&1
+exec "$ROOT/Support/jre/bin/java" -Xdock:name="$NAME" \
+  -Xdock:icon="$CONTENTS/Resources/app.icns" "${JAVA_ARGS[@]}" "$@" >"$DATA/logs/$NAME.log" 2>&1

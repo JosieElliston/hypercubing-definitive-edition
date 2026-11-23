@@ -5,9 +5,9 @@
 set -u
 CONTENTS="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck source=/dev/null
-. "$CONTENTS/Resources/program.conf"   # defines APPNAME, BIN (path relative to Contents/Resources), TERMINAL (0/1)
+. "$CONTENTS/Resources/program.conf"   # NAME, BIN (relative to Contents/Resources), optional TERMINAL (0/1)
 DATA="$HOME/Library/Application Support/Hypercubing"
-WORK="$DATA/$APPNAME"
+WORK="$DATA/$NAME"
 mkdir -p "$DATA/logs" "$WORK"
 # Copy bundled data files when the bundled version changes; user-created files survive (no --delete).
 STAMP="$(cat "$CONTENTS/Resources/stamp")"
@@ -23,4 +23,4 @@ if [ "${TERMINAL:-0}" = 1 ]; then
   chmod +x "$CMD"
   exec open -a Terminal "$CMD"
 fi
-exec "$CONTENTS/Resources/$BIN" "$@" >"$DATA/logs/$APPNAME.log" 2>&1
+exec "$CONTENTS/Resources/$BIN" "$@" >"$DATA/logs/$NAME.log" 2>&1

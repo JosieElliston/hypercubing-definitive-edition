@@ -10,8 +10,9 @@ set -u
 APPDIR=$(cd "$1" && pwd); shift
 ROOT=$(cd "$APPDIR/.." && pwd)
 NAME=$(basename "$APPDIR")
-# KIND (wine, java or native), then EXE (wine), JAVA_ARGS (java, an array) or BIN (native), and
-# optionally DEFAULTS (an array, see below).
+RES=$APPDIR   # JAVA_ARGS refers to the program's files as $RES/...
+# KIND (wine, java or native), then EXE and optional KEEP (wine), JAVA_ARGS (java, an array) or BIN
+# (native). See "Payloads" in the build's build.sh.
 # shellcheck source=/dev/null
 . "$APPDIR/app.conf"
 
@@ -34,9 +35,9 @@ mkdir -p "$LOGS" 2>/dev/null && [ -w "$LOGS" ] ||
   fail "Can't write to $ROOT/Support. Put the hypercubing folder somewhere your user can write to, such as your home folder."
 LOG="$LOGS/$NAME.log"
 
-# Files the program saves its settings into ship as <file>.default, so extracting a newer version
-# over this folder doesn't reset them. The real file is created on first launch.
-for f in ${DEFAULTS[@]+"${DEFAULTS[@]}"}; do
+# KEEP lists files the program saves its settings into. They ship as <file>.default, so extracting
+# a newer version over this folder doesn't reset them; the real file is created on first launch.
+for f in ${KEEP[@]+"${KEEP[@]}"}; do
   [ -e "$APPDIR/$f" ] || cp "$APPDIR/$f.default" "$APPDIR/$f"
 done
 
