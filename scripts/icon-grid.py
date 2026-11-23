@@ -21,7 +21,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 APPS = ROOT / "dist/mac/hypercubing"
 ICON = 240          # icon edge, px (README shows the PNG at half size)
-COLS = 5
+COLS = 6
 GAP_X, GAP_Y = 24, 56
 LABEL_GAP = 18      # icon bottom to label top
 FONT_PX = 34
