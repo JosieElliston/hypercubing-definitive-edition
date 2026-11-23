@@ -6,6 +6,8 @@ changes they need to work there already made (see below).
 
 Requires a 64-bit x86 PC and a glibc-based Linux distribution.
 
+The download is about 140 MB. The extracted bundle contains about 280 MB of files.
+
 ## Installing
 
 1. Extract this `hypercubing` folder somewhere your user can write to, such as

@@ -6,6 +6,8 @@ so you don't need to install either.
 
 Requires an Apple Silicon Mac.
 
+The download is about 380 MB. The extracted bundle contains about 960 MB of files, largely wine (about 640 MB).
+
 ## Installing
 
 1. Move this whole `hypercubing` folder into `/Applications`. You can put it
@@ -53,10 +55,8 @@ Requires an Apple Silicon Mac.
   - **3to4++** — the physical 3x3x3x3 design, simulated
   - **Geraniums Pot** — 610 intersecting-circle puzzles, with photos of the real ones
 - Shared parts (in `Support`; don't open these directly):
-  - `engine` — Wine, which runs the Windows programs (about 490 MB)
-  - `jre` — Java, which runs the Java programs (about 51 MB)
-
-Sharing one copy of Wine and one of Java keeps the folder to about 800 MB.
+  - `engine` — Wine, which runs the Windows programs (about 640 MB)
+  - `jre` — Java, which runs the Java programs
 
 ## Where your stuff goes
 
