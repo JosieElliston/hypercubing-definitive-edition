@@ -756,6 +756,32 @@ EOF
   printf '%s' "$c"
 }
 
+# Add the names that Spotlight's application importer indexes alongside the display name.
+mac_spotlight_aliases() {
+  local slug=$1 plist=$2 aliases
+  case $slug in
+    magictile) aliases='["MT"]' ;;
+    mc7dkb) aliases='["MC7D"]' ;;
+    mpu) aliases='["MPUlt"]' ;;
+    ms5d) aliases='["MS5D"]' ;;
+    mht633) aliases='["MHT633"]' ;;
+    mc5d) aliases='["MC5D"]' ;;
+    m120c) aliases='["M120C"]' ;;
+    mc4d) aliases='["MC4D"]' ;;
+    elevencell) aliases='["NM11C", "11Cell"]' ;;
+    elevencell3d) aliases='["11C3D", "11Cell3D"]' ;;
+    mc3d) aliases='["MC3D"]' ;;
+    isocubesim) aliases='["MZRG"]' ;;
+    hsc1) aliases='["HSC1"]' ;;
+    hsc2) aliases='["HSC2"]' ;;
+    circleguy) aliases='["CG"]' ;;
+    3to4pp) aliases='["3to4pp"]' ;;
+    flat-hypercube) aliases='["FHC"]' ;;
+    *) return 0 ;;
+  esac
+  plutil -replace CFBundleAlternateNames -json "$aliases" "$plist"
+}
+
 # package_mac <payload dir>: make <NAME>.app. Bundle layout: Contents/Resources holds program.conf
 # (the manifest), res/ files and app.icns; data/ goes in Resources/program (Windows programs) or
 # Resources/data (others), which the launcher copies to where the program runs.
@@ -766,7 +792,8 @@ package_mac() (
   if [ "$KIND" = app ]; then
     rm -rf "$MAC_DIST/$NAME.app"
     cp -R "$p"/app/*.app "$MAC_DIST/$NAME.app"
-    exit 0
+    mac_spotlight_aliases "$SLUG" "$MAC_DIST/$NAME.app/Contents/Info.plist"
+    exit
   fi
   c=$(new_app "$NAME" "mac-$KIND-launcher.sh" "$SLUG" "${VERSION:-}")
   cp "$p/manifest" "$c/Resources/program.conf"
@@ -777,6 +804,7 @@ package_mac() (
     if [ -d "$s/data" ]; then mkdir -p "$c/Resources/$data"; cp -R "$s/data/." "$c/Resources/$data/"; fi
   done
   if [ -f "$p/icon.png" ]; then make_icns "$p/icon.png" "$c/Resources/app.icns"; fi
+  mac_spotlight_aliases "$SLUG" "$c/Info.plist"
 )
 
 mac_engine() {

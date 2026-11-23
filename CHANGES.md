@@ -1,5 +1,11 @@
 # Changes
 
+## Unreleased
+
+markdown readme formatting.
+better Magic120Cell icon.
+spotlight search aliases.
+
 ## 1.1
 
 circleguy now runs natively on x86-64 Linux and requires glibc 2.28 or newer.
