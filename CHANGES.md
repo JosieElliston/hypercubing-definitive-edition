@@ -9,8 +9,6 @@ does not freeze the puzzle window.
 Added Laminated and Flat Hypercube as native builds for Mac and Linux.
 Flat Hypercube takes its puzzle dimensions or a saved solve from the command line.
 
-Updated the README thumbnail to show all 21 programs in a six-column grid.
-
 ## 1.0
 
 First release, for Mac and Linux, with 19 programs:
