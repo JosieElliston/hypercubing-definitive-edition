@@ -2505,7 +2505,7 @@ index 0000000..58e6fe0
 +	}
 +}
 diff --git a/Magic120CellGui/Magic120CellGui.csproj b/Magic120CellGui/Magic120CellGui.csproj
-index a601ea7..cb7b658 100644
+index a601ea7..9c8c77d 100644
 --- a/Magic120CellGui/Magic120CellGui.csproj
 +++ b/Magic120CellGui/Magic120CellGui.csproj
 @@ -1,95 +1,30 @@
@@ -2591,9 +2591,9 @@ index a601ea7..cb7b658 100644
 -      <DependentUpon>PropertyDlg.cs</DependentUpon>
 -    </Compile>
 -    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
-+    <!-- The window icon. It's not in MainFrame.resx, because the SDK's resource generator needs
++    <!-- Reuse the executable icon for the window. Keep it out of MainFrame.resx because the SDK needs
 +         System.Resources.Extensions at runtime for non-string resources. -->
-+    <EmbeddedResource Include="Magic120Cell.ico" LogicalName="Magic120Cell.ico" />
++    <EmbeddedResource Include="$(ApplicationIcon)" LogicalName="Magic120Cell.ico" />
    </ItemGroup>
    <ItemGroup>
 -    <EmbeddedResource Include="InputDlg.resx">

@@ -346,7 +346,7 @@ payload_m120c() {
   rm -rf "$out/obj"
   # The installer's preset view settings, read from the working directory, and its sample log.
   cp "$s"/Magic120CellInstall/installConfig/* "$out/"
-  wine_payload Magic120Cell m120c Magic120Cell.exe "$out" "$(lbicon M120C)"
+  wine_payload Magic120Cell m120c Magic120Cell.exe "$out" "$out/Magic120Cell.exe"
   rm -rf "$out"
 }
 

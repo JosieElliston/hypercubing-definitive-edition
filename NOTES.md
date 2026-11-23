@@ -373,9 +373,9 @@ of them are untested.
   `payload_m120c`). Why? geometryLib has a stale root `glInit.cpp` besides `gl/glInit.cpp`,
   basenames repeat across the two trees, and each tree's `#include <stdafx.h>` must find
   its own stdafx.h.
-- Magic120Cell's window icon moved from `MainFrame.resx` to an embedded `.ico`. Why? The
-  dotnet SDK only compiles non-string resx resources with System.Resources.Extensions,
-  which would have to ship with the exe.
+- Magic120Cell uses upstream's multicolored `MC120.ico` for its executable and window. The
+  launchers use the icon extracted from the executable. The port embeds the window icon as
+  an `.ico` because non-string `.resx` resources would require shipping System.Resources.Extensions.
 - Neither program's GL view overlaps its menu strip (window tree, 2026-11-23), so they need
   no FillFix-style workaround.
 - Testing without Screen Recording permission: add a temporary `glReadPixels` back-buffer
