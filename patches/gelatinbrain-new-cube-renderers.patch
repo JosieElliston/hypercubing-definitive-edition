@@ -1,0 +1,236 @@
+--- a/CGl192Cube.java
++++ b/CGl192Cube.java
+@@ -10,7 +10,7 @@
+ import static com.jogamp.opengl.GL2.*;
+ import com.jogamp.opengl.GL;
+ import com.jogamp.opengl.util.GLBuffers;
+-import com.jogamp.opengl.math.FloatUtil;
++import com.jogamp.math.FloatUtil;
+ import java.io.*;
+ 
+ class CGl192Cube extends CGl192Cube_ implements IGl192Cube
+@@ -393,7 +393,7 @@
+ public void Init(){}
+ public void Draw()
+ {
+-	if(twistModified_!=0)
++	if(twistModified_!=0 && shaders_[side_?1:0].isInitialized())
+ 	{
+ 		twistModified_ &= (side_?1:2);
+ 		GL2 gl=CGL.gl_;
+@@ -458,6 +458,25 @@
+ 	else
+ 	{
+ 		//CMatrix3_.apply_(m2,vertices0_,vertices_,0,vertices0_.length,vertices0_.length-24);
++	}
++	int len=(cube_.type_==3)?576:768;
++	if(!shaders_[side_?1:0].isInitialized())
++	{
++		boolean turning=(state_&0x40000000)!=0;
++		int axis=(splitInfo_==-1)?0:splitInfo_;
++		int[] masks=normalMasks_;
++		if(turning)
++		{
++			axis=0x100|(twistNo_<<1)|(twistDir_?1:0);
++			masks=twistPieceMasks_[cube_.type_-1][twistNo_];
++		}
++		else if(splitInfo_!=-1)
++		{
++			len+=(cube_.type_==2)?32:16;
++		}
++		LegacyShaderRenderer.draw192(m2.m_,vertices_,colorTable_,cIndices_,faceIndices0_,
++			splitIndices_,IGl192Cube.splitNormals_,masks,axis,elementIndices(),len*3);
++		return;
+ 	}
+ 	if(colorModified_[side_?1:0])
+ 	{
+@@ -465,7 +484,6 @@
+ 	}
+ 	
+ 	CGL.gl_.glUseProgram(shaders_[side_?1:0].getProgramId());
+-	int len=(cube_.type_==3)?576:768;
+ 
+ 	if((state_&0x40000000)==0)
+ 	{
+--- a/CGl48TrianglesCube.java
++++ b/CGl48TrianglesCube.java
+@@ -8,7 +8,7 @@
+ import static com.jogamp.opengl.GL2.*;
+ import com.jogamp.opengl.GL;
+ import com.jogamp.opengl.util.GLBuffers;
+-import com.jogamp.opengl.math.FloatUtil;
++import com.jogamp.math.FloatUtil;
+ import java.io.*;
+ public class CGl48TrianglesCube extends CGlHexa 
+ {
+@@ -986,6 +986,7 @@
+ public void Draw()
+ {
+ 	GL2 gl=CGL.gl_;
++	boolean shaderReady=shaders_[side_?1:0].isInitialized();
+ 	if((state_&0x40000000)!=0)
+ 	{
+ 		countTwistTime0();
+@@ -998,14 +999,31 @@
+ 			if(twistNo_<14)drawTwistV0(m1,phase,tv_);
+ 			else drawTwistE0(m1,phase,te_);
+ 		}
+-		vbuf_.rewind();//nbuf_.rewind();
+-		gl.glUseProgram(shaders_[side_?1:0].getProgramId());
+-		gl.glUniform3fv(shaders_[side_?1:0].vTable_, numTwistVertices_, vbuf_);
+-		gl.glUseProgram(0);
++		if(shaderReady)
++		{
++			vbuf_.rewind();//nbuf_.rewind();
++			gl.glUseProgram(shaders_[side_?1:0].getProgramId());
++			gl.glUniform3fv(shaders_[side_?1:0].vTable_, numTwistVertices_, vbuf_);
++			gl.glUseProgram(0);
++		}
+ 	}
+ 	CMatrix3F m2=new CMatrix3F(modelMatrix0_);
+ 	m2.mul_(mv_);
+ 	SetDrawMatrices(m2);
++	if(shaderReady)
++	{
++		drawWithShader(gl,m2);
++	}
++	else
++	{
++		LegacyShaderRenderer.draw48(m2.m_,vbuf_,cbuf_,cibuf_,vabuf_,numTriangles_*3);
++	}
++	DrawArrows();
++	if((state_&0x40000000)!=0){countTwistTime1();}
++}
++
++private void drawWithShader(GL2 gl,CMatrix3F m2)
++{
+ 	if((twistModified_&(side_?2:1))!=0)
+ 	{
+ 		gl.glUseProgram(shaders_[side_?1:0].getProgramId());
+@@ -1051,8 +1069,6 @@
+ 
+ 	gl.glDrawArrays(GL.GL_TRIANGLES, 0,numTriangles_*3);
+ 	gl.glUseProgram(0);
+-	DrawArrows();
+-	if((state_&0x40000000)==0){}else{countTwistTime1();}
+ }
+ 
+ 
+--- a/CGl8x24Cube.java
++++ b/CGl8x24Cube.java
+@@ -10,7 +10,6 @@
+ import static com.jogamp.opengl.GL2.*;
+ import com.jogamp.opengl.GL;
+ import com.jogamp.opengl.util.GLBuffers;
+-import com.jogamp.opengl.math.FloatUtil;
+ import java.io.PrintStream;
+ 
+ class CGl8x24Cube extends CGl192Cube_ implements IGl8x24Cube
+@@ -173,19 +172,12 @@
+ public void Init(){}
+ public void Draw()
+ {
+-	if((twistModified_&(side_?2:1))!=0)
++	if((twistModified_&(side_?2:1))!=0 && shaders_[side_?1:0].isInitialized())
+ 	{
+ 		GL2 gl=CGL.gl_;
+ 		gl.glUseProgram(shaders_[side_?1:0].getProgramId());
+ 		initIntBuffer(gl,shaders_[side_?1:0].cIndices_  ,cIndices_,cibuf_);
+-		int[]t={2,0,1,5,3,4,};
+-		int axis;
+-		if((state_&0x40000000)==0)
+-		{
+-			axis=(splitInfo_==-1)?0:(splitInfo_<<4);
+-		}
+-		else axis = t[twistNo_]|0x100;
+-		initIntBuffer_(gl,((CShaderProgram)shaders_[side_?1:0]).utAxis_  ,axis,axisbuf_);
++		initIntBuffer_(gl,((CShaderProgram)shaders_[side_?1:0]).utAxis_,shaderAxis(),axisbuf_);
+ 		gl.glUseProgram(0);
+ 		twistModified_ &= (side_?1:2);
+ 	}
+@@ -207,39 +199,41 @@
+ 	if((state_&0x40000000)==0){}else{countTwistTime1();}
+ }
+ 
+-private void drawWithShader(CMatrix3F m2)
++private int shaderAxis()
+ {
+-	//for(int i=0;i<9;i++){m2.m_[i]*=(float)s_;}
+ 	if((state_&0x40000000)==0)
+ 	{
++		return (splitInfo_==-1)?0:(splitInfo_<<4);
+ 	}
+-	else
++	int[] axes={2,0,1,5,3,4};
++	return axes[twistNo_]|0x100;
++}
++
++private void drawWithShader(CMatrix3F m2)
++{
++	boolean turning=(state_&0x40000000)!=0;
++	int vertexCount=768*3;
++	if(turning)
+ 	{
+ 		applyT_(vertices_,twistTimer_.phase_/twistTimer_.angle_);
+-
++		CMatrix3_.apply_(m2.m_,vertices_,vertices_,vertices_.length);
++	}
++	else
++	{
++		CMatrix3_.apply_(m2.m_,vertices0_,vertices_,vertices0_.length);
++		if(splitInfo_!=-1)vertexCount+=16*3;
+ 	}
++	if(!shaders_[side_?1:0].isInitialized())
++	{
++		LegacyShaderRenderer.draw8x24(vertices_,colorTable_,cIndices_,splits_,shaderAxis(),vertexCount);
++		return;
++	}
+ 	if(colorModified_[side_?1:0])
+ 	{
+ 		setColorBuffers(CGL.gl_,side_?1:0);
+ 	}
+ 	CGL.gl_.glUseProgram(shaders_[side_?1:0].getProgramId());
+-	if((state_&0x40000000)==0)
+-	{
+-		CMatrix3_.apply_(m2.m_,vertices0_,vertices_,vertices0_.length);
+-		if(splitInfo_!=-1)
+-		{
+-			display_(CGL.gl_,null,vertices_,vertices_.length,(768+16)*3);
+-		}
+-		else
+-		{
+-			display_(CGL.gl_,null,vertices_,vertices_.length,(768)*3);
+-		}
+-	}
+-	else
+-	{
+-		CMatrix3_.apply_(m2.m_,vertices_,vertices_,vertices_.length);
+-		display_(CGL.gl_,null,vertices_,vertices_.length,(768)*3);
+-	}
++	display_(CGL.gl_,null,vertices_,vertices_.length,vertexCount);
+ 	CGL.gl_.glUseProgram(0);
+ }
+ 
+--- a/CGlShaderCube.java
++++ b/CGlShaderCube.java
+@@ -9,7 +9,7 @@
+ import com.jogamp.opengl.GL2;
+ import static com.jogamp.opengl.GL2.*;
+ import com.jogamp.opengl.util.GLBuffers;
+-import com.jogamp.opengl.math.FloatUtil;
++import com.jogamp.math.FloatUtil;
+ import java.io.PrintStream;
+ 
+ abstract class CGlShaderCube extends CGlHexa
+@@ -109,6 +109,11 @@
+ 	bufferIDs_ = new IntBuffer[] {GLBuffers.newDirectIntBuffer(1),GLBuffers.newDirectIntBuffer(1), };
+ }
+ 
++protected ShortBuffer elementIndices()
++{
++	return eiBuf_;
++}
++
+ static ShortBuffer initElementIndices_(short[]in)
+ {
+ 	short[]eIndices=new short[in.length*3];

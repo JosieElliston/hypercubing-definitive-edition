@@ -1,0 +1,3111 @@
+diff --git a/.gitignore b/.gitignore
+index 1c3353c..a8937f2 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -663,3 +663,7 @@ $RECYCLE.BIN/
+ # Additional files built by Visual Studio
+ 
+ # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudio,osx,c++,csharp
++
++# Build output
++bin/
++obj/
+diff --git a/Magic120Cell/AssemblyInfo.cpp b/Magic120Cell/AssemblyInfo.cpp
+deleted file mode 100644
+index 4745446..0000000
+--- a/Magic120Cell/AssemblyInfo.cpp
++++ /dev/null
+@@ -1,42 +0,0 @@
+-#include "stdafx.h"
+-
+-using namespace System;
+-using namespace System::Reflection;
+-using namespace System::Runtime::CompilerServices;
+-using namespace System::Runtime::InteropServices;
+-using namespace System::Security::Permissions;
+-
+-//
+-// General Information about an assembly is controlled through the following
+-// set of attributes. Change these attribute values to modify the information
+-// associated with an assembly.
+-//
+-[assembly:AssemblyTitleAttribute("Magic120Cell")];
+-[assembly:AssemblyDescriptionAttribute("")];
+-[assembly:AssemblyConfigurationAttribute("")];
+-[assembly:AssemblyCompanyAttribute("R3 Productions")];
+-[assembly:AssemblyProductAttribute("Magic120Cell")];
+-[assembly:AssemblyCopyrightAttribute("Copyright (c) R3 Productions 2008")];
+-[assembly:AssemblyTrademarkAttribute("")];
+-[assembly:AssemblyCultureAttribute("")];
+-
+-//
+-// Version information for an assembly consists of the following four values:
+-//
+-//      Major Version
+-//      Minor Version
+-//      Build Number
+-//      Revision
+-//
+-// You can specify all the value or you can default the Revision and Build Numbers
+-// by using the '*' as shown below:
+-
+-[assembly:AssemblyVersionAttribute("1.0.0.0")];
+-
+-[assembly:ComVisible(false)];
+-
+-[assembly:CLSCompliantAttribute(true)];
+-
+-[assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+-
+-//[assembly:AssemblyKeyFile("mc5d.snk")];
+diff --git a/Magic120Cell/Magic120Cell.vcxproj b/Magic120Cell/Magic120Cell.vcxproj
+index b815670..1051339 100644
+--- a/Magic120Cell/Magic120Cell.vcxproj
++++ b/Magic120Cell/Magic120Cell.vcxproj
+@@ -5,29 +5,46 @@
+       <Configuration>Debug</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+     <ProjectConfiguration Include="Release|Win32">
+       <Configuration>Release</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+   </ItemGroup>
+   <PropertyGroup Label="Globals">
+     <ProjectGuid>{42CC3972-1B3B-419B-87A4-7796289D9E23}</ProjectGuid>
+     <RootNamespace>Magic120Cell</RootNamespace>
+-    <Keyword>ManagedCProj</Keyword>
++    <Keyword>Win32Proj</Keyword>
+   </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+-    <ConfigurationType>Application</ConfigurationType>
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <PlatformToolset>v143</PlatformToolset>
+     <CharacterSet>Unicode</CharacterSet>
+-    <CLRSupport>true</CLRSupport>
+     <WholeProgramOptimization>true</WholeProgramOptimization>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+-    <ConfigurationType>Application</ConfigurationType>
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <PlatformToolset>v143</PlatformToolset>
+     <CharacterSet>Unicode</CharacterSet>
+-    <CLRSupport>true</CLRSupport>
+   </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ImportGroup Label="ExtensionSettings">
+@@ -35,23 +52,43 @@
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <PropertyGroup Label="UserMacros" />
+   <PropertyGroup>
+     <_ProjectFileVersion>15.0.26323.1</_ProjectFileVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <TargetName>Magic120CellCore</TargetName>
+     <OutDir>$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+     <LinkIncremental>true</LinkIncremental>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <TargetName>Magic120CellCore</TargetName>
++    <OutDir>x64\$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <TargetName>Magic120CellCore</TargetName>
+     <OutDir>$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+     <LinkIncremental>false</LinkIncremental>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <TargetName>Magic120CellCore</TargetName>
++    <OutDir>x64\$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+@@ -65,14 +102,31 @@
+     <Link>
+       <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib;..\geometryLib\Debug\geometryLib.lib</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+-      <AssemblyDebug>true</AssemblyDebug>
+       <SubSystem>Windows</SubSystem>
+-      <EntryPointSymbol />
+       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+       <DataExecutionPrevention />
+       <TargetMachine>MachineX86</TargetMachine>
+     </Link>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <Optimization>Disabled</Optimization>
++      <AdditionalIncludeDirectories>..\geometryLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
++      <PrecompiledHeader>Use</PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib;..\geometryLib\x64\Debug\geometryLib.lib</AdditionalDependencies>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <SubSystem>Windows</SubSystem>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention />
++      <TargetMachine>MachineX64</TargetMachine>
++    </Link>
++  </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+     <ClCompile>
+       <AdditionalIncludeDirectories>..\geometryLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+@@ -86,38 +140,31 @@
+       <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib;..\geometryLib\Release\geometryLib.lib</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+-      <EntryPointSymbol />
+       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+       <DataExecutionPrevention />
+       <TargetMachine>MachineX86</TargetMachine>
+     </Link>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <AdditionalIncludeDirectories>..\geometryLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
++      <PrecompiledHeader>Use</PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib;..\geometryLib\x64\Release\geometryLib.lib</AdditionalDependencies>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <SubSystem>Windows</SubSystem>
++      <RandomizedBaseAddress>false</RandomizedBaseAddress>
++      <DataExecutionPrevention />
++      <TargetMachine>MachineX64</TargetMachine>
++    </Link>
++  </ItemDefinitionGroup>
+   <ItemGroup>
+-    <Reference Include="System">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Data">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Drawing">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Windows.Forms">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Xml">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-  </ItemGroup>
+-  <ItemGroup>
+-    <ClCompile Include="AssemblyInfo.cpp" />
+-    <ClCompile Include="cubeFrame.cpp" />
+-    <ClCompile Include="main.cpp" />
++    <ClCompile Include="coreApi.cpp" />
+     <ClCompile Include="stdafx.cpp">
+       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+@@ -131,7 +178,6 @@
+     <ClCompile Include="workFiles\settings.cpp" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ClInclude Include="cubeFrame.h" />
+     <ClInclude Include="resource.h" />
+     <ClInclude Include="stdafx.h" />
+     <ClInclude Include="workFiles\cell.h" />
+@@ -148,11 +194,6 @@
+   <ItemGroup>
+     <ResourceCompile Include="app.rc" />
+   </ItemGroup>
+-  <ItemGroup>
+-    <ProjectReference Include="..\Magic120CellGui\Magic120CellGui.csproj">
+-      <Project>{6b1a6b1e-6ad5-442d-a27d-7d4eadf1b8a9}</Project>
+-    </ProjectReference>
+-  </ItemGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+   <ImportGroup Label="ExtensionTargets">
+   </ImportGroup>
+diff --git a/Magic120Cell/Magic120Cell.vcxproj.filters b/Magic120Cell/Magic120Cell.vcxproj.filters
+index 979b240..9399ed9 100644
+--- a/Magic120Cell/Magic120Cell.vcxproj.filters
++++ b/Magic120Cell/Magic120Cell.vcxproj.filters
+@@ -15,27 +15,18 @@
+     </Filter>
+   </ItemGroup>
+   <ItemGroup>
+-    <ClCompile Include="AssemblyInfo.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\cell.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+     <ClCompile Include="workFiles\cellDodec.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+-    <ClCompile Include="cubeFrame.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\loader.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+     <ClCompile Include="workFiles\magic120Cell.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+-    <ClCompile Include="main.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\primitives.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+@@ -45,6 +36,9 @@
+     <ClCompile Include="workFiles\settings.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
++    <ClCompile Include="coreApi.cpp">
++      <Filter>Source Files</Filter>
++    </ClCompile>
+     <ClCompile Include="stdafx.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+@@ -56,9 +50,6 @@
+     <ClInclude Include="workFiles\cellDodec.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+-    <ClInclude Include="cubeFrame.h">
+-      <Filter>Header Files</Filter>
+-    </ClInclude>
+     <ClInclude Include="workFiles\loader.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+diff --git a/Magic120Cell/coreApi.cpp b/Magic120Cell/coreApi.cpp
+new file mode 100644
+index 0000000..f96fe00
+--- /dev/null
++++ b/Magic120Cell/coreApi.cpp
+@@ -0,0 +1,376 @@
++// A plain C API over the puzzle core, called by the C# GUI (CubeFrame.cs) via P/Invoke.
++// This replaces the C++/CLI CubeFrame class, so the core builds as a native DLL.
++
++#include <stdafx.h>
++
++#include "gl/glInit.h"
++#include "helper.h"
++#include "workFiles/magic120Cell.h"
++
++#define M120C_API extern "C" __declspec(dllexport)
++
++struct SCore
++{
++	CPuzzle * m_puzzle;
++	CRenderer * m_renderer;
++};
++
++M120C_API SCore *
++M120C_Create()
++{
++	SCore * core = new SCore();
++	core->m_puzzle = new CMagic120Cell();
++	core->m_renderer = new CRenderer( core->m_puzzle );
++	return core;
++}
++
++M120C_API void
++M120C_Destroy( SCore * core )
++{
++	delete core->m_puzzle;
++	delete core->m_renderer;
++	delete core;
++}
++
++M120C_API void
++M120C_InitGL( HWND hwnd )
++{
++	CGlInit glInit;
++	glInit.initializeGL( hwnd );
++}
++
++M120C_API void
++M120C_RenderScene( SCore * core, int width, int height )
++{
++	core->m_renderer->renderScene( width, height );
++}
++
++M120C_API double
++M120C_GetCurrentTwistStep( SCore * core )
++{
++	return core->m_puzzle->getCurrentTwistStep();
++}
++
++// The angle at which the current twist is finished, in degrees.
++M120C_API double
++M120C_GetCurrentTwistEndAngle( SCore * core )
++{
++	return rad2deg( core->m_puzzle->getCurrentTwistMagnitude() );
++}
++
++M120C_API void
++M120C_IterateRotate( SCore * core )
++{
++	core->m_puzzle->iterateRotate();
++}
++
++M120C_API void
++M120C_FinishRotate( SCore * core )
++{
++	core->m_puzzle->finishRotate();
++}
++
++// Called after a twist finishes. Returns 0 if the puzzle is not solved,
++// 1 if it is solved (beep), and 3 if a congratulatory message should be shown too.
++M120C_API int
++M120C_CheckSolved( SCore * core )
++{
++	// NOTE: Don't do solution checks after view rotations.
++	if( !core->m_puzzle->getCurrentTwist().m_viewRotation && core->m_puzzle->isSolved() )
++		return core->m_puzzle->canShowSolvedMessage() ? 3 : 1;
++	return 0;
++}
++
++// These return 0 if there is nothing to undo/redo; otherwise they start the rotation.
++M120C_API int
++M120C_StartUndo( SCore * core )
++{
++	STwist undo;
++	if( !core->m_puzzle->twistHistory().getUndoTwist( undo ) )
++		return 0;
++	core->m_puzzle->startRotate( undo );
++	return 1;
++}
++
++M120C_API int
++M120C_StartRedo( SCore * core )
++{
++	STwist redo;
++	if( !core->m_puzzle->twistHistory().getRedoTwist( redo ) )
++		return 0;
++	core->m_puzzle->startRotate( redo );
++	return 1;
++}
++
++M120C_API void
++M120C_PerformDrag( SCore * core, int dx, int dy, int width, int height, int leftButton, int rightButton )
++{
++	CRenderer * renderer = core->m_renderer;
++
++	// This is increment we moved, scaled to the window size.
++	float xIncrement = (float)dx / (float)width;
++	float yIncrement = (float)dy / (float)height;
++
++	// A measure of the magnitude of the change.
++	float magnitude = (float)( sqrt( xIncrement*xIncrement + yIncrement*yIncrement ) * 100 );
++
++	if( leftButton )
++	{
++		// The spherical coordinate radius.
++		CVector3D & view = renderer->m_viewLookfrom;
++		double radius = view.abs();
++		if( ! IS_ZERO( radius ) )
++		{
++			CVector3D & up = renderer->m_up;
++			CVector3D v1 = up.cross( view );
++			CVector3D v2 = view.cross( v1 );
++			v1.normalize();
++			v2.normalize();
++
++			view.rotateAboutAxis( v2, -xIncrement*magnitude );
++			view.rotateAboutAxis( v1, -yIncrement*magnitude );
++			up.rotateAboutAxis( v2, -xIncrement*magnitude );
++			up.rotateAboutAxis( v1, -yIncrement*magnitude );
++		}
++	}
++
++	if( rightButton )
++	{
++		// The view vector magnitude.
++		CVector3D viewVector = renderer->m_viewLookfrom - renderer->m_viewLookat;
++		double abs = viewVector.abs();
++
++		// Increment it.
++		abs += 5 * abs * yIncrement;
++		viewVector.normalize();
++		viewVector *= abs;
++
++		double smallestRadius = .02;
++		if( viewVector.abs() < smallestRadius )
++		{
++			viewVector.normalize( );
++			viewVector *= smallestRadius;
++		}
++
++		// Set the new position.
++		renderer->m_viewLookfrom = viewVector;
++	}
++}
++
++// A left or right click on the puzzle. Returns 1 if a rotation was started.
++M120C_API int
++M120C_Click( SCore * core, int width, int height, int x, int y, int left, int shift, int ctrl, int alt )
++{
++	CPuzzle * puzzle = core->m_puzzle;
++
++	if( shift && ctrl && alt )
++	{
++		puzzle->regenColors();
++		return 0;
++	}
++
++	int stickerHash = core->m_renderer->renderForPicking( width, height, x, y );
++
++	if( -1 != stickerHash )
++	{
++		// What we do depends on ctrl, shift, left/right.
++		if( shift && ctrl )
++		{
++			puzzle->highlightSticker( stickerHash, false, 0 != left );
++		}
++		else if( shift )
++		{
++			puzzle->highlightSticker( stickerHash, true, 0 != left );
++		}
++		else
++		{
++			if( ctrl )
++			{
++				int clickedCell, dummy;
++				decodeStickerHash( stickerHash, clickedCell, dummy );
++
++				STwist twist;
++				if( puzzle->calcViewTwist( clickedCell, 0 != left, twist ) )
++				{
++					puzzle->startRotate( twist );
++					return 1;
++				}
++			}
++			else
++			{
++				STwist twist( stickerHash, 0 != left );
++
++				// Detect if this twist was just the reverse of the last twist.
++				STwist temp;
++				if( puzzle->twistHistory().getUndoTwist( temp, false ) && temp == twist )
++					puzzle->twistHistory().getUndoTwist( temp );
++
++				// Don't try to twist if a 1C was clicked.
++				if( 0 != twist.m_sticker )
++				{
++					puzzle->startRotate( twist );
++					return 1;
++				}
++			}
++		}
++	}
++
++	return 0;
++}
++
++// The values of the C# CubeParameter enum.
++enum CubeParameter
++{
++	Puzzle,
++	Perspective4d,
++	CellDistance,
++	CellSize,
++	StickerSize,
++	RotationRate,
++	LogicalVisibility,
++	Symmetry,
++	DrawInvertedCells,
++	ReverseInvertedCellColor,
++	DrawWireframe,
++};
++
++M120C_API void
++M120C_SetParameter( SCore * core, int param, int value )
++{
++	CPuzzle * puzzle = core->m_puzzle;
++	CSettings & settings = puzzle->getSettings();
++	switch( param )
++	{
++	case Puzzle:
++		puzzle->setPuzzleType( (int)value );
++		break;
++	case Perspective4d:
++		settings.m_projection4Distance = 3.0 + pow( (double)value / 25, 2 );
++		break;
++	case CellDistance:
++		settings.m_cellDistance = 1.0 + (double)value / 25;
++		break;
++	case CellSize:
++		settings.m_cellSize = (double)value / 100;
++		break;
++	case StickerSize:
++		settings.m_stickerSize = (double)value / 100;
++		break;
++	case RotationRate:
++		settings.m_rotationStep = 0.1 + (double)value / 5;
++
++		// Make extremely large for disco ball mode.
++		if( (int)value == 100 )
++			settings.m_rotationStep = 200;
++		break;
++	case LogicalVisibility:
++		settings.m_logicalVisibility = (short)value;
++		break;
++	case Symmetry:
++		settings.m_symmetry = value;
++		puzzle->physicalVisibilityChanged();
++		break;
++	case DrawInvertedCells:
++		settings.m_drawInvertedCells = 1 == value ? true : false;
++		break;
++	case ReverseInvertedCellColor:
++		settings.m_reverseInvertedCellColor = 1 == value ? true : false;
++		break;
++	case DrawWireframe:
++		settings.m_drawWireframe = 1 == value ? true : false;
++		break;
++	}
++
++	puzzle->settingsChanged();
++}
++
++M120C_API void
++M120C_SetupStickerRatios( SCore * core, double r1, double r2, double r3 )
++{
++	CSettings & settings = core->m_puzzle->getSettings();
++	settings.m_r1 = r1;
++	settings.m_r2 = r2;
++	settings.m_r3 = r3;
++	core->m_puzzle->shapeChanged();
++}
++
++M120C_API void
++M120C_EnableFace( SCore * core, int face, int enable )
++{
++	core->m_puzzle->getSettings().m_visibility[face] = 0 != enable;
++	core->m_puzzle->physicalVisibilityChanged();
++}
++
++// Face -1 is the background.
++M120C_API void
++M120C_ColorFace( SCore * core, int face, int red, int green, int blue, int alpha )
++{
++	CColor color( (float)red / 255, (float)green / 255, (float)blue / 255, (float)alpha / 255 );
++	if( -1 == face )
++		core->m_renderer->setBackgroundColor( color );
++	else
++		core->m_puzzle->setColor( face, color );
++}
++
++M120C_API void
++M120C_CycleStickerAccent( SCore * core, int colors )
++{
++	CSettings & settings = core->m_puzzle->getSettings();
++	switch( colors )
++	{
++	case 1:
++		settings.m_highlight1C = !settings.m_highlight1C;
++		break;
++	case 2:
++		settings.m_highlight2C = !settings.m_highlight2C;
++		break;
++	case 3:
++		settings.m_highlight3C = !settings.m_highlight3C;
++		break;
++	case 4:
++		settings.m_highlight4C = !settings.m_highlight4C;
++		break;
++	}
++}
++
++M120C_API void
++M120C_Save( SCore * core, const wchar_t * fileName )
++{
++	core->m_puzzle->save( fileName );
++}
++
++M120C_API void
++M120C_Load( SCore * core, const wchar_t * fileName )
++{
++	core->m_puzzle->load( fileName );
++}
++
++M120C_API void
++M120C_Scramble( SCore * core, int number )
++{
++	core->m_puzzle->scramble( number );
++}
++
++M120C_API void
++M120C_MarkUnscrambled( SCore * core )
++{
++	core->m_puzzle->markUnscrambled();
++}
++
++M120C_API void
++M120C_ResetState( SCore * core )
++{
++	core->m_puzzle->reset();
++}
++
++M120C_API void
++M120C_ResetView( SCore * core )
++{
++	core->m_puzzle->resetView();
++}
++
++M120C_API void
++M120C_ClearStickersToHighlight( SCore * core )
++{
++	core->m_puzzle->clearStickersToHighlight();
++}
+diff --git a/Magic120Cell/cubeFrame.cpp b/Magic120Cell/cubeFrame.cpp
+deleted file mode 100644
+index 0645ef4..0000000
+--- a/Magic120Cell/cubeFrame.cpp
++++ /dev/null
+@@ -1,643 +0,0 @@
+-// {{{ClassName=CubeFrame
+-
+-#include <stdafx.h>
+-#include "cubeFrame.h"
+-
+-#include "gl/glInit.h"
+-#include "helper.h"
+-#include "workFiles/magic120Cell.h"
+-
+-#define _USE_MATH_DEFINES
+-#include <math.h>
+-
+-using namespace System::Drawing;
+-
+-namespace Magic120Cell
+-{
+-
+-CubeFrame::CubeFrame() 
+-{
+-	m_solving = false;
+-	m_enableRedraw = true;
+-	m_animating	= false;
+-
+-	m_dragging = false;
+-	m_mouseDownX = m_mouseDownY = -1;
+-	m_mouseLastX = m_mouseLastY = 0;
+-}
+-
+-CubeFrame::~CubeFrame() 
+-{
+-	if( m_components )
+-		delete m_components;
+-
+-	if( m_puzzle )
+-		delete( m_puzzle );
+-
+-	if( m_renderer )
+-		delete( m_renderer );
+-}
+-
+-void 
+-CubeFrame::Run() 
+-{
+-	m_frame = gcnew MainFrame( this );
+-
+-	m_components = gcnew System::ComponentModel::Container();
+-	m_timer = gcnew Timer( m_components );
+-	m_timer->Interval = 20;
+-	m_timer->Tick += gcnew EventHandler( this, &CubeFrame::TimerTick );
+-
+-	m_frame->Load += gcnew EventHandler( this, &CubeFrame::FrameLoad );
+-
+-	m_frame->DrawSurface->Paint += gcnew PaintEventHandler( this, &CubeFrame::Paint );
+-	m_frame->DrawSurface->KeyDown += gcnew KeyEventHandler( this, &CubeFrame::KeyDown );
+-	m_frame->DrawSurface->LostFocus += gcnew EventHandler( this, &CubeFrame::LostFocus );
+-	m_frame->DrawSurface->MouseDown += gcnew MouseEventHandler( this, &CubeFrame::MouseDown );
+-	m_frame->DrawSurface->MouseMove += gcnew MouseEventHandler( this, &CubeFrame::MouseMove );
+-	m_frame->DrawSurface->MouseUp += gcnew MouseEventHandler( this, &CubeFrame::MouseUp );
+-
+-	//m_puzzle = new CMagicSimplex4D();
+-	m_puzzle = new CMagic120Cell();
+-	m_renderer = new CRenderer( m_puzzle );
+-
+-	Application::Run( m_frame );
+-}
+-
+-void 
+-CubeFrame::FrameLoad( Object^ sender, EventArgs^ args ) 
+-{
+-	CGlInit glInit;
+-	glInit.initializeGL( (HWND)m_frame->DrawSurface->Handle.ToInt32() );
+-}
+-
+-void 
+-CubeFrame::Paint( Object^ sender, System::Windows::Forms::PaintEventArgs^ args ) 
+-{
+-	DoRender( args->Graphics );
+-}
+-
+-void 
+-CubeFrame::TimerTick( System::Object^ sender, System::EventArgs^ e )
+-{
+-	if( m_currentAngle + m_puzzle->getCurrentTwistStep() >= rad2deg( m_puzzle->getCurrentTwistMagnitude() ) )
+-	{
+-		m_puzzle->finishRotate();
+-		DoRender();
+-		bool showMessage = false;
+-
+-		// Special handling if we are solving.
+-		if( m_solving )
+-		{
+-			// Start the next undo.
+-			STwist undo;
+-			if( m_puzzle->twistHistory().getUndoTwist( undo ) )
+-			{
+-				internalRotate( undo );
+-				return;
+-			}
+-			else
+-			{
+-				m_solving = false;
+-			}
+-		}
+-		else
+-		{
+-			// NOTE: Don't do solution checks after view rotations.
+-			if( !m_puzzle->getCurrentTwist().m_viewRotation && m_puzzle->isSolved() )
+-			{
+-				// Beep!
+-				System::Media::SystemSounds::Asterisk::get()->Play();
+-
+-				// See if we should show a message.
+-				showMessage = m_puzzle->canShowSolvedMessage();
+-			}
+-		}
+-
+-		m_timer->Enabled = false;
+-		m_animating = false;
+-
+-		Redraw( false );
+-
+-		// Show a congratulatory message if they've solved it.
+-		if( showMessage )
+-			showSolvedMessage();
+-
+-		return;
+-	}
+-
+-	// Do the drawing.
+-	m_puzzle->iterateRotate();
+-	DoRender();
+-
+-	m_currentAngle += m_puzzle->getCurrentTwistStep();
+-}
+-
+-void 
+-CubeFrame::MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
+-{
+-	// Make sure we have the focus.
+-	m_frame->DrawSurface->Select();
+-
+-	// Are we starting a drag?
+-	// NOTE: The mousedown checks make sure we had a mouse down call and fixes a problem I was seeing
+-	//		 where the view would reset when you loaded in a log file.
+-	if( ! m_dragging && e->Button != MouseButtons::None &&
+-		-1 != m_mouseDownX && -1 != m_mouseDownY &&
+-		((Math::Abs( e->X - m_mouseDownX ) > SystemInformation::DragSize.Width / 2) ||
+-		(Math::Abs( e->Y - m_mouseDownY ) > SystemInformation::DragSize.Height / 2)) )
+-	{
+-		StartDrag();
+-
+-		// Fake the original mouse position so we will get some drag motion immediately.
+-		m_mouseLastX = m_mouseDownX;
+-		m_mouseLastY = m_mouseDownY;
+-	}
+-
+-	// Are we dragging?
+-	if( m_dragging )
+-		PerformDrag( e->X, e->Y, e->Button );
+-
+-	m_mouseLastX = e->X;
+-	m_mouseLastY = e->Y;
+-
+-	// We don't need to continue past here if we are animating.
+-	if( m_animating )
+-		return;
+-
+-	Redraw( true );
+-}
+-
+-void
+-CubeFrame::StartDrag() 
+-{
+-	m_dragging = true;
+-	m_frame->DrawSurface->Capture = true;
+-}
+-
+-void 
+-CubeFrame::PerformDrag( int x, int y, MouseButtons btn ) 
+-{
+-	// This is increment we moved, scaled to the window size.
+-	float xIncrement = (float)( x - m_mouseLastX ) / (float)m_frame->DrawSurface->ClientRectangle.Width;
+-	float yIncrement = (float)( y - m_mouseLastY ) / (float)m_frame->DrawSurface->ClientRectangle.Height;
+-
+-	// A measure of the magnitude of the change.
+-	float magnitude = (float)( sqrt( xIncrement*xIncrement + yIncrement*yIncrement ) * 100 );
+-
+-	if( btn == System::Windows::Forms::MouseButtons::Left )
+-	{
+-		// The spherical coordinate radius.
+-		CVector3D & view = m_renderer->m_viewLookfrom;
+-		double radius = view.abs();
+-		if( ! IS_ZERO( radius ) )
+-		{
+-			CVector3D & up = m_renderer->m_up;
+-			CVector3D v1 = up.cross( view );
+-			CVector3D v2 = view.cross( v1 );
+-			v1.normalize();
+-			v2.normalize();
+-
+-			view.rotateAboutAxis( v2, -xIncrement*magnitude );
+-			view.rotateAboutAxis( v1, -yIncrement*magnitude );
+-			up.rotateAboutAxis( v2, -xIncrement*magnitude );
+-			up.rotateAboutAxis( v1, -yIncrement*magnitude );
+-
+-			/* OLD way
+-			// The spherical coordinate angles.
+-			double theta = atan2( viewVector.m_components[1], viewVector.m_components[0] );
+-			double phi = acos( viewVector.m_components[2] / radius );
+-
+-			// Increment the angles.
+-			theta -= magnitude * xIncrement;
+-			phi   -= magnitude * yIncrement;
+-
+-			// Check the bounds.
+-			// So we don't have to worry about the upVector, don't allow these to be exactly 0 or Pi.
+-			if( phi <= 0 )
+-				phi  = 0.0000001;
+-			if( phi >= CONSTANT_PI )
+-				phi  = CONSTANT_PI - 0.0000001;
+-
+-			// Calculate the new position.
+-			m_renderer->m_viewLookfrom.m_components[0] = m_renderer->m_viewLookat.m_components[0] + radius * sin( phi ) * cos( theta );
+-			m_renderer->m_viewLookfrom.m_components[1] = m_renderer->m_viewLookat.m_components[1] + radius * sin( phi ) * sin( theta );
+-			m_renderer->m_viewLookfrom.m_components[2] = m_renderer->m_viewLookat.m_components[2] + radius * cos( phi );
+-			*/
+-		}
+-	}
+-
+-	if( btn == System::Windows::Forms::MouseButtons::Right )
+-	{
+-		// The view vector magnitude.
+-		CVector3D viewVector = m_renderer->m_viewLookfrom - m_renderer->m_viewLookat;
+-		double abs = viewVector.abs();
+-	
+-		// Increment it.
+-		abs += 5 * abs * yIncrement;
+-		viewVector.normalize();
+-		viewVector *= abs;
+-
+-		double smallestRadius = .02;
+-		if( viewVector.abs() < smallestRadius )
+-		{
+-			viewVector.normalize( );
+-			viewVector *= smallestRadius;
+-		}
+-
+-		// Set the new position.
+-		m_renderer->m_viewLookfrom = viewVector;
+-	}
+-}
+-
+-void 
+-CubeFrame::FinishDrag() 
+-{
+-	m_frame->DrawSurface->Capture = false;
+-	m_dragging = false;
+-}
+-
+-void 
+-CubeFrame::MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
+-{
+-	m_mouseDownX = e->X;
+-	m_mouseDownY = e->Y;
+-}
+-
+-void 
+-CubeFrame::MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) 
+-{
+-	// NOTE: The mousedown checks make sure we had a mouse down call and fixes a problem I was seeing
+-	//		 where where unintended sticker clicks could happen when loading a log file.
+-	if( -1 == m_mouseDownX || -1 == m_mouseDownY )
+-		return;
+-
+-	m_mouseDownX = m_mouseDownY = -1;
+-
+-	// Figure out if we were dragging, and if the drag is done.
+-	if( m_dragging )
+-	{
+-		if( Form::MouseButtons == MouseButtons::None )
+-			FinishDrag();
+-		return;
+-	}
+-
+-	if( m_animating )
+-		return;
+-
+-	// Past here, the mouse-up represents a click.
+-
+-	if( e->Button == System::Windows::Forms::MouseButtons::Left || 
+-		e->Button == System::Windows::Forms::MouseButtons::Right )
+-	{
+-		if( ShiftDown() && CtrlDown() && AltDown() )
+-		{
+-			m_puzzle->regenColors();
+-			return;
+-		}
+-
+-		bool left = e->Button == System::Windows::Forms::MouseButtons::Left;
+-		
+-		int stickerHash = m_renderer->renderForPicking( 
+-			m_frame->DrawSurface->ClientRectangle.Width, 
+-			m_frame->DrawSurface->ClientRectangle.Height,
+-			e->X, e->Y );
+-
+-		if( -1 != stickerHash )
+-		{
+-			// What we do depends on ctrl, shift, left/right.
+-			if( ShiftDown() && CtrlDown() )
+-			{
+-				m_puzzle->highlightSticker( stickerHash, false, left );
+-			}
+-			else if( ShiftDown() )
+-			{
+-				m_puzzle->highlightSticker( stickerHash, true, left );
+-			}
+-			else
+-			{
+-				if( CtrlDown() )
+-				{
+-					int clickedCell, dummy;
+-					decodeStickerHash( stickerHash, clickedCell, dummy );
+-					
+-					STwist twist;
+-					if( m_puzzle->calcViewTwist( clickedCell, left, twist ) )
+-						internalRotate( twist );
+-				}
+-				else
+-				{
+-					STwist twist( stickerHash, left );
+-
+-					// Detect if this twist was just the reverse of the last twist.
+-					STwist temp;
+-					if( m_puzzle->twistHistory().getUndoTwist( temp, false ) && temp == twist )
+-						m_puzzle->twistHistory().getUndoTwist( temp );
+-
+-					// Don't try to twist if a 1C was clicked.
+-					if( 0 != twist.m_sticker )
+-						internalRotate( twist );
+-				}
+-			}
+-		}	
+-	}
+-}
+-
+-void 
+-CubeFrame::KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) 
+-{
+-	if( m_solving && e->KeyCode == Keys::Escape )
+-		m_solving = false;
+-}
+-
+-void 
+-CubeFrame::LostFocus( Object^ sender, System::EventArgs^ args ) 
+-{
+-	/*
+-	// Reset click handling.
+-	m_puzzle->clearStickersToHighlight();
+-
+-	Redraw( true );
+-	*/
+-}
+-
+-void 
+-CubeFrame::SetParameter( CubeParameter param, int value ) 
+-{
+-	CSettings & settings = m_puzzle->getSettings();
+-	switch( param )
+-	{
+-	case CubeParameter::Puzzle:
+-		m_puzzle->setPuzzleType( (int)value );
+-		break;
+-	case CubeParameter::Perspective4d:
+-		settings.m_projection4Distance = 3.0 + pow( (double)value / 25, 2 );
+-		break;
+-	case CubeParameter::CellDistance:
+-		settings.m_cellDistance = 1.0 + (double)value / 25;
+-		break;
+-	case CubeParameter::CellSize:
+-		settings.m_cellSize = (double)value / 100;
+-		break;
+-	case CubeParameter::StickerSize:
+-		settings.m_stickerSize = (double)value / 100;
+-		break;
+-	case CubeParameter::RotationRate:
+-		settings.m_rotationStep = 0.1 + (double)value / 5;
+-		
+-		// Make extremely large for disco ball mode.
+-		if( (int)value == 100 )
+-			settings.m_rotationStep = 200;
+-		break;
+-	case CubeParameter::LogicalVisibility:
+-		settings.m_logicalVisibility = (short)value;
+-		break;
+-	case CubeParameter::Symmetry:
+-		settings.m_symmetry = value;
+-		m_puzzle->physicalVisibilityChanged();
+-		break;
+-	case CubeParameter::DrawInvertedCells:
+-		settings.m_drawInvertedCells = 1 == value ? true : false;
+-		break;
+-	case CubeParameter::ReverseInvertedCellColor:
+-		settings.m_reverseInvertedCellColor = 1 == value ? true : false;
+-		break;
+-	case CubeParameter::DrawWireframe:
+-		settings.m_drawWireframe = 1 == value ? true : false;
+-		break;
+-	}
+-
+-	m_puzzle->settingsChanged();
+-	Redraw( true );
+-}
+-
+-void 
+-CubeFrame::SetupStickerRatios( double r1, double r2, double r3 )
+-{
+-	CSettings & settings = m_puzzle->getSettings();
+-	settings.m_r1 = r1;
+-	settings.m_r2 = r2;
+-	settings.m_r3 = r3;
+-	m_puzzle->shapeChanged();
+-	Redraw( true );
+-}
+-
+-bool
+-CubeFrame::EnableRedraw::get()
+-{
+-	return m_enableRedraw;
+-}
+-
+-void
+-CubeFrame::EnableRedraw::set( bool val )
+-{
+-	m_enableRedraw = val;
+-	if( val )
+-		Redraw( false );
+-}
+-
+-void 
+-CubeFrame::EnableFace( int face, bool enable ) 
+-{
+-	m_puzzle->getSettings().m_visibility[face] = enable;
+-	m_puzzle->physicalVisibilityChanged();
+-	Redraw( true );
+-}
+-
+-void 
+-CubeFrame::ColorFace( int face, System::Drawing::Color c ) 
+-{
+-	// Setting background color?
+-	CColor color( (float)c.R / 255, (float)c.G / 255, (float)c.B / 255, (float)c.A / 255 );
+-	if( -1 == face )
+-		m_renderer->setBackgroundColor( color );
+-	else
+-		m_puzzle->setColor( face, color );
+-
+-}
+-
+-void 
+-CubeFrame::CycleStickerAccent( int colors ) 
+-{
+-	CSettings & settings = m_puzzle->getSettings();
+-	switch( colors )
+-	{
+-	case 1:
+-		settings.m_highlight1C = !settings.m_highlight1C;
+-		break;
+-	case 2:
+-		settings.m_highlight2C = !settings.m_highlight2C;
+-		break;
+-	case 3:
+-		settings.m_highlight3C = !settings.m_highlight3C;
+-		break;
+-	case 4:
+-		settings.m_highlight4C = !settings.m_highlight4C;
+-		break;
+-	}
+-
+-	Redraw( true );
+-}
+-
+-void 
+-CubeFrame::Save( bool saveas ) 
+-{
+-	if( m_animating )
+-		return;
+-
+-	m_puzzle->save( saveas );
+-}
+-
+-void 
+-CubeFrame::Load() 
+-{
+-	if( m_animating )
+-		return;
+-
+-	m_puzzle->load();
+-	Redraw( true );
+-}
+-
+-void 
+-CubeFrame::Scramble( int number ) 
+-{
+-	if( m_animating )
+-		return;
+-
+-	m_puzzle->scramble( number );
+-	Redraw( true );
+-}
+-
+-void 
+-CubeFrame::Solve() 
+-{
+-	if( m_animating )
+-		return;
+-
+-	// Start the first undo.
+-	STwist undo;
+-	if( m_puzzle->twistHistory().getUndoTwist( undo ) )
+-	{
+-		m_solving = true;
+-		internalRotate( undo );
+-	}
+-
+-	// Clicking the solve button means the puzzle shouldn't be counted as scrambled.
+-	m_puzzle->markUnscrambled();
+-}
+-
+-void 
+-CubeFrame::Undo() 
+-{
+-	if( m_animating )
+-		return;
+-
+-	STwist undo;
+-	if( m_puzzle->twistHistory().getUndoTwist( undo ) )
+-		internalRotate( undo );
+-}
+-
+-void 
+-CubeFrame::Redo() 
+-{
+-	if( m_animating )
+-		return;
+-
+-	STwist redo;
+-	if( m_puzzle->twistHistory().getRedoTwist( redo ) )
+-		internalRotate( redo );
+-}
+-
+-void 
+-CubeFrame::ResetState() 
+-{
+-	if( m_animating )
+-		return;
+-
+-	m_puzzle->reset();
+-}
+-
+-void 
+-CubeFrame::ResetView()
+-{
+-	if( m_animating )
+-		return;
+-
+-	m_puzzle->resetView();
+-	DoRender();
+-}
+-
+-void 
+-CubeFrame::KeyUp() 
+-{
+-	// Reset click handling.
+-	if( !ShiftDown() || !CtrlDown() )
+-	{
+-		m_puzzle->clearStickersToHighlight();
+-		Redraw( true );
+-	}
+-}
+-
+-void 
+-CubeFrame::internalRotate( const STwist & twist ) 
+-{
+-	m_currentAngle = 0;
+-	m_puzzle->startRotate( twist );
+-	m_animating = true;
+-	m_timer->Enabled = true;
+-}
+-
+-void 
+-CubeFrame::showSolvedMessage()
+-{
+-	String ^ text = "You are a true permutation puzzle master and now one with the universe.\n\n"
+-		"Be sure to send your logfile to roice@gravitation3d.com\n"
+-		"to get your name listed in the Magic120Cell Hall of Insanity!";
+-	String ^ caption = "Magic120Cell Unraveled!";
+-	System::Windows::Forms::MessageBox::Show( text, caption, MessageBoxButtons::OK, MessageBoxIcon::Exclamation );
+-}
+-
+-void 
+-CubeFrame::Redraw( bool force ) 
+-{
+-	if( force || m_enableRedraw )
+-		m_frame->DrawSurface->Invalidate();
+-}
+-
+-void 
+-CubeFrame::DoRender() 
+-{
+-	Graphics^ g = Graphics::FromHwnd( m_frame->DrawSurface->Handle );
+-	DoRender( g );
+-	g->~Graphics();
+-}
+-
+-void 
+-CubeFrame::DoRender( Graphics^ g )
+-{
+-	m_renderer->renderScene( m_frame->DrawSurface->ClientRectangle.Width, m_frame->DrawSurface->ClientRectangle.Height );
+-
+-	IntPtr hdc = g->GetHdc();
+-	SwapBuffers( (HDC)hdc.ToPointer() );
+-	g->ReleaseHdc( hdc );
+-}
+-
+-bool 
+-CubeFrame::ShiftDown() 
+-{
+-	return (Form::ModifierKeys & Keys::Shift) == Keys::Shift;
+-}
+-
+-bool 
+-CubeFrame::CtrlDown() 
+-{
+-	return (Form::ModifierKeys & Keys::Control) == Keys::Control;
+-}
+-
+-bool
+-CubeFrame::AltDown()
+-{
+-	return (Form::ModifierKeys & Keys::Alt) == Keys::Alt;
+-}
+-
+-}
+diff --git a/Magic120Cell/cubeFrame.h b/Magic120Cell/cubeFrame.h
+deleted file mode 100644
+index 5ffa792..0000000
+--- a/Magic120Cell/cubeFrame.h
++++ /dev/null
+@@ -1,113 +0,0 @@
+-
+-#pragma once
+-
+-#include "workFiles/puzzle.h"
+-
+-using namespace System;
+-using namespace System::Windows::Forms;
+-
+-namespace Magic120Cell
+-{
+-
+-	public ref class CubeFrame : ICube
+-	{
+-	public:
+-
+-		CubeFrame();
+-		~CubeFrame();
+-
+-		// run the application
+-		void Run();
+-
+-	protected:
+-
+-		// event handers
+-		void FrameLoad( Object^ sender, EventArgs^ args );
+-		void Paint( Object^ sender, System::Windows::Forms::PaintEventArgs^ args );
+-		void TimerTick( System::Object^ sender, System::EventArgs^ e );
+-		void MouseDown( Object^ sender, System::Windows::Forms::MouseEventArgs^ args );
+-		void MouseMove( Object^ sender, System::Windows::Forms::MouseEventArgs^ args );
+-		void MouseUp( Object^ sender, System::Windows::Forms::MouseEventArgs^ args );
+-		void KeyDown( Object^ sender, System::Windows::Forms::KeyEventArgs^ args );
+-		void LostFocus( Object^ sender, System::EventArgs^ args );
+-
+-		// drag helpers
+-		void StartDrag();
+-		void PerformDrag( int x, int y, MouseButtons btn );
+-		void FinishDrag();
+-
+-		// paint helpers
+-		void Redraw( bool force );
+-		void DoRender( System::Drawing::Graphics^ g );
+-		void DoRender();
+-
+-		// keyboard helpers
+-		static bool ShiftDown();
+-		static bool CtrlDown();
+-		static bool AltDown();
+-
+-	public:
+-
+-		// ICube methods
+-		virtual void SetParameter( CubeParameter param, int value );
+-		virtual void SetupStickerRatios( double r0, double r1, double r2 );
+-		virtual void EnableFace( int face, bool enable );
+-		virtual void ColorFace( int face, System::Drawing::Color c );
+-		virtual void CycleStickerAccent( int colors );
+-		virtual void Save( bool saveas );
+-		virtual void Load();
+-		virtual void Scramble( int number );
+-		virtual void Solve();
+-		virtual void Undo();
+-		virtual void Redo();
+-		virtual void ResetState();
+-		virtual void ResetView();
+-		virtual void KeyUp();
+-		virtual property bool EnableRedraw
+-		{
+-			bool get();
+-			void set( bool );
+-		}
+-
+-	private:
+-
+-		// Internal rotation method
+-		// NOTE: This will always rotate, even if the puzzle is in the animating state.
+-		//		 You'll want to consider using the ICube rotate method instead.
+-		void internalRotate( const STwist & twist );
+-
+-		// Show a congratulatory solved message.
+-		void showSolvedMessage();
+-
+-	private:
+-
+-		// The main frame of our UI
+-		MainFrame^ m_frame;
+-
+-		// Additonal managed component bits.
+-		System::ComponentModel::IContainer^ m_components;
+-		Timer^	m_timer;
+-
+-		// The cube renderer.
+-		CRenderer* m_renderer;
+-		CPuzzle* m_puzzle;
+-		bool	m_enableRedraw;
+-
+-		// Whether or not we are solving.
+-		bool	m_solving;
+-
+-		// Rotation stuff.
+-		double	m_currentAngle;
+-
+-		// Animating?
+-		bool	m_animating;
+-
+-		// Mouse moving.
+-		int		m_mouseDownX;
+-		int		m_mouseDownY;
+-		bool	m_dragging;
+-		int		m_mouseLastX;
+-		int		m_mouseLastY;
+-	};
+-
+-}
+diff --git a/Magic120Cell/main.cpp b/Magic120Cell/main.cpp
+deleted file mode 100644
+index f72f19b..0000000
+--- a/Magic120Cell/main.cpp
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#include "stdafx.h"
+-#include "cubeFrame.h"
+-#include <tchar.h>
+-
+-using namespace Magic120Cell;
+-
+-[STAThreadAttribute]
+-int APIENTRY _tWinMain(
+-    HINSTANCE hInstance, 
+-    HINSTANCE hPrevInstance, 
+-    LPTSTR lpCmdLine, int nCmdShow)
+-{
+-	// Enabling Windows XP visual effects before any controls are created
+-	Application::EnableVisualStyles();
+-	Application::SetCompatibleTextRenderingDefault(false); 
+-
+-	// Create the main window and run it
+-	(gcnew CubeFrame())->Run();
+-	return 0;
+-}
+diff --git a/Magic120Cell/stdafx.h b/Magic120Cell/stdafx.h
+index bb0207d..b328518 100644
+--- a/Magic120Cell/stdafx.h
++++ b/Magic120Cell/stdafx.h
+@@ -6,8 +6,8 @@
+ // TODO: reference additional headers your program requires here
+ 
+ #include "windows.h"
+-#include "gl\gl.h"
+-#include "gl\glu.h"
++#include "GL/gl.h"
++#include "GL/glu.h"
+ 
+ #include <assert.h>
+ #define _USE_MATH_DEFINES
+diff --git a/Magic120Cell/workFiles/cellDodec.cpp b/Magic120Cell/workFiles/cellDodec.cpp
+index c9d6ee3..a4e6f9f 100644
+--- a/Magic120Cell/workFiles/cellDodec.cpp
++++ b/Magic120Cell/workFiles/cellDodec.cpp
+@@ -33,7 +33,7 @@ CellDodec::CellDodec()
+ CellDodec &  
+ CellDodec::operator = ( const CellDodec & rhs ) 
+ {
+-	__super::operator = ( rhs );
++	Cell::operator = ( rhs );
+ 	m_ringSet = rhs.m_ringSet;
+ 	m_ring = rhs.m_ring;
+ 	m_ringItem = rhs.m_ringItem;
+@@ -233,7 +233,7 @@ CellDodec::regenStickers( __int8 face )
+ 		for( int i=0; i<11; i++ )
+ 		{
+ 			__int8 sticker = getStickerIndex( face, i );
+-			SPrimitive3D & stickerPrim = __super::getSticker( sticker );
++			SPrimitive3D & stickerPrim = Cell::getSticker( sticker );
+ 			stickerPrim = tempCell.getSticker( sticker );
+ 		}
+ 	}
+diff --git a/Magic120Cell/workFiles/loader.cpp b/Magic120Cell/workFiles/loader.cpp
+index 9cf264b..5cd00e7 100644
+--- a/Magic120Cell/workFiles/loader.cpp
++++ b/Magic120Cell/workFiles/loader.cpp
+@@ -1,12 +1,10 @@
+ #include <stdafx.h>
+ #include "loader.h"
+ 
+-#include "vectorND.h"
++#include <stdio.h>
++#include <stdlib.h>
+ 
+-using namespace System::Collections;
+-using System::Char;
+-using System::String;
+-using System::IO::File;
++#include "vectorND.h"
+ 
+ #define VERSION_STRING	"Version1"
+ 
+@@ -14,20 +12,104 @@ using System::IO::File;
+ namespace
+ {
+ 
++// Line-based text file I/O matching what the original System::IO code did:
++// lines are written with CRLF, and read lines may end in CRLF, LF or CR.
++class CLineReader
++{
++public:
++
++	bool open( const wchar_t * fileName )
++	{
++		FILE * f = _wfopen( fileName, L"rb" );
++		if( !f )
++			return false;
++		char buf[4096];
++		size_t n;
++		while( ( n = fread( buf, 1, sizeof( buf ), f ) ) > 0 )
++			m_data.append( buf, n );
++		fclose( f );
++
++		// Skip a UTF-8 byte order mark, as StreamReader does.
++		if( 0 == m_data.compare( 0, 3, "\xEF\xBB\xBF" ) )
++			m_pos = 3;
++		return true;
++	}
++
++	// Like StreamReader::Peek() >= 0.
++	bool more() const { return m_pos < m_data.size(); }
++
++	std::string readLine()
++	{
++		size_t end = m_data.find_first_of( "\r\n", m_pos );
++		if( std::string::npos == end )
++			end = m_data.size();
++		std::string line = m_data.substr( m_pos, end - m_pos );
++		m_pos = end;
++		if( m_pos < m_data.size() && '\r' == m_data[m_pos] )
++			m_pos++;
++		if( m_pos < m_data.size() && '\n' == m_data[m_pos] )
++			m_pos++;
++		return line;
++	}
++
++private:
++
++	std::string m_data;
++	size_t m_pos = 0;
++};
++
++// Like String::Split with a tab delimiter.
++std::vector<std::string> 
++split( const std::string & line ) 
++{
++	std::vector<std::string> result;
++	size_t start = 0, tab;
++	while( std::string::npos != ( tab = line.find( '\t', start ) ) )
++	{
++		result.push_back( line.substr( start, tab - start ) );
++		start = tab + 1;
++	}
++	result.push_back( line.substr( start ) );
++	return result;
++}
++
++// Like System::Convert::ToInt32, but returns false instead of throwing.
++bool 
++toInt( const std::string & s, int & value, int base = 10 ) 
++{
++	const char * begin = s.c_str();
++	char * end;
++	long l = strtol( begin, &end, base );
++	if( 10 == base )
++		while( ' ' == *end || '\t' == *end )
++			end++;
++	if( end == begin || '\0' != *end )
++		return false;
++	value = (int)l;
++	return true;
++}
++
+ void 
+-saveTwists( System::IO::StreamWriter ^ sw, const std::vector<STwist> & twists ) 
++writeLine( std::string & sw, const std::string & line ) 
+ {
+-	String ^ line = "";
++	sw += line;
++	sw += "\r\n";
++}
++
++void 
++saveTwists( std::string & sw, const std::vector<STwist> & twists ) 
++{
++	std::string line = "";
+ 	int count = 0;
+ 	for( uint t=0; t<twists.size(); t++ )
+ 	{
+-		String ^ twistString = System::Convert::ToString( twists[t].getTwistHash() );
++		std::string twistString = std::to_string( twists[t].getTwistHash() );
+ 		line += twistString;
+ 		count++;
+ 
+ 		if( count >= 10 || t == twists.size()-1 )
+ 		{
+-			sw->WriteLine( line );
++			writeLine( sw, line );
+ 			line = "";
+ 			count = 0;
+ 		}
+@@ -39,47 +121,41 @@ saveTwists( System::IO::StreamWriter ^ sw, const std::vector<STwist> & twists )
+ }
+ 
+ bool 
+-loadTwists( System::IO::StreamReader ^ sr, std::vector<STwist> & twists, int numLines ) 
++loadTwists( CLineReader & sr, std::vector<STwist> & twists, int numLines ) 
+ {
+ 	twists.clear();
+ 
+-	// Delimiters (just tabs).
+-	array<Char> ^ delimiter = { '\t' };
+-
+-	String ^ line = "";
+ 	int linesRead = 0;
+-    while( sr->Peek() >= 0 ) 
+-    {
++	while( sr.more() ) 
++	{
+ 		// Were there a specific number of lines specified to read?
+ 		if( -1 != numLines )
+ 			if( linesRead == numLines )
+ 				return true;
+ 
+-		line = sr->ReadLine();
++		std::vector<std::string> split = ::split( sr.readLine() );
+ 		linesRead++;
+-		array<String ^> ^ split = line->Split( delimiter );
+-		IEnumerator ^ myEnum = split->GetEnumerator();
+ 
+-		while( myEnum->MoveNext() )
++		for( uint i=0; i<split.size(); i++ )
+ 		{
+-			String ^ tempString = safe_cast<String ^>( myEnum->Current );
+ 			STwist twist;
+-			int twistHash = System::Convert::ToInt32( tempString );
++			int twistHash;
++			if( !toInt( split[i], twistHash ) )
++				return false;
+ 			twist.decodeTwistHash( twistHash );
+ 			twists.push_back( twist );
+ 		}
+-    }
++	}
+ 
+ 	return true;
+ }
+ 
+ bool 
+-loadFromFile( String ^ fileName, int & puzzle, CState & state, std::vector<STwist> & twists ) 
++loadFromFile( const wchar_t * fileName, int & puzzle, CState & state, std::vector<STwist> & twists ) 
+ {
+-	System::IO::StreamReader ^ sr = gcnew System::IO::StreamReader( fileName );
+-
+-	// Delimiters (just tabs).
+-	array<Char> ^ delimiter = { '\t' };
++	CLineReader sr;
++	if( !sr.open( fileName ) )
++		return false;
+ 
+ 	/* Read the header.
+ 	   Fail if unexpected format.
+@@ -87,75 +163,83 @@ loadFromFile( String ^ fileName, int & puzzle, CState & state, std::vector<STwis
+ 	   Magic120Cell	Version1	4	1	1000
+ 	   last 3 columns are: puzzle type, whether we've scrambled, and the number of twists.
+ 	*/
+-	String ^ line = sr->ReadLine();
+-	array<String ^> ^ split = line->Split( delimiter );
+-	if( 5 != split->Length )
++	std::vector<std::string> split = ::split( sr.readLine() );
++	if( 5 != split.size() )
+ 		return false;
+ 
+-	if( !split[0]->Equals( "Magic120Cell" ) )
++	if( split[0] != "Magic120Cell" )
+ 		return false;
+-	if( !split[1]->Equals( VERSION_STRING ) )
++	if( split[1] != VERSION_STRING )
+ 		return false;
+ 
+-	puzzle = System::Convert::ToInt32( split[2] );
++	int newPuzzle, scrambled, numTwists;
++	if( !toInt( split[2], newPuzzle ) || !toInt( split[3], scrambled ) || !toInt( split[4], numTwists ) )
++		return false;
++	puzzle = newPuzzle;
+ 
+ 	// NOTE: State needs to be reset before setting scrambled flag.
+ 	state.reset();
+-	state.setScrambled( 1 == System::Convert::ToInt32( split[3] ) );
+-
+-	int numTwists = System::Convert::ToInt32( split[4] );
++	state.setScrambled( 1 == scrambled );
+ 
+ 	// Now read the state.
+ 	for( int c=0; c<state.nCells(); c++ )
+ 	{
+-		line = sr->ReadLine();
+-		assert( 2*state.nStickers() == line->Length );
++		std::string line = sr.readLine();
++		assert( 2*state.nStickers() == line.length() );
+ 		for( int s=0; s<state.nStickers(); s++ )
+-			state.setStickerColorIndex( c, s, System::Convert::ToInt32( line->Substring( 2*s, 2 ), 16 ) );
++		{
++			int colorIndex;
++			if( !toInt( line.substr( 2*s, 2 ), colorIndex, 16 ) )
++				return false;
++			state.setStickerColorIndex( c, s, colorIndex );
++		}
+ 		state.commitChanges( c );
+ 	}
+ 
+ 	// Now read all the twists.
+ 	loadTwists( sr, twists, -1 );
+ 
+-	// Close the file.
+-	sr->Close();
+-
+ 	return true;
+ }
+ 
+ void 
+-saveToFile( String ^ fileName, int puzzle, const CState & state, const std::vector<STwist> & twists, bool saveas ) 
++saveToFile( const wchar_t * fileName, int puzzle, const CState & state, const std::vector<STwist> & twists ) 
+ {
+-	System::IO::StreamWriter ^ sw = File::CreateText( fileName );
++	std::string sw;
+ 
+ 	// Write the header.
+-	String ^ header = "Magic120Cell\t" + VERSION_STRING + "\t" +
+-		System::Convert::ToString( puzzle ) + "\t" +
+-		System::Convert::ToString( state.getScrambled() ? 1 : 0 ) + "\t" +
+-		System::Convert::ToString( twists.size() );
+-	sw->WriteLine( header );
++	std::string header = "Magic120Cell\t" VERSION_STRING "\t" +
++		std::to_string( puzzle ) + "\t" +
++		std::to_string( state.getScrambled() ? 1 : 0 ) + "\t" +
++		std::to_string( twists.size() );
++	writeLine( sw, header );
+ 
+ 	// Now write out the state.
+-	String ^ line;
++	std::string line;
+ 	for( int c=0; c<state.nCells(); c++ )
+ 	{
+ 		line = "";
+ 		for( int s=0; s<state.nStickers(); s++ )
+ 		{
+ 			int colorInt = state.getStickerColorIndex( c, s );
++			char hex[16];
++			snprintf( hex, sizeof( hex ), "%x", colorInt );
+ 			if( colorInt < 16 )
+ 				line += "0";
+-			line += System::Convert::ToString( colorInt, 16 );
++			line += hex;
+ 		}
+-		sw->WriteLine( line );
++		writeLine( sw, line );
+ 	}
+ 
+ 	// Now write out all the twists.
+ 	saveTwists( sw, twists );
+ 
+-	// Close the file.
+-	sw->Close();
++	// Write the file.
++	FILE * f = _wfopen( fileName, L"wb" );
++	if( !f )
++		return;
++	fwrite( sw.data(), 1, sw.size(), f );
++	fclose( f );
+ }
+ 
+ }
+@@ -165,84 +249,26 @@ CLoader::CLoader()
+ }
+ 
+ void 
+-CLoader::saveToFile( int puzzle, const CState & state, const std::vector<STwist> & twists, bool saveas ) 
++CLoader::saveToFile( const wchar_t * fileName, int puzzle, const CState & state, const std::vector<STwist> & twists ) 
+ {
+-	// Get the filename to save to.
+-	String ^ fileName = getSaveFileName( saveas );
+-	if( "" == fileName )
+-		return;
+-
+-	::saveToFile( fileName, puzzle, state, twists, saveas );
++	::saveToFile( fileName, puzzle, state, twists );
+ }
+ 
+ void 
+ CLoader::saveScrambledFile( const CState & state, const std::vector<STwist> & twists )
+ {
+-	::saveToFile( "full_scramble.log", 4, state, twists, false );
++	::saveToFile( L"full_scramble.log", 4, state, twists );
+ }
+ 
+ bool 
+-CLoader::loadFromFile( int & puzzle, CState & state, std::vector<STwist> & twists ) 
++CLoader::loadFromFile( const wchar_t * fileName, int & puzzle, CState & state, std::vector<STwist> & twists ) 
+ {
+-	String ^ fileName = getLoadFileName();
+-	if( ! File::Exists( fileName ) )
+-		return false;
+-
+ 	return ::loadFromFile( fileName, puzzle, state, twists );
+ }
+ 
+ bool 
+ CLoader::loadScrambledFile( CState & state, std::vector<STwist> & twists )
+ {
+-	String ^ fileName = "full_scramble.log";
+-	if( ! File::Exists( fileName ) )
+-		return false;
+-
+ 	int dummy;
+-	return ::loadFromFile( fileName, dummy, state, twists );
++	return ::loadFromFile( L"full_scramble.log", dummy, state, twists );
+ }
+-
+-namespace
+-{
+-	std::string systemStringToStdString( System::String ^ input )
+-	{
+-		// XXX - There has got to be a better way to do this!
+-		std::string returnString;
+-		for( int i=0; i<input->Length; i++ )
+-			returnString.push_back( (char)input[i] );
+-		return returnString;
+-	}
+-}
+-
+-#define FILTER "MagicCube5D log files (*.log)|*.log|All files (*.*)|*.*"
+-
+-System::String ^ 
+-CLoader::getSaveFileName( bool forcePrompt ) 
+-{
+-	if( 0 == m_filename.length() || forcePrompt )
+-	{
+-		System::Windows::Forms::SaveFileDialog ^ dlg = gcnew System::Windows::Forms::SaveFileDialog();
+-		dlg->AddExtension = true;
+-		dlg->OverwritePrompt = true;
+-		dlg->Filter = FILTER;
+-		if( System::Windows::Forms::DialogResult::OK != dlg->ShowDialog() )
+-			return "";
+-		m_filename = systemStringToStdString( dlg->FileName );
+-	}
+-
+-	return gcnew String( m_filename.c_str() );
+-}
+-
+-System::String ^ 
+-CLoader::getLoadFileName() 
+-{
+-	System::Windows::Forms::OpenFileDialog ^ dlg = gcnew System::Windows::Forms::OpenFileDialog();
+-	dlg->CheckFileExists = true;
+-	dlg->Filter = FILTER;
+-	if( System::Windows::Forms::DialogResult::OK != dlg->ShowDialog() )
+-		return "";
+-	m_filename = systemStringToStdString( dlg->FileName );
+-	return dlg->FileName;
+-}
+-
+-#undef FILTER
+\ No newline at end of file
+diff --git a/Magic120Cell/workFiles/loader.h b/Magic120Cell/workFiles/loader.h
+index b57cdcf..dce835c 100644
+--- a/Magic120Cell/workFiles/loader.h
++++ b/Magic120Cell/workFiles/loader.h
+@@ -11,17 +11,9 @@ public:
+ 	CLoader();
+ 
+ 	// Save/Load the entire puzzle.
+-	void saveToFile( int puzzle, const CState & state, const std::vector<STwist> & twists, bool saveas );
++	// The GUI prompts for the file name.
++	void saveToFile( const wchar_t * fileName, int puzzle, const CState & state, const std::vector<STwist> & twists );
+ 	void saveScrambledFile( const CState & state, const std::vector<STwist> & twists );
+-	bool loadFromFile( int & puzzle, CState & state, std::vector<STwist> & twists );
++	bool loadFromFile( const wchar_t * fileName, int & puzzle, CState & state, std::vector<STwist> & twists );
+ 	bool loadScrambledFile( CState & state, std::vector<STwist> & twists );
+-
+-private:
+-
+-	// Prompt for filenames.
+-	System::String ^ getSaveFileName( bool forcePrompt );
+-	System::String ^ getLoadFileName();
+-
+-	// The last filename we saved.
+-	std::string m_filename;
+ };
+\ No newline at end of file
+diff --git a/Magic120Cell/workFiles/magic120Cell.cpp b/Magic120Cell/workFiles/magic120Cell.cpp
+index 694e011..1d10bae 100644
+--- a/Magic120Cell/workFiles/magic120Cell.cpp
++++ b/Magic120Cell/workFiles/magic120Cell.cpp
+@@ -82,7 +82,7 @@ CMagic120Cell::isCellVisible( int i )
+ void 
+ CMagic120Cell::render( const CVector3D & lookFrom, bool forPicking ) 
+ {
+-	__super::render( lookFrom, forPicking );
++	CPuzzle::render( lookFrom, forPicking );
+ 
+ 	// Draw hypercube cells?
+ 	if( 1 == m_settings.m_symmetry && 
+@@ -471,7 +471,7 @@ CMagic120Cell::scramble( int numTwists )
+ void 
+ CMagic120Cell::resetView()
+ {
+-	__super::resetView();
++	CPuzzle::resetView();
+ 	m_settings.m_centerCell = 5;
+ 	m_layerMapLogical = m_layerMap;
+ }
+diff --git a/Magic120Cell/workFiles/puzzle.cpp b/Magic120Cell/workFiles/puzzle.cpp
+index 762ac66..9beaf01 100644
+--- a/Magic120Cell/workFiles/puzzle.cpp
++++ b/Magic120Cell/workFiles/puzzle.cpp
+@@ -94,15 +94,15 @@ CPuzzle::render( const CVector3D & lookFrom, bool forPicking )
+ }
+ 
+ void 
+-CPuzzle::save( bool saveas ) 
++CPuzzle::save( const wchar_t * fileName ) 
+ {
+-	m_loader.saveToFile( m_settings.m_puzzle, m_state, m_twistHistory.getAllTwists(), saveas );
++	m_loader.saveToFile( fileName, m_settings.m_puzzle, m_state, m_twistHistory.getAllTwists() );
+ }
+ 
+ void 
+-CPuzzle::load() 
++CPuzzle::load( const wchar_t * fileName ) 
+ {
+-	m_loader.loadFromFile( m_settings.m_puzzle, m_state, m_twistHistory.getAllTwists() );
++	m_loader.loadFromFile( fileName, m_settings.m_puzzle, m_state, m_twistHistory.getAllTwists() );
+ 
+ 	// Don't allow a solved message to be shown if the user is just loading a file with a completed solution!
+ 	if( m_state.getScrambled() && m_state.isSolved() )
+diff --git a/Magic120Cell/workFiles/puzzle.h b/Magic120Cell/workFiles/puzzle.h
+index 2da4f08..f19cb22 100644
+--- a/Magic120Cell/workFiles/puzzle.h
++++ b/Magic120Cell/workFiles/puzzle.h
+@@ -20,8 +20,8 @@ public:
+ 	virtual void render( const CVector3D & lookFrom, bool forPicking );
+ 
+ 	// Save/load.
+-	void save( bool saveas );
+-	void load();
++	void save( const wchar_t * fileName );
++	void load( const wchar_t * fileName );
+ 
+ 	// Sticker highlighting.
+ 	void highlightSticker( int stickerHash, bool shiftOnly, bool leftClick );
+diff --git a/Magic120CellGui/CubeFrame.cs b/Magic120CellGui/CubeFrame.cs
+new file mode 100644
+index 0000000..58e6fe0
+--- /dev/null
++++ b/Magic120CellGui/CubeFrame.cs
+@@ -0,0 +1,484 @@
++using System;
++using System.ComponentModel;
++using System.Drawing;
++using System.Runtime.InteropServices;
++using System.Windows.Forms;
++
++namespace Magic120Cell
++{
++	/// <summary>
++	/// Connects the GUI to the native puzzle core (Magic120CellCore.dll).
++	/// This was the C++/CLI CubeFrame class; it moved here so no part of the program is mixed-mode.
++	/// </summary>
++	public class CubeFrame : ICube
++	{
++		// The main frame of our UI
++		private MainFrame m_frame;
++
++		// Additonal managed component bits.
++		private IContainer m_components;
++		private Timer m_timer;
++
++		// The puzzle and its renderer.
++		private IntPtr m_core;
++		private bool m_enableRedraw = true;
++
++		// Whether or not we are solving.
++		private bool m_solving;
++
++		// Rotation stuff.
++		private double m_currentAngle;
++
++		// Animating?
++		private bool m_animating;
++
++		// Mouse moving.
++		private int m_mouseDownX = -1;
++		private int m_mouseDownY = -1;
++		private bool m_dragging;
++		private int m_mouseLastX;
++		private int m_mouseLastY;
++
++		// The last filename we saved or loaded.
++		private string m_filename = "";
++
++		// run the application
++		public void Run()
++		{
++			m_frame = new MainFrame( this );
++
++			m_components = new Container();
++			m_timer = new Timer( m_components );
++			m_timer.Interval = 20;
++			m_timer.Tick += TimerTick;
++
++			m_frame.Load += FrameLoad;
++
++			m_frame.DrawSurface.Paint += Paint;
++			m_frame.DrawSurface.KeyDown += KeyDown;
++			m_frame.DrawSurface.MouseDown += MouseDown;
++			m_frame.DrawSurface.MouseMove += MouseMove;
++			m_frame.DrawSurface.MouseUp += MouseUp;
++
++			m_core = Core.M120C_Create();
++
++			Application.Run( m_frame );
++
++			m_components.Dispose();
++			Core.M120C_Destroy( m_core );
++		}
++
++		private void FrameLoad( object sender, EventArgs args )
++		{
++			Core.M120C_InitGL( m_frame.DrawSurface.Handle );
++		}
++
++		private void Paint( object sender, PaintEventArgs args )
++		{
++			DoRender( args.Graphics );
++		}
++
++		private void TimerTick( object sender, EventArgs e )
++		{
++			if( m_currentAngle + Core.M120C_GetCurrentTwistStep( m_core ) >= Core.M120C_GetCurrentTwistEndAngle( m_core ) )
++			{
++				Core.M120C_FinishRotate( m_core );
++				DoRender();
++				bool showMessage = false;
++
++				// Special handling if we are solving.
++				if( m_solving )
++				{
++					// Start the next undo.
++					if( 0 != Core.M120C_StartUndo( m_core ) )
++					{
++						RotationStarted();
++						return;
++					}
++					else
++					{
++						m_solving = false;
++					}
++				}
++				else
++				{
++					int solved = Core.M120C_CheckSolved( m_core );
++					if( 0 != solved )
++					{
++						// Beep!
++						System.Media.SystemSounds.Asterisk.Play();
++
++						// See if we should show a message.
++						showMessage = 3 == solved;
++					}
++				}
++
++				m_timer.Enabled = false;
++				m_animating = false;
++
++				Redraw( false );
++
++				// Show a congratulatory message if they've solved it.
++				if( showMessage )
++					ShowSolvedMessage();
++
++				return;
++			}
++
++			// Do the drawing.
++			Core.M120C_IterateRotate( m_core );
++			DoRender();
++
++			m_currentAngle += Core.M120C_GetCurrentTwistStep( m_core );
++		}
++
++		private void MouseMove( object sender, MouseEventArgs e )
++		{
++			// Make sure we have the focus.
++			m_frame.DrawSurface.Select();
++
++			// Are we starting a drag?
++			// NOTE: The mousedown checks make sure we had a mouse down call and fixes a problem I was seeing
++			//		 where the view would reset when you loaded in a log file.
++			if( !m_dragging && e.Button != MouseButtons.None &&
++				-1 != m_mouseDownX && -1 != m_mouseDownY &&
++				((Math.Abs( e.X - m_mouseDownX ) > SystemInformation.DragSize.Width / 2) ||
++				(Math.Abs( e.Y - m_mouseDownY ) > SystemInformation.DragSize.Height / 2)) )
++			{
++				StartDrag();
++
++				// Fake the original mouse position so we will get some drag motion immediately.
++				m_mouseLastX = m_mouseDownX;
++				m_mouseLastY = m_mouseDownY;
++			}
++
++			// Are we dragging?
++			if( m_dragging )
++				PerformDrag( e.X, e.Y, e.Button );
++
++			m_mouseLastX = e.X;
++			m_mouseLastY = e.Y;
++
++			// We don't need to continue past here if we are animating.
++			if( m_animating )
++				return;
++
++			Redraw( true );
++		}
++
++		private void StartDrag()
++		{
++			m_dragging = true;
++			m_frame.DrawSurface.Capture = true;
++		}
++
++		private void PerformDrag( int x, int y, MouseButtons btn )
++		{
++			Rectangle rect = m_frame.DrawSurface.ClientRectangle;
++			Core.M120C_PerformDrag( m_core, x - m_mouseLastX, y - m_mouseLastY, rect.Width, rect.Height,
++				btn == MouseButtons.Left ? 1 : 0, btn == MouseButtons.Right ? 1 : 0 );
++		}
++
++		private void FinishDrag()
++		{
++			m_frame.DrawSurface.Capture = false;
++			m_dragging = false;
++		}
++
++		private void MouseDown( object sender, MouseEventArgs e )
++		{
++			m_mouseDownX = e.X;
++			m_mouseDownY = e.Y;
++		}
++
++		private void MouseUp( object sender, MouseEventArgs e )
++		{
++			// NOTE: The mousedown checks make sure we had a mouse down call and fixes a problem I was seeing
++			//		 where where unintended sticker clicks could happen when loading a log file.
++			if( -1 == m_mouseDownX || -1 == m_mouseDownY )
++				return;
++
++			m_mouseDownX = m_mouseDownY = -1;
++
++			// Figure out if we were dragging, and if the drag is done.
++			if( m_dragging )
++			{
++				if( Control.MouseButtons == MouseButtons.None )
++					FinishDrag();
++				return;
++			}
++
++			if( m_animating )
++				return;
++
++			// Past here, the mouse-up represents a click.
++
++			if( e.Button == MouseButtons.Left || e.Button == MouseButtons.Right )
++			{
++				Rectangle rect = m_frame.DrawSurface.ClientRectangle;
++				if( 0 != Core.M120C_Click( m_core, rect.Width, rect.Height, e.X, e.Y, e.Button == MouseButtons.Left ? 1 : 0,
++					ShiftDown() ? 1 : 0, CtrlDown() ? 1 : 0, AltDown() ? 1 : 0 ) )
++				{
++					RotationStarted();
++				}
++			}
++		}
++
++		private void KeyDown( object sender, KeyEventArgs e )
++		{
++			if( m_solving && e.KeyCode == Keys.Escape )
++				m_solving = false;
++		}
++
++		public void SetParameter( CubeParameter param, int value )
++		{
++			Core.M120C_SetParameter( m_core, (int)param, value );
++			Redraw( true );
++		}
++
++		public void SetupStickerRatios( double r1, double r2, double r3 )
++		{
++			Core.M120C_SetupStickerRatios( m_core, r1, r2, r3 );
++			Redraw( true );
++		}
++
++		public bool EnableRedraw
++		{
++			get { return m_enableRedraw; }
++			set
++			{
++				m_enableRedraw = value;
++				if( value )
++					Redraw( false );
++			}
++		}
++
++		public void EnableFace( int face, bool enable )
++		{
++			Core.M120C_EnableFace( m_core, face, enable ? 1 : 0 );
++			Redraw( true );
++		}
++
++		public void ColorFace( int face, Color c )
++		{
++			// Face -1 sets the background color.
++			Core.M120C_ColorFace( m_core, face, c.R, c.G, c.B, c.A );
++		}
++
++		public void CycleStickerAccent( int colors )
++		{
++			Core.M120C_CycleStickerAccent( m_core, colors );
++			Redraw( true );
++		}
++
++		public void Save( bool saveas )
++		{
++			if( m_animating )
++				return;
++
++			string fileName = GetSaveFileName( saveas );
++			if( "" == fileName )
++				return;
++
++			Core.M120C_Save( m_core, fileName );
++		}
++
++		public void Load()
++		{
++			if( m_animating )
++				return;
++
++			Core.M120C_Load( m_core, GetLoadFileName() );
++			Redraw( true );
++		}
++
++		private const string Filter = "MagicCube5D log files (*.log)|*.log|All files (*.*)|*.*";
++
++		private string GetSaveFileName( bool forcePrompt )
++		{
++			if( 0 == m_filename.Length || forcePrompt )
++			{
++				SaveFileDialog dlg = new SaveFileDialog();
++				dlg.AddExtension = true;
++				dlg.OverwritePrompt = true;
++				dlg.Filter = Filter;
++				if( DialogResult.OK != dlg.ShowDialog() )
++					return "";
++				m_filename = dlg.FileName;
++			}
++
++			return m_filename;
++		}
++
++		private string GetLoadFileName()
++		{
++			OpenFileDialog dlg = new OpenFileDialog();
++			dlg.CheckFileExists = true;
++			dlg.Filter = Filter;
++			if( DialogResult.OK != dlg.ShowDialog() )
++				return "";
++			m_filename = dlg.FileName;
++			return dlg.FileName;
++		}
++
++		public void Scramble( int number )
++		{
++			if( m_animating )
++				return;
++
++			Core.M120C_Scramble( m_core, number );
++			Redraw( true );
++		}
++
++		public void Solve()
++		{
++			if( m_animating )
++				return;
++
++			// Start the first undo.
++			if( 0 != Core.M120C_StartUndo( m_core ) )
++			{
++				m_solving = true;
++				RotationStarted();
++			}
++
++			// Clicking the solve button means the puzzle shouldn't be counted as scrambled.
++			Core.M120C_MarkUnscrambled( m_core );
++		}
++
++		public void Undo()
++		{
++			if( m_animating )
++				return;
++
++			if( 0 != Core.M120C_StartUndo( m_core ) )
++				RotationStarted();
++		}
++
++		public void Redo()
++		{
++			if( m_animating )
++				return;
++
++			if( 0 != Core.M120C_StartRedo( m_core ) )
++				RotationStarted();
++		}
++
++		public void ResetState()
++		{
++			if( m_animating )
++				return;
++
++			Core.M120C_ResetState( m_core );
++		}
++
++		public void ResetView()
++		{
++			if( m_animating )
++				return;
++
++			Core.M120C_ResetView( m_core );
++			DoRender();
++		}
++
++		public void KeyUp()
++		{
++			// Reset click handling.
++			if( !ShiftDown() || !CtrlDown() )
++			{
++				Core.M120C_ClearStickersToHighlight( m_core );
++				Redraw( true );
++			}
++		}
++
++		// Called after the core has started a rotation (was internalRotate).
++		private void RotationStarted()
++		{
++			m_currentAngle = 0;
++			m_animating = true;
++			m_timer.Enabled = true;
++		}
++
++		// Show a congratulatory solved message.
++		private void ShowSolvedMessage()
++		{
++			string text = "You are a true permutation puzzle master and now one with the universe.\n\n" +
++				"Be sure to send your logfile to roice@gravitation3d.com\n" +
++				"to get your name listed in the Magic120Cell Hall of Insanity!";
++			string caption = "Magic120Cell Unraveled!";
++			MessageBox.Show( text, caption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
++		}
++
++		private void Redraw( bool force )
++		{
++			if( force || m_enableRedraw )
++				m_frame.DrawSurface.Invalidate();
++		}
++
++		private void DoRender()
++		{
++			using( Graphics g = Graphics.FromHwnd( m_frame.DrawSurface.Handle ) )
++				DoRender( g );
++		}
++
++		private void DoRender( Graphics g )
++		{
++			Core.M120C_RenderScene( m_core, m_frame.DrawSurface.ClientRectangle.Width, m_frame.DrawSurface.ClientRectangle.Height );
++
++			IntPtr hdc = g.GetHdc();
++			Core.SwapBuffers( hdc );
++			g.ReleaseHdc( hdc );
++		}
++
++		private static bool ShiftDown()
++		{
++			return (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
++		}
++
++		private static bool CtrlDown()
++		{
++			return (Control.ModifierKeys & Keys.Control) == Keys.Control;
++		}
++
++		private static bool AltDown()
++		{
++			return (Control.ModifierKeys & Keys.Alt) == Keys.Alt;
++		}
++
++		// The native core's C API (coreApi.cpp).
++		private static class Core
++		{
++			private const string Dll = "Magic120CellCore.dll";
++			private const CallingConvention Cdecl = CallingConvention.Cdecl;
++
++			[DllImport( "gdi32.dll" )]
++			public static extern bool SwapBuffers( IntPtr hdc );
++
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern IntPtr M120C_Create();
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_Destroy( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_InitGL( IntPtr hwnd );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_RenderScene( IntPtr core, int width, int height );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern double M120C_GetCurrentTwistStep( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern double M120C_GetCurrentTwistEndAngle( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_IterateRotate( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_FinishRotate( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern int M120C_CheckSolved( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern int M120C_StartUndo( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern int M120C_StartRedo( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_PerformDrag( IntPtr core, int dx, int dy, int width, int height, int leftButton, int rightButton );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern int M120C_Click( IntPtr core, int width, int height, int x, int y, int left, int shift, int ctrl, int alt );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_SetParameter( IntPtr core, int param, int value );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_SetupStickerRatios( IntPtr core, double r1, double r2, double r3 );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_EnableFace( IntPtr core, int face, int enable );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_ColorFace( IntPtr core, int face, int red, int green, int blue, int alpha );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_CycleStickerAccent( IntPtr core, int colors );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_Save( IntPtr core, [MarshalAs( UnmanagedType.LPWStr )] string fileName );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_Load( IntPtr core, [MarshalAs( UnmanagedType.LPWStr )] string fileName );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_Scramble( IntPtr core, int number );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_MarkUnscrambled( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_ResetState( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_ResetView( IntPtr core );
++			[DllImport( Dll, CallingConvention = Cdecl )] public static extern void M120C_ClearStickersToHighlight( IntPtr core );
++		}
++	}
++}
+diff --git a/Magic120CellGui/Magic120CellGui.csproj b/Magic120CellGui/Magic120CellGui.csproj
+index a601ea7..cb7b658 100644
+--- a/Magic120CellGui/Magic120CellGui.csproj
++++ b/Magic120CellGui/Magic120CellGui.csproj
+@@ -1,95 +1,30 @@
+-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
++<Project Sdk="Microsoft.NET.Sdk">
++  <!-- The program's exe. The puzzle core is native code in Magic120CellCore.dll (the Magic120Cell
++       C++ project plus geometryLib), called via P/Invoke from CubeFrame.cs; that DLL must sit next
++       to the exe. -->
+   <PropertyGroup>
+-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+-    <ProductVersion>8.0.50727</ProductVersion>
+-    <SchemaVersion>2.0</SchemaVersion>
+-    <ProjectGuid>{6B1A6B1E-6AD5-442D-A27D-7D4EADF1B8A9}</ProjectGuid>
+-    <OutputType>Library</OutputType>
+-    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <OutputType>WinExe</OutputType>
++    <TargetFramework>net48</TargetFramework>
+     <RootNamespace>Magic120Cell</RootNamespace>
+-    <AssemblyName>Magic120CellGui</AssemblyName>
+-    <SignAssembly>true</SignAssembly>
+-    <AssemblyOriginatorKeyFile>
+-    </AssemblyOriginatorKeyFile>
+-    <FileUpgradeFlags>
+-    </FileUpgradeFlags>
+-    <OldToolsVersion>3.5</OldToolsVersion>
+-    <UpgradeBackupLocation>
+-    </UpgradeBackupLocation>
+-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+-    <DebugSymbols>true</DebugSymbols>
+-    <DebugType>full</DebugType>
+-    <Optimize>false</Optimize>
+-    <OutputPath>bin\Debug\</OutputPath>
+-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+-    <DebugType>pdbonly</DebugType>
+-    <Optimize>true</Optimize>
+-    <OutputPath>bin\Release\</OutputPath>
+-    <DefineConstants>TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
++    <AssemblyName>Magic120Cell</AssemblyName>
++    <ApplicationIcon>..\Magic120Cell\MC120.ico</ApplicationIcon>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <Prefer32Bit>false</Prefer32Bit>
++    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
++    <LangVersion>latest</LangVersion>
++    <DebugType>none</DebugType>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="System" />
+-    <Reference Include="System.Data" />
+-    <Reference Include="System.Drawing" />
+     <Reference Include="System.Windows.Forms" />
+-    <Reference Include="System.Xml" />
++    <Reference Include="System.Drawing" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Compile Include="GuiSettings.cs" />
+-    <Compile Include="InputDlg.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="InputDlg.Designer.cs">
+-      <DependentUpon>InputDlg.cs</DependentUpon>
+-    </Compile>
+-    <Compile Include="MainFrame.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="MainFrame.Designer.cs">
+-      <DependentUpon>MainFrame.cs</DependentUpon>
+-    </Compile>
+-    <Compile Include="PersistableBase.cs" />
+-    <Compile Include="Properties\AssemblyInfo.cs" />
+-    <Compile Include="PropertyDlg.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="PropertyDlg.Designer.cs">
+-      <DependentUpon>PropertyDlg.cs</DependentUpon>
+-    </Compile>
+-    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
++    <!-- The window icon. It's not in MainFrame.resx, because the SDK's resource generator needs
++         System.Resources.Extensions at runtime for non-string resources. -->
++    <EmbeddedResource Include="Magic120Cell.ico" LogicalName="Magic120Cell.ico" />
+   </ItemGroup>
+   <ItemGroup>
+-    <EmbeddedResource Include="InputDlg.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>InputDlg.cs</DependentUpon>
+-    </EmbeddedResource>
+-    <EmbeddedResource Include="MainFrame.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>MainFrame.cs</DependentUpon>
+-    </EmbeddedResource>
+-    <EmbeddedResource Include="PropertyDlg.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>PropertyDlg.cs</DependentUpon>
+-    </EmbeddedResource>
++    <!-- Lets the project build without the .NET Framework targeting pack installed. -->
++    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+-       Other similar extension points exist, see Microsoft.Common.targets.
+-  <Target Name="BeforeBuild">
+-  </Target>
+-  <Target Name="AfterBuild">
+-  </Target>
+-  -->
+-  <PropertyGroup>
+-    <PostBuildEvent>copy "$(TargetPath)" ..</PostBuildEvent>
+-  </PropertyGroup>
+-</Project>
+\ No newline at end of file
++</Project>
+diff --git a/Magic120CellGui/MainFrame.Designer.cs b/Magic120CellGui/MainFrame.Designer.cs
+index d3cff38..b190b4e 100644
+--- a/Magic120CellGui/MainFrame.Designer.cs
++++ b/Magic120CellGui/MainFrame.Designer.cs
+@@ -1013,7 +1013,7 @@ private void InitializeComponent()
+ 			this.Controls.Add(this.tabSettings);
+ 			this.Controls.Add(this.panelMain);
+ 			this.Controls.Add(this.menuStrip1);
+-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
++			this.Icon = new System.Drawing.Icon( typeof( MainFrame ).Assembly.GetManifestResourceStream( "Magic120Cell.ico" ) );
+ 			this.ImeMode = System.Windows.Forms.ImeMode.On;
+ 			this.KeyPreview = true;
+ 			this.MainMenuStrip = this.menuStrip1;
+diff --git a/Magic120CellGui/MainFrame.resx b/Magic120CellGui/MainFrame.resx
+index 22190af..c2a2fc7 100644
+--- a/Magic120CellGui/MainFrame.resx
++++ b/Magic120CellGui/MainFrame.resx
+@@ -124,164 +124,4 @@
+     <value>17, 17</value>
+   </metadata>
+   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+-    <value>
+-        AAABAAMAICAAAAAACACoCAAANgAAAEBAAAAAAAgAKBYAAN4IAAAQEAAAAAAIAGgFAAAGHwAAKAAAACAA
+-        AABAAAAAAQAIAAAAAAAABAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICA
+-        AADAwMAAwNzAAPDKpgAEBAQACAgIAAwMDAAREREAFhYWABwcHAAiIiIAKSkpAFVVVQBNTU0AQkJCADk5
+-        OQCAfP8AUFD/AJMA1gD/7MwAxtbvANbn5wCQqa0AAAAzAAAAZgAAAJkAAADMAAAzAAAAMzMAADNmAAAz
+-        mQAAM8wAADP/AABmAAAAZjMAAGZmAABmmQAAZswAAGb/AACZAAAAmTMAAJlmAACZmQAAmcwAAJn/AADM
+-        AAAAzDMAAMxmAADMmQAAzMwAAMz/AAD/ZgAA/5kAAP/MADMAAAAzADMAMwBmADMAmQAzAMwAMwD/ADMz
+-        AAAzMzMAMzNmADMzmQAzM8wAMzP/ADNmAAAzZjMAM2ZmADNmmQAzZswAM2b/ADOZAAAzmTMAM5lmADOZ
+-        mQAzmcwAM5n/ADPMAAAzzDMAM8xmADPMmQAzzMwAM8z/ADP/MwAz/2YAM/+ZADP/zAAz//8AZgAAAGYA
+-        MwBmAGYAZgCZAGYAzABmAP8AZjMAAGYzMwBmM2YAZjOZAGYzzABmM/8AZmYAAGZmMwBmZmYAZmaZAGZm
+-        zABmmQAAZpkzAGaZZgBmmZkAZpnMAGaZ/wBmzAAAZswzAGbMmQBmzMwAZsz/AGb/AABm/zMAZv+ZAGb/
+-        zADMAP8A/wDMAJmZAACZM5kAmQCZAJkAzACZAAAAmTMzAJkAZgCZM8wAmQD/AJlmAACZZjMAmTNmAJlm
+-        mQCZZswAmTP/AJmZMwCZmWYAmZmZAJmZzACZmf8AmcwAAJnMMwBmzGYAmcyZAJnMzACZzP8Amf8AAJn/
+-        MwCZzGYAmf+ZAJn/zACZ//8AzAAAAJkAMwDMAGYAzACZAMwAzACZMwAAzDMzAMwzZgDMM5kAzDPMAMwz
+-        /wDMZgAAzGYzAJlmZgDMZpkAzGbMAJlm/wDMmQAAzJkzAMyZZgDMmZkAzJnMAMyZ/wDMzAAAzMwzAMzM
+-        ZgDMzJkAzMzMAMzM/wDM/wAAzP8zAJn/ZgDM/5kAzP/MAMz//wDMADMA/wBmAP8AmQDMMwAA/zMzAP8z
+-        ZgD/M5kA/zPMAP8z/wD/ZgAA/2YzAMxmZgD/ZpkA/2bMAMxm/wD/mQAA/5kzAP+ZZgD/mZkA/5nMAP+Z
+-        /wD/zAAA/8wzAP/MZgD/zJkA/8zMAP/M/wD//zMAzP9mAP//mQD//8wAZmb/AGb/ZgBm//8A/2ZmAP9m
+-        /wD//2YAIQClAF9fXwB3d3cAhoaGAJaWlgDLy8sAsrKyANfX1wDd3d0A4+PjAOrq6gDx8fEA+Pj4APD7
+-        /wCkoKAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAICAgICAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAgICAgICIgAAAAAAAAAAAAAAAAAAAAAAMzMA
+-        AAACAgICAvr6+voiAAAAAAAAAAAAAAAAAAAAADMzMzMzAgICAgL6+vr6+iIAAAAAAAAAAAAAAAAAAAAz
+-        MzMzMzMCKAICAvr6+vr6IgAALS0tAAAAAAAAAAAAAAIzMzMzMwICAgL6+vr6+voiAgItLS0AAAAAAAAA
+-        AAACAgIzMzMtAgICAgL6+vr6+iICAi0tLS0AAAAAAAAAAAICAgItLS0iIiICAgL6+iIiAgItLS0tLQAA
+-        AAAAAAAAAgICLS0iIiIiAgIBAgIiAgICLTMzLS0iAAAAAAAAAAAAAgItIiIzMwICAgIBAQECIi0tLTMz
+-        IiIAAAAAAAAAAAAAACIzMzMzAgICAgIBHy0tMzMzMwAiAAAAAAAAAAAAAAAiLTMzMzMzAgICAh8iMzMz
+-        MzMzAgIAAAAAAAAAAAAAAgAAMzMzMzMCAgICHyIzMzMzMwICAgIAAAAAAAAAAAICAjMzMzMzMwICAgIf
+-        IjMzMzMzAgICAgAAAAAAAAACAgICADMzMzMCAgICAh8iLS0tLS0CAgIAAAAAAAAAAAICAgIzADMzMwIC
+-        AgIBASItLS0tLQICAgAAAAAAAAAAAgICLS0zMwACAgICAgIAAAItLS0tAgICAAAAAAAAAAAALS0tLS0z
+-        IiICAgICAiIiAgICLS36IiIAAAAAAAAAAAAtLS0tLSIiAgICAgL6+iIiAgL6AgICIgAAAAAAAAAAAAAt
+-        LS0tIiICAgL6+vr6+iIiAgICAgICAAAAAAAAAAAAAAAAAAAAIgICAvr6+vr6+gICAgICAgAAAAAAAAAA
+-        AAAAAAAAAAAAAgIC+vr6+voiAAACAgIAAAAAAAAAAAAAAAAAAAAAAAACAgL6+vr6+iIAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAACAvr6+vr6AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIiIiIiIiIAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////////////+f///+
+-        B///+AP//nAD//wAA//4AAMf+AAAH/AAAA/wAAAP8AAAD/gAAA/+AAAf/AAAH/gAAA/wAAAP4AAAH+AA
+-        AB/gAGAf8AAAH/AAAB/4AAAf/8AAP//gDH//4A////Af///wH/////////////////8oAAAAQAAAAIAA
+-        AAABAAgAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDA
+-        wADA3MAA8MqmAAQEBAAICAgADAwMABEREQAWFhYAHBwcACIiIgApKSkAVVVVAE1NTQBCQkIAOTk5AIB8
+-        /wBQUP8AkwDWAP/szADG1u8A1ufnAJCprQAAADMAAABmAAAAmQAAAMwAADMAAAAzMwAAM2YAADOZAAAz
+-        zAAAM/8AAGYAAABmMwAAZmYAAGaZAABmzAAAZv8AAJkAAACZMwAAmWYAAJmZAACZzAAAmf8AAMwAAADM
+-        MwAAzGYAAMyZAADMzAAAzP8AAP9mAAD/mQAA/8wAMwAAADMAMwAzAGYAMwCZADMAzAAzAP8AMzMAADMz
+-        MwAzM2YAMzOZADMzzAAzM/8AM2YAADNmMwAzZmYAM2aZADNmzAAzZv8AM5kAADOZMwAzmWYAM5mZADOZ
+-        zAAzmf8AM8wAADPMMwAzzGYAM8yZADPMzAAzzP8AM/8zADP/ZgAz/5kAM//MADP//wBmAAAAZgAzAGYA
+-        ZgBmAJkAZgDMAGYA/wBmMwAAZjMzAGYzZgBmM5kAZjPMAGYz/wBmZgAAZmYzAGZmZgBmZpkAZmbMAGaZ
+-        AABmmTMAZplmAGaZmQBmmcwAZpn/AGbMAABmzDMAZsyZAGbMzABmzP8AZv8AAGb/MwBm/5kAZv/MAMwA
+-        /wD/AMwAmZkAAJkzmQCZAJkAmQDMAJkAAACZMzMAmQBmAJkzzACZAP8AmWYAAJlmMwCZM2YAmWaZAJlm
+-        zACZM/8AmZkzAJmZZgCZmZkAmZnMAJmZ/wCZzAAAmcwzAGbMZgCZzJkAmczMAJnM/wCZ/wAAmf8zAJnM
+-        ZgCZ/5kAmf/MAJn//wDMAAAAmQAzAMwAZgDMAJkAzADMAJkzAADMMzMAzDNmAMwzmQDMM8wAzDP/AMxm
+-        AADMZjMAmWZmAMxmmQDMZswAmWb/AMyZAADMmTMAzJlmAMyZmQDMmcwAzJn/AMzMAADMzDMAzMxmAMzM
+-        mQDMzMwAzMz/AMz/AADM/zMAmf9mAMz/mQDM/8wAzP//AMwAMwD/AGYA/wCZAMwzAAD/MzMA/zNmAP8z
+-        mQD/M8wA/zP/AP9mAAD/ZjMAzGZmAP9mmQD/ZswAzGb/AP+ZAAD/mTMA/5lmAP+ZmQD/mcwA/5n/AP/M
+-        AAD/zDMA/8xmAP/MmQD/zMwA/8z/AP//MwDM/2YA//+ZAP//zABmZv8AZv9mAGb//wD/ZmYA/2b/AP//
+-        ZgAhAKUAX19fAHd3dwCGhoYAlpaWAMvLywCysrIA19fXAN3d3QDj4+MA6urqAPHx8QD4+PgA8Pv/AKSg
+-        oACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICAgICAgICAgIAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgICAgICAgICAgICAgIAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAgICAgICAgICAgICAgICAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAgICAgICAgICAgICAgIC
+-        IiIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMAAAAAAAAAAAACAgICAgICAvr6+vr6
+-        +voCAiIiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzMzMzMwAAAAACAgICAgICAgL6
+-        +vr6+vr6+voiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMzMzMwIAAgICAgIC
+-        AgIC+vr6+vr6+vr6IiIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMzMzMzMCAigC
+-        AgICAgIC+vr6+vr6+vr6+iIiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMzMzMzMz
+-        AgICAgICAgICAvr6+vr6+vr6+voiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMzMzMzMz
+-        MzMzMwICAgICAgICAvr6+vr6+vr6+vr6IiICAgItLS0tLS0AAAAAAAAAAAAAAAAAAAAAAAAAAAACMzMz
+-        MzMzMzMzMzMCAgIoAgICAgL6+vr6+vr6+vr6+voiAgICLS0tLS0tLQAAAAAAAAAAAAAAAAAAAAAAAAAC
+-        AgIzMzMzMzMzMzMzAgICKAICAgIC+vr6+vr6+vr6+vr6IgICAi0tLS0tLS0AAAAAAAAAAAAAAAAAAAAA
+-        AAACAgICAjMzMzMzMzMzLQICAgICAgICAgL6+vr6+vr6+vr6+iICAgItLS0tLS0tLQAAAAAAAAAAAAAA
+-        AAAAAAACAgICAgICMzMzMzMtLS0tAgICKAICAgICAvr6+vr6+vr6IiIiAgICLS0tLS0tLS0tAAAAAAAA
+-        AAAAAAAAAAAAAAICAgICAgIzLS0tLS0tLQICAgICAgICAgIC+vr6+voiIiIiAgICAi0tLS0tLS0tLQAA
+-        AAAAAAAAAAAAAAAAAAACAgICAgICLS0tLS0tLSIiIiIiAgICAgICAgL6+iIiIiICAgICAjMtLS0tLS0t
+-        LS0iAAAAAAAAAAAAAAAAAAAAAAICAgICAi0tLS0iIiIiIiIiAgICAgICAgICAiIiIiICAgICAjMzMzMt
+-        LS0tLS0iAAAAAAAAAAAAAAAAAAAAAAACAgICAgItLSIiIiIiIiICAgICAgICAQICAiIiAgIiIgICMy0t
+-        ADMzMy0tLS0iIgAAAAAAAAAAAAAAAAAAAAAAAAICAgICLSIiIiIiIiICAgICAgICAgIBASIBAQICIiIi
+-        LS0tLS0AMzMzMy0iIiIAAAAAAAAAAAAAAAAAAAAAAAACAgICAi0iIjMzMzMzMwICAgICAgICAgEBAQEB
+-        AgItLS0tLS0zMwAzMzMiIiIiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgItMzMzMzMzMzMCAgICAgICAgIC
+-        AQEBHy0tLS0tMzMzMzMzMwAzIiIiAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIiMzMzMzMzMzMzMwICAgIC
+-        AgICAgEfHyItLTMzMzMzMzMzMzMzACIiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIjMzMzMzMzMzMzMC
+-        AgICAgICAgIfHyIiMzMzMzMzMzMzMzMzAgICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIiIzMzMzMzMz
+-        MzMzMwICAgICAgICHx8iIiIzMzMzMzMzMzMzAgICAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMz
+-        MzMzMzMzMzMCAgICAgICAh8fIiIiMzMzMzMzMzMzMwICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAICAgIC
+-        MzMzMzMzMzMzMzMzMwICAgICAgIfHyIiIjMzMzMzMzMzMwICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAIC
+-        AgICAjMzMzMzMzMzMzMzMzMCAgICAgICHx8iIiIzMzMzMzMzMzMCAgICAgICAAAAAAAAAAAAAAAAAAAA
+-        AAACAgICAgIzMzMzMzMzMzMzMzMCAgICAgICHx8fIiIiLS0tLTMzMzMCAgICAgICAgAAAAAAAAAAAAAA
+-        AAAAAAACAgICAgICMzMzMzMzMzMzMzMCAgICAgICAh8fHyIiLS0tLS0tLS0tAgICAgICAgIAAAAAAAAA
+-        AAAAAAAAAAACAgICAgICAjMAMzMzMzMzMzMCAgICAgICAgIBAR8iIi0tLS0tLS0tLQICAgICAgICAAAA
+-        AAAAAAAAAAAAAAAAAgICAgICAjMzMwAAMzMzMzMzAgICAgICAgICAQEBIi0tLS0tLS0tLS0tAgICAgIC
+-        AgAAAAAAAAAAAAAAAAAAAAICAgICAgIzMzMzMwAAMzMzAgICAgICAgICAQEBACItLS0tLS0tLS0tLQIC
+-        AgICAgIAAAAAAAAAAAAAAAAAAAAAAgICAgItLS0zMzMzAAAAAgICAgICAgICAgIiIgAAAgItLS0tLS0t
+-        LS0CAgICAgIAAAAAAAAAAAAAAAAAAAAAAAICAi0tLS0tLTMzMzMzAAACAgICAgICAgICIiIiACICAgIt
+-        LS0tLS0tLQICAiIiAAAAAAAAAAAAAAAAAAAAAAACLS0tLS0tLS0tLTMzIiIiAAICAgICAgICAiIiIiIC
+-        AgICAgItLS0tLS0CMyIiIgAAAAAAAAAAAAAAAAAAAAAAAC0tLS0tLS0tLS0tKCIiIgICAgICAgICAgIC
+-        IiIiIgICAgICAgICLfr6AgIiIiIAAAAAAAAAAAAAAAAAAAAAAAAtLS0tLS0tLS0tLSIiIiICAgICAgIC
+-        AgIC+voiIiIiAgICAgIC+voCAgICAiIiAAAAAAAAAAAAAAAAAAAAAAAAAC0tLS0tLS0tLS0iIiICAgIC
+-        AgICAgL6+vr6+iIiIiICAgICAgICAgICAgICIgAAAAAAAAAAAAAAAAAAAAAAAAAtLS0tLS0tLS0tIiIi
+-        AgICAgICAvr6+vr6+vr6IiIiIgICAgICAgICAgICAiIAAAAAAAAAAAAAAAAAAAAAAAAAAC0tLS0tLS0t
+-        IiIiAgICAgIC+vr6+vr6+vr6+voiIiICAgICAgICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAtLS0t
+-        LS0tLSIAACICAgICAvr6+vr6+vr6+vr6+iIiAgICAgICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAiAgICAgIC+vr6+vr6+vr6+voiIgICAgICAgICAgIAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAICAgICAvr6+vr6+vr6+vr6IgAAAgICAgICAgIAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAACAgICAgL6+vr6+vr6+vr6IiIAAAAAAAAAAgIAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICAgIC+vr6+vr6+vr6+iIiAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgICAvr6+vr6+vr6+voiAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICAgIC+vr6+vr6+voiIgAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgICAiL6+vr6+vr6IiIAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICIiIiIiIiIiIiIiIAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIiIiIiIiIiIiIiIi
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIiIiIiIi
+-        IgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////////
+-        //////////////////////////////////////////////////////////////////4B/////////AB/
+-        ///////wAB///////8AAH///////gAAP/////P+AAA/////4DwAAD/////gBAAAP////8AAAAA/////g
+-        AAAAD////8AAAAAAB///gAAAAAAD//+AAAAAAAP//wAAAAAAAf/+AAAAAAAA//8AAAAAAAD//wAAAAAA
+-        AH//gAAAAAAA//+AAAAAAAD//8AAAAAAAP//wAAAAAAA///4AAAAAAH///gAAAAAA///+AAAAAAD///4
+-        AAAAAAH//8AAAAAAAP//gAAAAAAB//8AAAAAAAH//wAAAAAAAf/+AAAAAAAB//wAAAAAAAH//AAAAAAA
+-        Af/8AAAAEAAB//4AAAAYAAP//gAAAAgAA//+AAAAAAAD//8AAAAAAAP//wAAAAAAA///gAAAAAAD//+A
+-        AAAAAAP//8AAAAAAB///wBgAAAAP////+AAAAB/////8AADAP/////wAAP5//////AAA///////+AAH/
+-        //////4AAf///////wAB////////AAP///////+AA/////////Af////////////////////////////
+-        /////////////////////////////ygAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAB
+-        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAMDcwADwyqYABAQEAAgICAAMDAwAERERABYW
+-        FgAcHBwAIiIiACkpKQBVVVUATU1NAEJCQgA5OTkAgHz/AFBQ/wCTANYA/+zMAMbW7wDW5+cAkKmtAAAA
+-        MwAAAGYAAACZAAAAzAAAMwAAADMzAAAzZgAAM5kAADPMAAAz/wAAZgAAAGYzAABmZgAAZpkAAGbMAABm
+-        /wAAmQAAAJkzAACZZgAAmZkAAJnMAACZ/wAAzAAAAMwzAADMZgAAzJkAAMzMAADM/wAA/2YAAP+ZAAD/
+-        zAAzAAAAMwAzADMAZgAzAJkAMwDMADMA/wAzMwAAMzMzADMzZgAzM5kAMzPMADMz/wAzZgAAM2YzADNm
+-        ZgAzZpkAM2bMADNm/wAzmQAAM5kzADOZZgAzmZkAM5nMADOZ/wAzzAAAM8wzADPMZgAzzJkAM8zMADPM
+-        /wAz/zMAM/9mADP/mQAz/8wAM///AGYAAABmADMAZgBmAGYAmQBmAMwAZgD/AGYzAABmMzMAZjNmAGYz
+-        mQBmM8wAZjP/AGZmAABmZjMAZmZmAGZmmQBmZswAZpkAAGaZMwBmmWYAZpmZAGaZzABmmf8AZswAAGbM
+-        MwBmzJkAZszMAGbM/wBm/wAAZv8zAGb/mQBm/8wAzAD/AP8AzACZmQAAmTOZAJkAmQCZAMwAmQAAAJkz
+-        MwCZAGYAmTPMAJkA/wCZZgAAmWYzAJkzZgCZZpkAmWbMAJkz/wCZmTMAmZlmAJmZmQCZmcwAmZn/AJnM
+-        AACZzDMAZsxmAJnMmQCZzMwAmcz/AJn/AACZ/zMAmcxmAJn/mQCZ/8wAmf//AMwAAACZADMAzABmAMwA
+-        mQDMAMwAmTMAAMwzMwDMM2YAzDOZAMwzzADMM/8AzGYAAMxmMwCZZmYAzGaZAMxmzACZZv8AzJkAAMyZ
+-        MwDMmWYAzJmZAMyZzADMmf8AzMwAAMzMMwDMzGYAzMyZAMzMzADMzP8AzP8AAMz/MwCZ/2YAzP+ZAMz/
+-        zADM//8AzAAzAP8AZgD/AJkAzDMAAP8zMwD/M2YA/zOZAP8zzAD/M/8A/2YAAP9mMwDMZmYA/2aZAP9m
+-        zADMZv8A/5kAAP+ZMwD/mWYA/5mZAP+ZzAD/mf8A/8wAAP/MMwD/zGYA/8yZAP/MzAD/zP8A//8zAMz/
+-        ZgD//5kA///MAGZm/wBm/2YAZv//AP9mZgD/Zv8A//9mACEApQBfX18Ad3d3AIaGhgCWlpYAy8vLALKy
+-        sgDX19cA3d3dAOPj4wDq6uoA8fHxAPj4+ADw+/8ApKCgAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+-        AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgICAgAAAAAAAAAAMzMA
+-        AgL6+voAAAAAAAAAAjMzAgIC+vr6Ai0AAAAAAAICLS0CAvr6IgItLQAAAAACAiIiAgICAgItMyIAAAAA
+-        ACIzMwICHyIzMzMAAAAAAAICMzMzAh8iMzMCAgAAAAICMzMzAgIBLS0tAgIAAAAALS0zAAICIgICLQIA
+-        AAAAAC0tLSIC+voiAgICAAAAAAAAAAACAvr6+gICAgAAAAAAAAAAAAL6+iIAAAAAAAAAAAAAAAAAIiIA
+-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAD//wAA/h8AAOQfAADABwAAwAMAAMADAADgBwAAwAMAAIAD
+-        AADABwAAwAcAAPgHAAD8PwAA/n8AAP//AAA=
+-</value>
+-  </data>
+ </root>
+\ No newline at end of file
+diff --git a/Magic120CellGui/Program.cs b/Magic120CellGui/Program.cs
+new file mode 100644
+index 0000000..a271afb
+--- /dev/null
++++ b/Magic120CellGui/Program.cs
+@@ -0,0 +1,19 @@
++using System;
++using System.Windows.Forms;
++
++namespace Magic120Cell
++{
++	internal static class Program
++	{
++		[STAThread]
++		private static void Main()
++		{
++			// Enabling Windows XP visual effects before any controls are created
++			Application.EnableVisualStyles();
++			Application.SetCompatibleTextRenderingDefault( false );
++
++			// Create the main window and run it
++			new CubeFrame().Run();
++		}
++	}
++}
+diff --git a/Magic120CellGui/Properties/AssemblyInfo.cs b/Magic120CellGui/Properties/AssemblyInfo.cs
+index d0b471b..387ca10 100644
+--- a/Magic120CellGui/Properties/AssemblyInfo.cs
++++ b/Magic120CellGui/Properties/AssemblyInfo.cs
+@@ -5,11 +5,11 @@
+ // General Information about an assembly is controlled through the following 
+ // set of attributes. Change these attribute values to modify the information
+ // associated with an assembly.
+-[assembly: AssemblyTitle( "Magic120CellGui" )]
++[assembly: AssemblyTitle( "Magic120Cell" )]
+ [assembly: AssemblyDescription( "" )]
+ [assembly: AssemblyConfiguration( "" )]
+ [assembly: AssemblyCompany( "R3 Productions" )]
+-[assembly: AssemblyProduct( "Magic120CellGui" )]
++[assembly: AssemblyProduct( "Magic120Cell" )]
+ [assembly: AssemblyCopyright( "Copyright © R3 Productions 2008" )]
+ [assembly: AssemblyTrademark( "" )]
+ [assembly: AssemblyCulture( "" )]
+diff --git a/geometryLib/geometryLib.vcxproj b/geometryLib/geometryLib.vcxproj
+index dbe5bc5..8624796 100644
+--- a/geometryLib/geometryLib.vcxproj
++++ b/geometryLib/geometryLib.vcxproj
+@@ -5,10 +5,18 @@
+       <Configuration>Debug</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+     <ProjectConfiguration Include="Release|Win32">
+       <Configuration>Release</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+   </ItemGroup>
+   <PropertyGroup Label="Globals">
+     <ProjectGuid>{F081AF41-C7F4-49C1-A518-12F34832A243}</ProjectGuid>
+@@ -22,20 +30,37 @@
+     <CharacterSet>Unicode</CharacterSet>
+     <WholeProgramOptimization>false</WholeProgramOptimization>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>StaticLibrary</ConfigurationType>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++    <WholeProgramOptimization>false</WholeProgramOptimization>
++  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+     <ConfigurationType>StaticLibrary</ConfigurationType>
+     <PlatformToolset>v143</PlatformToolset>
+     <CharacterSet>Unicode</CharacterSet>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>StaticLibrary</ConfigurationType>
++    <PlatformToolset>v143</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ImportGroup Label="ExtensionSettings">
+   </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <PropertyGroup Label="UserMacros" />
+   <PropertyGroup>
+     <_ProjectFileVersion>15.0.26323.1</_ProjectFileVersion>
+@@ -44,10 +69,18 @@
+     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+@@ -61,6 +94,19 @@
+       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+     </ClCompile>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <Optimization>Disabled</Optimization>
++      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <MinimalRebuild>true</MinimalRebuild>
++      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
++      <PrecompiledHeader>Use</PrecompiledHeader>
++      <WarningLevel>Level4</WarningLevel>
++      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
++    </ClCompile>
++  </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+     <ClCompile>
+       <Optimization>MaxSpeed</Optimization>
+@@ -75,6 +121,20 @@
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+     </ClCompile>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <Optimization>MaxSpeed</Optimization>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <PrecompiledHeader>Use</PrecompiledHeader>
++      <WarningLevel>Level4</WarningLevel>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++  </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClCompile Include="gl\displayList.cpp" />
+     <ClCompile Include="gl\glInit.cpp" />
+diff --git a/geometryLib/gl/displayList.h b/geometryLib/gl/displayList.h
+index ef020da..e1d462c 100644
+--- a/geometryLib/gl/displayList.h
++++ b/geometryLib/gl/displayList.h
+@@ -1,8 +1,8 @@
+ #pragma once
+ 
+ #include "windows.h"
+-#include "gl\gl.h"
+-#include "gl\glu.h"
++#include "GL/gl.h"
++#include "GL/glu.h"
+ 
+ 
+ class CDisplayList
+diff --git a/geometryLib/matrix4D.h b/geometryLib/matrix4D.h
+index 2e607d7..d0eff35 100644
+--- a/geometryLib/matrix4D.h
++++ b/geometryLib/matrix4D.h
+@@ -10,7 +10,7 @@
+ #define DO_OP_MATRIX_INPLACE( operation ) \
+ 	for( int i=0; i<4; i++ ) \
+ 		for( int j=0; j<4; j++ ) \
+-			m[i][j] operation= rhs.m[i][j]; \
++			m[i][j] = m[i][j] operation rhs.m[i][j]; \
+ 	return( *this );
+ 
+ #define DO_OP_M_SCALAR_NEW( operation ) \
+@@ -23,7 +23,7 @@
+ #define DO_OP_M_SCALAR_INPLACE( operation ) \
+ 	for( int i=0; i<4; i++ ) \
+ 		for( int j=0; j<4; j++ ) \
+-			m[i][j] operation= a; \
++			m[i][j] = m[i][j] operation a; \
+ 	return( *this );
+ 
+ class CMatrix4D
+diff --git a/geometryLib/polygon.cpp b/geometryLib/polygon.cpp
+index f08b8e4..5198e33 100644
+--- a/geometryLib/polygon.cpp
++++ b/geometryLib/polygon.cpp
+@@ -973,7 +973,7 @@ CPolygon::drawEdgePoints( int lod ) const
+ 
+ 		// First point.
+ 		assert( ! (isInfinite( s.m_p1 ) && isInfinite( s.m_p2 )) );
+-		CVector3D p1 = isInfinite( s.m_p1 ) ? s.m_p2 * finiteScale : s.m_p1;
++		CVector3D p1 = isInfinite( s.m_p1 ) ? CVector3D( s.m_p2 * finiteScale ) : s.m_p1;
+ 		vertex( p1 );
+ 
+ 		// For arcs, add in a bunch of extra points.
+@@ -991,7 +991,7 @@ CPolygon::drawEdgePoints( int lod ) const
+ 		}
+ 
+ 		// Last point.
+-		CVector3D p2 = isInfinite( s.m_p2 ) ? s.m_p1 * finiteScale : s.m_p2;
++		CVector3D p2 = isInfinite( s.m_p2 ) ? CVector3D( s.m_p1 * finiteScale ) : s.m_p2;
+ 		vertex( p2 );
+ 	}
+ }
+diff --git a/geometryLib/renderer.cpp b/geometryLib/renderer.cpp
+index 68c66f7..78ecbd6 100644
+--- a/geometryLib/renderer.cpp
++++ b/geometryLib/renderer.cpp
+@@ -1,8 +1,10 @@
+ #include <stdafx.h>
+ #include "renderer.h"
+ 
++#ifdef _MSC_VER
+ #include "atlstr.h"
+ #include "atlimage.h"
++#endif
+ #include "puzzle/twist.h"
+ 
+ 
+@@ -133,6 +135,7 @@ void CRenderer::renderSceneInternal( int width, int height, bool stereo, bool fo
+ void 
+ CRenderer::screenShot( int width, int height ) 
+ {
++#ifdef _MSC_VER	// Uses ATL; only for making videos.
+ 	//assert( glutExtensionSupported( "GL_EXT_packed_pixels" );
+ 
+ 	// Setup our output image.
+@@ -162,6 +165,7 @@ CRenderer::screenShot( int width, int height )
+ 	CString outName;
+ 	outName.Format( _T("C:\\p4\\video\\scratch\\%05d.png"), m_step );
+ 	imageOut.Save( outName, Gdiplus::ImageFormatPNG );
++#endif
+ }
+ 
+ void CRenderer::setupProjection( int cx, int cy ) 
+diff --git a/geometryLib/renderer.h b/geometryLib/renderer.h
+index e0bef34..a8c83fb 100644
+--- a/geometryLib/renderer.h
++++ b/geometryLib/renderer.h
+@@ -1,5 +1,4 @@
+ #pragma once
+-#include <atltypes.h>
+ #include "vectorND.h"
+ 
+ #include "gl/glInit.h"
+diff --git a/geometryLib/stdafx.h b/geometryLib/stdafx.h
+index 1cef7c2..5e92696 100644
+--- a/geometryLib/stdafx.h
++++ b/geometryLib/stdafx.h
+@@ -13,8 +13,8 @@
+ // TODO: reference additional headers your program requires here
+ 
+ #include "windows.h"
+-#include "gl\gl.h"
+-#include "gl\glu.h"
++#include "GL/gl.h"
++#include "GL/glu.h"
+ 
+ #include <assert.h>
+ #define _USE_MATH_DEFINES
+diff --git a/geometryLib/vectorND.h b/geometryLib/vectorND.h
+index 5e57eef..06e8b41 100644
+--- a/geometryLib/vectorND.h
++++ b/geometryLib/vectorND.h
+@@ -16,7 +16,7 @@ typedef unsigned int uint;
+ 
+ #define DO_OP_VECTOR_INPLACE( operation ) \
+ 	for( int i=0; i<Size; ++i ) \
+-        m_components[i] operation= rhs.m_components[i]; \
++        m_components[i] = m_components[i] operation rhs.m_components[i]; \
+ 	CheckVector(); \
+ 	return( *this );
+ 
+@@ -29,7 +29,7 @@ typedef unsigned int uint;
+ 
+ #define DO_OP_SCALAR_INPLACE( operation ) \
+ 	for( int i=0; i<Size; ++i ) \
+-        m_components[i] operation= a; \
++        m_components[i] = m_components[i] operation a; \
+ 	CheckVector(); \
+ 	return( *this );
+ 

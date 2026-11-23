@@ -1,0 +1,32 @@
+diff --git a/s3d/DxBase.cs b/s3d/DxBase.cs
+index fab576b..96cbd6e 100644
+--- a/s3d/DxBase.cs
++++ b/s3d/DxBase.cs
+@@ -391,6 +391,7 @@ namespace _3dedit {
+ 			// Render the scene as normal
+ 			if( FAILED( hr = Render() ) )
+ 				return hr;
++			TestDump.AfterRender(m_pd3dDevice);
+ 
+ 			// flip back buffer to front
+ 			// Show the frame on the primary surface.
+diff --git a/src/rubik7d.cs b/src/rubik7d.cs
+index 9c6b471..604ed30 100644
+--- a/src/rubik7d.cs
++++ b/src/rubik7d.cs
+@@ -1884,6 +1884,7 @@ namespace _3dedit
+      	void mkPickObject(EAction act,ref Vector3 pt,ref Vector3 vec,double ang){
+             m_runUndo=false;
+             int stk=CubeView.FindSticker(ref pt,ref vec);
++            TestDump.Log("pick act="+act+" stk="+stk+" NClicks="+NClicks);
+             if(stk<0) {
+                 NClicks=0;
+                 ClickQual=true;
+@@ -2011,6 +2012,7 @@ namespace _3dedit
+                         rr=Cube.RotateCubeByStickers(fclick,ffrom,ff);
+                     } else {
+                         rr=Cube.Twist(fclick,ffrom,ff,TwistMask);
++                        TestDump.Log("twist rr="+rr);
+                         if(cb_HighlightByColors.CheckState!=CheckState.Unchecked)
+                             Cube.FindStickersByMask(FaceMask,cb_HighlightByColors.CheckState==CheckState.Checked);
+                         TestBuild();

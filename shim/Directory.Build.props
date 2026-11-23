@@ -1,0 +1,26 @@
+<!-- Shared settings for the three Managed DirectX shim assemblies. See NOTES.md, "MDX shim". -->
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <!-- Not 1.0.2902.0: wine-mono's GAC has a partial MDX at that version, and the GAC beats
+         app-local DLLs. Each exe gets a bindingRedirect 1.0.2902.0 -> this version instead. -->
+    <AssemblyVersion>1.0.2911.0</AssemblyVersion>
+    <FileVersion>1.0.2911.0</FileVersion>
+    <!-- The exes reference token 31bf3856ad364e35, so public-sign with Microsoft's public key. -->
+    <SignAssembly>true</SignAssembly>
+    <PublicSign>true</PublicSign>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key/ms-public.snk</AssemblyOriginatorKeyFile>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS0660;CS0661;CS1591</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

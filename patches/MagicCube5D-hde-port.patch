@@ -1,0 +1,2762 @@
+diff --git a/.gitignore b/.gitignore
+index 3fba8cb..742b8ba 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -45,3 +45,7 @@ Temporary Items
+ Backup/*
+ .vs/*
+ MagicCube5D/.vs/*
++
++# Build output
++bin/
++obj/
+diff --git a/src/MagicCube5D/AssemblyInfo.cpp b/src/MagicCube5D/AssemblyInfo.cpp
+deleted file mode 100644
+index 5c6bf3a..0000000
+--- a/src/MagicCube5D/AssemblyInfo.cpp
++++ /dev/null
+@@ -1,42 +0,0 @@
+-#include "stdafx.h"
+-
+-using namespace System;
+-using namespace System::Reflection;
+-using namespace System::Runtime::CompilerServices;
+-using namespace System::Runtime::InteropServices;
+-using namespace System::Security::Permissions;
+-
+-//
+-// General Information about an assembly is controlled through the following
+-// set of attributes. Change these attribute values to modify the information
+-// associated with an assembly.
+-//
+-[assembly:AssemblyTitleAttribute("MagicCube5D")];
+-[assembly:AssemblyDescriptionAttribute("")];
+-[assembly:AssemblyConfigurationAttribute("")];
+-[assembly:AssemblyCompanyAttribute("R3 Productions")];
+-[assembly:AssemblyProductAttribute("MagicCube5D")];
+-[assembly:AssemblyCopyrightAttribute("Copyright � R3 Productions 2006")];
+-[assembly:AssemblyTrademarkAttribute("")];
+-[assembly:AssemblyCultureAttribute("")];
+-
+-//
+-// Version information for an assembly consists of the following four values:
+-//
+-//      Major Version
+-//      Minor Version
+-//      Build Number
+-//      Revision
+-//
+-// You can specify all the value or you can default the Revision and Build Numbers
+-// by using the '*' as shown below:
+-
+-[assembly:AssemblyVersionAttribute("1.0.0.0")];
+-
+-[assembly:ComVisible(false)];
+-
+-[assembly:CLSCompliantAttribute(true)];
+-
+-[assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+-
+-//[assembly:AssemblyKeyFile("mc5d.snk")];
+diff --git a/src/MagicCube5D/MagicCube5D.cpp b/src/MagicCube5D/MagicCube5D.cpp
+deleted file mode 100644
+index bd29f91..0000000
+--- a/src/MagicCube5D/MagicCube5D.cpp
++++ /dev/null
+@@ -1,17 +0,0 @@
+-// MagicCube5D.cpp : main project file.
+-
+-#include "cubeFrame.h"
+-#include "stdafx.h"
+-
+-using namespace MagicCube5D;
+-
+-[STAThreadAttribute] int main(array<System::String ^> ^ args) {
+-
+-    // Enabling Windows XP visual effects before any controls are created
+-    Application::EnableVisualStyles();
+-    Application::SetCompatibleTextRenderingDefault(false);
+-
+-    // Create the main window and run it
+-    (gcnew CubeFrame())->Run();
+-    return 0;
+-}
+diff --git a/src/MagicCube5D/MagicCube5D.vcxproj b/src/MagicCube5D/MagicCube5D.vcxproj
+index ca6beaa..3329f46 100644
+--- a/src/MagicCube5D/MagicCube5D.vcxproj
++++ b/src/MagicCube5D/MagicCube5D.vcxproj
+@@ -5,30 +5,47 @@
+       <Configuration>Debug</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+     <ProjectConfiguration Include="Release|Win32">
+       <Configuration>Release</Configuration>
+       <Platform>Win32</Platform>
+     </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
+   </ItemGroup>
+   <PropertyGroup Label="Globals">
+     <ProjectGuid>{42CC3972-1B3B-419B-87A4-7796289D9E23}</ProjectGuid>
+     <RootNamespace>MagicCube5D</RootNamespace>
+-    <Keyword>ManagedCProj</Keyword>
++    <Keyword>Win32Proj</Keyword>
+     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+   </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+-    <ConfigurationType>Application</ConfigurationType>
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <PlatformToolset>v142</PlatformToolset>
+     <CharacterSet>Unicode</CharacterSet>
+-    <CLRSupport>true</CLRSupport>
+     <WholeProgramOptimization>true</WholeProgramOptimization>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+-    <ConfigurationType>Application</ConfigurationType>
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <PlatformToolset>v142</PlatformToolset>
+     <CharacterSet>Unicode</CharacterSet>
+-    <CLRSupport>true</CLRSupport>
+   </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ImportGroup Label="ExtensionSettings">
+@@ -36,25 +53,47 @@
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+   </ImportGroup>
++  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
+   <PropertyGroup Label="UserMacros" />
+   <PropertyGroup>
+     <_ProjectFileVersion>15.0.26323.1</_ProjectFileVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <TargetName>MagicCube5DCore</TargetName>
+     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+     <LinkIncremental>true</LinkIncremental>
+     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)</IncludePath>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <TargetName>MagicCube5DCore</TargetName>
++    <OutDir>$(SolutionDir)x64\$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++    <LinkIncremental>true</LinkIncremental>
++    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)</IncludePath>
++  </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <TargetName>MagicCube5DCore</TargetName>
+     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+     <IntDir>$(Configuration)\</IntDir>
+     <LinkIncremental>false</LinkIncremental>
+     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)</IncludePath>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <TargetName>MagicCube5DCore</TargetName>
++    <OutDir>$(SolutionDir)x64\$(Configuration)\</OutDir>
++    <IntDir>x64\$(Configuration)\</IntDir>
++    <LinkIncremental>false</LinkIncremental>
++    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)</IncludePath>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+@@ -67,12 +106,26 @@
+     <Link>
+       <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+-      <AssemblyDebug>true</AssemblyDebug>
+       <SubSystem>Windows</SubSystem>
+-      <EntryPointSymbol>main</EntryPointSymbol>
+       <TargetMachine>MachineX86</TargetMachine>
+     </Link>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <Optimization>Disabled</Optimization>
++      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib</AdditionalDependencies>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <SubSystem>Windows</SubSystem>
++      <TargetMachine>MachineX64</TargetMachine>
++    </Link>
++  </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -85,36 +138,26 @@
+       <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib</AdditionalDependencies>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+-      <EntryPointSymbol>main</EntryPointSymbol>
+       <TargetMachine>MachineX86</TargetMachine>
+     </Link>
+   </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <WarningLevel>Level3</WarningLevel>
++      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++    </ClCompile>
++    <Link>
++      <AdditionalDependencies>opengl32.lib;glu32.lib;gdi32.lib;User32.lib</AdditionalDependencies>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <SubSystem>Windows</SubSystem>
++      <TargetMachine>MachineX64</TargetMachine>
++    </Link>
++  </ItemDefinitionGroup>
+   <ItemGroup>
+-    <Reference Include="System">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Data">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Drawing">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Windows.Forms">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-    <Reference Include="System.Xml">
+-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+-    </Reference>
+-  </ItemGroup>
+-  <ItemGroup>
+-    <ClCompile Include="AssemblyInfo.cpp" />
+-    <ClCompile Include="cubeFrame.cpp" />
+-    <ClCompile Include="MagicCube5D.cpp" />
++    <ClCompile Include="coreApi.cpp" />
+     <ClCompile Include="stdafx.cpp">
+       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+@@ -131,7 +174,6 @@
+     <ClCompile Include="workFiles\vectorND.cpp" />
+   </ItemGroup>
+   <ItemGroup>
+-    <ClInclude Include="cubeFrame.h" />
+     <ClInclude Include="resource.h" />
+     <ClInclude Include="stdafx.h" />
+     <ClInclude Include="workFiles\cube5D.h" />
+@@ -152,11 +194,6 @@
+   <ItemGroup>
+     <ResourceCompile Include="app.rc" />
+   </ItemGroup>
+-  <ItemGroup>
+-    <ProjectReference Include="..\MagicCubeGui\magicCubeGui.csproj">
+-      <Project>{6b1a6b1e-6ad5-442d-a27d-7d4eadf1b8a9}</Project>
+-    </ProjectReference>
+-  </ItemGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+   <ImportGroup Label="ExtensionTargets">
+   </ImportGroup>
+diff --git a/src/MagicCube5D/MagicCube5D.vcxproj.filters b/src/MagicCube5D/MagicCube5D.vcxproj.filters
+index 6b64967..ac65ea7 100644
+--- a/src/MagicCube5D/MagicCube5D.vcxproj.filters
++++ b/src/MagicCube5D/MagicCube5D.vcxproj.filters
+@@ -15,24 +15,15 @@
+     </Filter>
+   </ItemGroup>
+   <ItemGroup>
+-    <ClCompile Include="AssemblyInfo.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\cube5D.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+-    <ClCompile Include="cubeFrame.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\glInit.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+     <ClCompile Include="workFiles\loader.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+-    <ClCompile Include="MagicCube5D.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="workFiles\renderer.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+@@ -45,6 +36,9 @@
+     <ClCompile Include="workFiles\stateTransformer.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
++    <ClCompile Include="coreApi.cpp">
++      <Filter>Source Files</Filter>
++    </ClCompile>
+     <ClCompile Include="stdafx.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+@@ -62,9 +56,6 @@
+     <ClInclude Include="workFiles\cube5D.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+-    <ClInclude Include="cubeFrame.h">
+-      <Filter>Header Files</Filter>
+-    </ClInclude>
+     <ClInclude Include="workFiles\glInit.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+diff --git a/src/MagicCube5D/coreApi.cpp b/src/MagicCube5D/coreApi.cpp
+new file mode 100644
+index 0000000..29b227c
+--- /dev/null
++++ b/src/MagicCube5D/coreApi.cpp
+@@ -0,0 +1,284 @@
++// A plain C API over the puzzle core, called by the C# GUI (CubeFrame.cs) via P/Invoke.
++// This replaces the C++/CLI CubeFrame class, so the core builds as a native DLL.
++
++#include <stdafx.h>
++
++#include "workFiles/glInit.h"
++#include "workFiles/helper.h"
++#include "workFiles/renderer.h"
++#include "workFiles/selector.h"
++
++#define MC5D_API extern "C" __declspec(dllexport)
++
++MC5D_API CRenderer* MC5D_Create() { return new CRenderer(); }
++
++MC5D_API void MC5D_Destroy(CRenderer* r) { delete r; }
++
++MC5D_API void MC5D_InitGL(HWND hwnd) {
++    CGlInit glInit;
++    glInit.initializeGL(hwnd);
++}
++
++// Fills the 14 values MainFrame.UpdateProgressPage takes.
++MC5D_API void MC5D_GetSolvedInfo(CRenderer* r, int* info) {
++    SSolvedInfo si = r->m_cube.updateSolvedInfo();
++    int values[14] = {si.s0, si.n0, si.s1, si.n1, si.s2, si.n2, si.s3,
++                      si.n3, si.s4, si.n4, si.s5, si.n5, si.ss, si.ns};
++    for (int i = 0; i < 14; i++) info[i] = values[i];
++}
++
++MC5D_API void MC5D_RenderScene(CRenderer* r, int width, int height, int shiftDown) {
++    r->m_cube.m_settings.m_showAllCubieStickers = shiftDown;
++    r->renderScene(width, height);
++}
++
++MC5D_API void MC5D_IterationMade(CRenderer* r) { r->iterationMade(false); }
++
++MC5D_API double MC5D_GetRotationStep(CRenderer* r) {
++    return r->m_cube.m_settings.m_rotationStep;
++}
++
++MC5D_API void MC5D_FinishRotate(CRenderer* r) { r->m_cube.finishRotate(); }
++
++MC5D_API int MC5D_ShowSolvedMessage(CRenderer* r) {
++    return r->m_cube.showSolvedMessage();
++}
++
++MC5D_API void MC5D_StartRotate(CRenderer* r, int a1, int a2, int face, int slicemask) {
++    STwist twist;
++    twist.m_rotationAxis1 = a1;
++    twist.m_rotationAxis2 = a2;
++    twist.m_rotationFace = face;
++    twist.m_slicemask = slicemask;
++    r->m_cube.startRotate(twist);
++}
++
++// These return false if there is nothing to undo/redo; otherwise they start the rotation.
++MC5D_API int MC5D_StartUndo(CRenderer* r) {
++    STwist undo;
++    if (!r->m_cube.getUndoParams(undo)) return false;
++    r->m_cube.startRotate(undo);
++    return true;
++}
++
++MC5D_API int MC5D_StartRedo(CRenderer* r) {
++    STwist redo;
++    if (!r->m_cube.getRedoParams(redo)) return false;
++    r->m_cube.startRotate(redo);
++    return true;
++}
++
++MC5D_API void MC5D_PerformDrag(CRenderer* r, int dx, int dy, int width, int height,
++                               int leftButton, int rightButton) {
++
++    // This is increment we moved, scaled to the window size.
++    float xIncrement = (float)dx / (float)width;
++    float yIncrement = (float)dy / (float)height;
++
++    // A measure of the magnitude of the change.
++    float magnitude =
++            (float)(sqrt(xIncrement * xIncrement + yIncrement * yIncrement) * 100);
++
++    if (leftButton) {
++
++        // The spherical coordinate radius.
++        CVector3D viewVector = r->m_viewLookfrom - r->m_viewLookat;
++        double radius = viewVector.abs();
++        if (!IS_ZERO(radius)) {
++
++            // The spherical coordinate angles.
++            double theta =
++                    atan2(viewVector.m_components[1], viewVector.m_components[0]);
++            double phi = acos(viewVector.m_components[2] / radius);
++
++            // Increment the angles.
++            theta -= magnitude * xIncrement;
++            phi -= magnitude * yIncrement;
++
++            // Check the bounds.
++            // So we don't have to worry about the upVector, don't allow these to be
++            // exactly 0 or Pi.
++            if (phi <= 0) phi = 0.0000001;
++            if (phi >= CONSTANT_PI) phi = CONSTANT_PI - 0.0000001;
++
++            // Calculate the new position.
++            r->m_viewLookfrom.m_components[0] =
++                    r->m_viewLookat.m_components[0] + radius * sin(phi) * cos(theta);
++            r->m_viewLookfrom.m_components[1] =
++                    r->m_viewLookat.m_components[1] + radius * sin(phi) * sin(theta);
++            r->m_viewLookfrom.m_components[2] =
++                    r->m_viewLookat.m_components[2] + radius * cos(phi);
++        }
++    }
++
++    if (rightButton) {
++
++        // The view vector magnitude.
++        CVector3D viewVector = r->m_viewLookfrom - r->m_viewLookat;
++        double abs = viewVector.abs();
++
++        // Increment it.
++        abs += 5 * abs * yIncrement;
++        viewVector.normalize();
++        viewVector *= abs;
++
++        double smallestRadius = .02;
++        if (viewVector.abs() < smallestRadius) {
++            viewVector.normalize();
++            viewVector *= smallestRadius;
++        }
++
++        // Set the new position.
++        r->m_viewLookfrom = viewVector;
++    }
++}
++
++// A left click. Returns true if a rotation was started.
++MC5D_API int MC5D_HandleClick(CRenderer* r, int ctrlDown, int slicemask) {
++    if (r->m_cube.m_clickState == CCube5D::READY_FOR_FIRST)
++        return r->m_cube.handleFirstClick(ctrlDown);
++    else
++        return r->m_cube.handleSecondClick(ctrlDown, slicemask);
++}
++
++MC5D_API void MC5D_ResetClickState(CRenderer* r) { r->m_cube.resetClickState(); }
++
++MC5D_API void MC5D_CycleSelectedGotoSticker(CRenderer* r, int left) {
++    r->m_cube.cycleSelectedGotoSticker(left);
++}
++
++MC5D_API void MC5D_SelectSticker(CRenderer* r, int x, int y, int shiftDown) {
++    CVector3D linep1, linep2;
++    CSelector::unProjectMousePoint(x, y, linep1, linep2);
++    r->m_cube.selectSticker(linep1, linep2, shiftDown);
++}
++
++// The values of the C# CubeParameter enum.
++enum CubeParameter {
++    Puzzle,
++    Perspective5d,
++    Perspective4d,
++    FaceSeparation,
++    StickerSeparation,
++    StickerSize,
++    RotationRate,
++    StereoMode,
++    StereoSeparation
++};
++
++MC5D_API void MC5D_SetParameter(CRenderer* r, int param, int value) {
++    switch (param) {
++        case Puzzle:
++            r->m_cube.setPuzzleType((int)value);
++            break;
++        case Perspective5d:
++            r->m_cube.m_settings.m_projection5Distance = (double)value;
++            break;
++        case Perspective4d:
++            r->m_cube.m_settings.m_projection4Distance = (double)value;
++            break;
++        case FaceSeparation:
++            r->m_cube.m_settings.m_faceOffset = (double)value / 5;
++            break;
++        case StickerSeparation:
++            r->m_cube.m_settings.m_stickerOffset = (double)value / 10;
++            break;
++        case StickerSize:
++            r->m_cube.m_settings.m_stickerSize = (double)value / 25;
++            break;
++        case RotationRate:
++            r->m_cube.m_settings.m_rotationStep = 0.1 + (double)value / 10;
++            break;
++        case StereoMode: {
++            r->m_cube.m_settings.m_stereoMode = (EStereoMode)value;
++
++            // Alter the viewing distance depending on the mode.
++            CVector3D viewVector = r->m_viewLookfrom;
++            viewVector.normalize();
++            if (r->m_cube.m_settings.m_stereoMode == STEREO_CROSS_EYED)
++                viewVector *= 170;
++            else
++                viewVector *= 85;
++            r->m_viewLookfrom = viewVector;
++
++            break;
++        }
++        case StereoSeparation:
++            r->m_cube.m_settings.m_stereoSeparation = (double)value / 20;
++            break;
++    }
++}
++
++MC5D_API void MC5D_CycleStickerAccent(CRenderer* r, int colors) {
++    CSettings& s = r->m_cube.m_settings;
++    switch (colors) {
++        case 1:
++            s.cycleAccentSetting(s.m_accent1Colored);
++            break;
++        case 2:
++            s.cycleAccentSetting(s.m_accent2Colored);
++            break;
++        case 3:
++            s.cycleAccentSetting(s.m_accent3Colored);
++            break;
++        case 4:
++            s.cycleAccentSetting(s.m_accent4Colored);
++            break;
++        case 5:
++            s.cycleAccentSetting(s.m_accent5Colored);
++            break;
++    }
++}
++
++MC5D_API void MC5D_EnableFace(CRenderer* r, int face, int enable) {
++    r->m_cube.setFaceVisible(face, enable);
++}
++
++// Face 10 is the background.
++MC5D_API void MC5D_ColorFace(CRenderer* r, int face, int red, int green, int blue,
++                             int alpha) {
++    CColor color((float)red / 255, (float)green / 255, (float)blue / 255,
++                 (float)alpha / 255);
++    if (face == 10)
++        r->setBackgroundColor(color);
++    else
++        r->m_cube.setFaceColor(face, color);
++}
++
++MC5D_API void MC5D_Save(CRenderer* r, const wchar_t* fileName) {
++    r->m_cube.save(fileName);
++}
++
++MC5D_API void MC5D_Load(CRenderer* r, const wchar_t* fileName) {
++    r->m_cube.load(fileName);
++}
++
++MC5D_API void MC5D_Scramble(CRenderer* r, int number) { r->m_cube.scramble(number); }
++
++MC5D_API void MC5D_Reset(CRenderer* r) { r->m_cube.reset(); }
++
++MC5D_API void MC5D_HighlightCubies(CRenderer* r, const int* colors, int count) {
++    std::vector<int> tempColors(colors, colors + count);
++    r->m_cube.highlightCubies(tempColors);
++}
++
++// Calls back once per macro name.
++MC5D_API void MC5D_GetMacroNames(CRenderer* r, void(__stdcall* callback)(const char*)) {
++    std::vector<std::string> macroNames;
++    r->m_cube.getMacroNames(macroNames);
++    for (uint i = 0; i < macroNames.size(); i++) callback(macroNames[i].c_str());
++}
++
++MC5D_API void MC5D_StartMacroRecord(CRenderer* r) { r->m_cube.startMacroRecord(); }
++
++MC5D_API void MC5D_StopMacroRecord(CRenderer* r) { r->m_cube.stopMacroRecord(); }
++
++MC5D_API void MC5D_RenameMacro(CRenderer* r, int index, const char* name) {
++    r->m_cube.renameMacro(index, name);
++}
++
++MC5D_API void MC5D_DeleteMacro(CRenderer* r, int index) { r->m_cube.deleteMacro(index); }
++
++MC5D_API void MC5D_ExecuteMacro(CRenderer* r, int index, int reverse) {
++    r->m_cube.executeMacro(index, reverse);
++}
+diff --git a/src/MagicCube5D/cubeFrame.cpp b/src/MagicCube5D/cubeFrame.cpp
+deleted file mode 100644
+index bbd8b26..0000000
+--- a/src/MagicCube5D/cubeFrame.cpp
++++ /dev/null
+@@ -1,617 +0,0 @@
+-// {{{ClassName=CubeFrame
+-
+-#include "cubeFrame.h"
+-
+-#include <stdafx.h>
+-
+-#include "workFiles/glInit.h"
+-#include "workFiles/helper.h"
+-#include "workFiles/selector.h"
+-
+-using namespace System::Drawing;
+-using namespace System::Windows::Forms;
+-
+-namespace MagicCube5D {
+-CubeFrame::CubeFrame() {
+-    m_solving = false;
+-    m_enableRedraw = true;
+-    m_animating = false;
+-
+-    m_dragging = false;
+-    m_mouseDownX = m_mouseDownY = -1;
+-    m_mouseLastX = m_mouseLastY = 0;
+-
+-    m_slicemask = 0;
+-}
+-
+-CubeFrame::~CubeFrame() {}
+-
+-CubeFrame::!CubeFrame() {
+-    if (m_components) delete m_components;
+-
+-    delete (m_renderer);
+-}
+-
+-namespace {
+-void updateSolvedInfo(CCube5D& cube, MainFrame ^ frame) {
+-    SSolvedInfo si = cube.updateSolvedInfo();
+-    frame->UpdateProgressPage(si.s0, si.n0, si.s1, si.n1, si.s2, si.n2, si.s3, si.n3,
+-                              si.s4, si.n4, si.s5, si.n5, si.ss, si.ns);
+-}
+-}  // namespace
+-
+-void CubeFrame::Run() {
+-    m_frame = gcnew MainFrame(this);
+-
+-    m_components = gcnew System::ComponentModel::Container();
+-    m_timer = gcnew Timer(m_components);
+-    m_timer->Interval = 20;
+-    m_timer->Tick += gcnew EventHandler(this, &CubeFrame::TimerTick);
+-
+-    m_frame->Load += gcnew EventHandler(this, &CubeFrame::FrameLoad);
+-
+-    m_frame->DrawSurface->Paint += gcnew PaintEventHandler(this, &CubeFrame::Paint);
+-    m_frame->DrawSurface->KeyDown += gcnew KeyEventHandler(this, &CubeFrame::KeyDown);
+-    m_frame->DrawSurface->KeyUp += gcnew KeyEventHandler(this, &CubeFrame::KeyUp);
+-    m_frame->KeyDown += gcnew KeyEventHandler(this, &CubeFrame::SliceDown);
+-    m_frame->KeyUp += gcnew KeyEventHandler(this, &CubeFrame::SliceUp);
+-    m_frame->DrawSurface->MouseDown +=
+-            gcnew MouseEventHandler(this, &CubeFrame::MouseDown);
+-    m_frame->DrawSurface->MouseMove +=
+-            gcnew MouseEventHandler(this, &CubeFrame::MouseMove);
+-    m_frame->DrawSurface->MouseUp += gcnew MouseEventHandler(this, &CubeFrame::MouseUp);
+-
+-    m_renderer = new CRenderer();
+-
+-    updateSolvedInfo(m_renderer->m_cube, m_frame);
+-
+-    Application::Run(m_frame);
+-}
+-
+-void CubeFrame::FrameLoad(Object ^ sender, EventArgs ^ args) {
+-    CGlInit glInit;
+-    glInit.initializeGL((HWND)m_frame->DrawSurface->Handle.ToInt32());
+-}
+-
+-void CubeFrame::Paint(Object ^ sender, System::Windows::Forms::PaintEventArgs ^ args) {
+-    DoRender(args->Graphics);
+-}
+-
+-void CubeFrame::TimerTick(System::Object ^ sender, System::EventArgs ^ e) {
+-    if (m_currentAngle + m_renderer->m_cube.m_settings.m_rotationStep >= 90) {
+-        m_renderer->m_cube.finishRotate();
+-        updateSolvedInfo(m_renderer->m_cube, m_frame);
+-        bool showMessage = false;
+-
+-        // Special handling if we are solving.
+-        if (m_solving) {
+-
+-            // Start the next undo.
+-            STwist undo;
+-            if (m_renderer->m_cube.getUndoParams(undo)) {
+-                internalRotate(undo);
+-                return;
+-            } else {
+-                m_solving = false;
+-            }
+-        } else {
+-            showMessage = m_renderer->m_cube.showSolvedMessage();
+-        }
+-
+-        m_timer->Enabled = false;
+-        m_animating = false;
+-
+-        // We need to select a sticker.
+-        internalSelectSticker();
+-
+-        Redraw(false);
+-
+-        // Show a congratulatory message if they've solved it.
+-        if (showMessage) showSolvedMessage();
+-
+-        return;
+-    }
+-
+-    // Do the drawing.
+-    m_renderer->iterationMade(false);
+-    DoRender();
+-
+-    m_currentAngle += m_renderer->m_cube.m_settings.m_rotationStep;
+-}
+-
+-void CubeFrame::MouseMove(System::Object ^ sender,
+-                          System::Windows::Forms::MouseEventArgs ^ e) {
+-
+-    // Make sure we have the focus.
+-    m_frame->DrawSurface->Select();
+-
+-    // Are we starting a drag?
+-    // NOTE: The mousedown checks makes sure we had a mouse down call and fixes a
+-    // problem I was seeing
+-    //		 where the view would reset when you loaded in a log file.
+-    if (!m_dragging && e->Button != MouseButtons::None && -1 != m_mouseDownX &&
+-        -1 != m_mouseDownY &&
+-        ((Math::Abs(e->X - m_mouseDownX) > SystemInformation::DragSize.Width / 2) ||
+-         (Math::Abs(e->Y - m_mouseDownY) > SystemInformation::DragSize.Height / 2))) {
+-        StartDrag();
+-
+-        // Fake the original mouse position so we will get some drag motion immediately.
+-        m_mouseLastX = m_mouseDownX;
+-        m_mouseLastY = m_mouseDownY;
+-    }
+-
+-    // Are we dragging?
+-    if (m_dragging) PerformDrag(e->X, e->Y, e->Button);
+-
+-    m_mouseLastX = e->X;
+-    m_mouseLastY = e->Y;
+-
+-    // We don't need to continue past here if we are animating.
+-    if (m_animating) return;
+-
+-    // Select a sticker based on the new mouse position.
+-    internalSelectSticker();
+-
+-    Redraw(true);
+-}
+-
+-void CubeFrame::StartDrag() {
+-    m_dragging = true;
+-    m_frame->DrawSurface->Capture = true;
+-}
+-
+-void CubeFrame::PerformDrag(int x, int y, MouseButtons btn) {
+-
+-    // This is increment we moved, scaled to the window size.
+-    float xIncrement = (float)(x - m_mouseLastX) /
+-                       (float)m_frame->DrawSurface->ClientRectangle.Width;
+-    float yIncrement = (float)(y - m_mouseLastY) /
+-                       (float)m_frame->DrawSurface->ClientRectangle.Height;
+-
+-    // A measure of the magnitude of the change.
+-    float magnitude =
+-            (float)(sqrt(xIncrement * xIncrement + yIncrement * yIncrement) * 100);
+-
+-    if (btn == System::Windows::Forms::MouseButtons::Left) {
+-
+-        // The spherical coordinate radius.
+-        CVector3D viewVector = m_renderer->m_viewLookfrom - m_renderer->m_viewLookat;
+-        double radius = viewVector.abs();
+-        if (!IS_ZERO(radius)) {
+-
+-            // The spherical coordinate angles.
+-            double theta =
+-                    atan2(viewVector.m_components[1], viewVector.m_components[0]);
+-            double phi = acos(viewVector.m_components[2] / radius);
+-
+-            // Increment the angles.
+-            theta -= magnitude * xIncrement;
+-            phi -= magnitude * yIncrement;
+-
+-            // Check the bounds.
+-            // So we don't have to worry about the upVector, don't allow these to be
+-            // exactly 0 or Pi.
+-            if (phi <= 0) phi = 0.0000001;
+-            if (phi >= CONSTANT_PI) phi = CONSTANT_PI - 0.0000001;
+-
+-            // Calculate the new position.
+-            m_renderer->m_viewLookfrom.m_components[0] =
+-                    m_renderer->m_viewLookat.m_components[0] +
+-                    radius * sin(phi) * cos(theta);
+-            m_renderer->m_viewLookfrom.m_components[1] =
+-                    m_renderer->m_viewLookat.m_components[1] +
+-                    radius * sin(phi) * sin(theta);
+-            m_renderer->m_viewLookfrom.m_components[2] =
+-                    m_renderer->m_viewLookat.m_components[2] + radius * cos(phi);
+-        }
+-    }
+-
+-    if (btn == System::Windows::Forms::MouseButtons::Right) {
+-
+-        // The view vector magnitude.
+-        CVector3D viewVector = m_renderer->m_viewLookfrom - m_renderer->m_viewLookat;
+-        double abs = viewVector.abs();
+-
+-        // Increment it.
+-        abs += 5 * abs * yIncrement;
+-        viewVector.normalize();
+-        viewVector *= abs;
+-
+-        double smallestRadius = .02;
+-        if (viewVector.abs() < smallestRadius) {
+-            viewVector.normalize();
+-            viewVector *= smallestRadius;
+-        }
+-
+-        // Set the new position.
+-        m_renderer->m_viewLookfrom = viewVector;
+-    }
+-}
+-
+-void CubeFrame::FinishDrag() {
+-    m_frame->DrawSurface->Capture = false;
+-    m_dragging = false;
+-}
+-
+-void CubeFrame::MouseDown(System::Object ^ sender,
+-                          System::Windows::Forms::MouseEventArgs ^ e) {
+-    m_mouseDownX = e->X;
+-    m_mouseDownY = e->Y;
+-}
+-
+-void CubeFrame::MouseUp(System::Object ^ sender,
+-                        System::Windows::Forms::MouseEventArgs ^ e) {
+-    m_mouseDownX = m_mouseDownY = -1;
+-
+-    // Figure out if we were dragging, and if the drag is done.
+-    if (m_dragging) {
+-        if (Form::MouseButtons == MouseButtons::None) FinishDrag();
+-        return;
+-    }
+-
+-    if (m_animating) return;
+-
+-    // Past here, the mouse-up represents a click.
+-
+-    // Left button click.
+-    if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+-        bool rotateStarted = false;
+-        if (m_renderer->m_cube.m_clickState == CCube5D::READY_FOR_FIRST)
+-            rotateStarted = m_renderer->m_cube.handleFirstClick(CtrlDown());
+-        else
+-            rotateStarted = m_renderer->m_cube.handleSecondClick(
+-                    CtrlDown(), m_slicemask == 0 ? 1 : m_slicemask);
+-        if (rotateStarted) {
+-            m_currentAngle = 0;
+-            m_animating = true;
+-            m_timer->Enabled = true;
+-        }
+-    }
+-}
+-
+-void CubeFrame::KeyDown(System::Object ^ sender,
+-                        System::Windows::Forms::KeyEventArgs ^ e) {
+-    if (m_animating) return;
+-
+-    // Reset click handling.
+-    if (e->KeyCode == Keys::Escape) m_renderer->m_cube.resetClickState();
+-
+-    // Cycle through click stickers.
+-    if (e->KeyCode == Keys::Left) m_renderer->m_cube.cycleSelectedGotoSticker(true);
+-    if (e->KeyCode == Keys::Right) m_renderer->m_cube.cycleSelectedGotoSticker(false);
+-
+-    // Shift
+-    if (e->KeyCode == Keys::ShiftKey) {
+-
+-        // We need to select a sticker.
+-        internalSelectSticker();
+-    }
+-
+-    Redraw(true);
+-}
+-
+-void CubeFrame::KeyUp(System::Object ^ sender,
+-                      System::Windows::Forms::KeyEventArgs ^ e) {
+-    if (m_animating) return;
+-
+-    // Shift
+-    if (e->KeyCode == Keys::ShiftKey) {
+-
+-        // We need to select a sticker.
+-        internalSelectSticker();
+-    }
+-
+-    Redraw(true);
+-}
+-
+-void CubeFrame::SliceDown(System::Object ^ sender,
+-                          System::Windows::Forms::KeyEventArgs ^ e) {
+-
+-    // Update our slicemask;
+-    if (e->KeyCode == Keys::NumPad1 || e->KeyCode == Keys::D1)
+-        m_slicemask |= SLICEMASK_1;
+-    if (e->KeyCode == Keys::NumPad2 || e->KeyCode == Keys::D2)
+-        m_slicemask |= SLICEMASK_2;
+-    if (e->KeyCode == Keys::NumPad3 || e->KeyCode == Keys::D3)
+-        m_slicemask |= SLICEMASK_3;
+-    if (e->KeyCode == Keys::NumPad4 || e->KeyCode == Keys::D4)
+-        m_slicemask |= SLICEMASK_4;
+-    if (e->KeyCode == Keys::NumPad5 || e->KeyCode == Keys::D5)
+-        m_slicemask |= SLICEMASK_5;
+-    if (e->KeyCode == Keys::NumPad6 || e->KeyCode == Keys::D6)
+-        m_slicemask |= SLICEMASK_6;
+-    if (e->KeyCode == Keys::NumPad7 || e->KeyCode == Keys::D7)
+-        m_slicemask |= SLICEMASK_7;
+-}
+-
+-void CubeFrame::SliceUp(System::Object ^ sender,
+-                        System::Windows::Forms::KeyEventArgs ^ e) {
+-
+-    // Update our slicemask;
+-    if (e->KeyCode == Keys::NumPad1 || e->KeyCode == Keys::D1)
+-        m_slicemask &= ~SLICEMASK_1;
+-    if (e->KeyCode == Keys::NumPad2 || e->KeyCode == Keys::D2)
+-        m_slicemask &= ~SLICEMASK_2;
+-    if (e->KeyCode == Keys::NumPad3 || e->KeyCode == Keys::D3)
+-        m_slicemask &= ~SLICEMASK_3;
+-    if (e->KeyCode == Keys::NumPad4 || e->KeyCode == Keys::D4)
+-        m_slicemask &= ~SLICEMASK_4;
+-    if (e->KeyCode == Keys::NumPad5 || e->KeyCode == Keys::D5)
+-        m_slicemask &= ~SLICEMASK_5;
+-    if (e->KeyCode == Keys::NumPad6 || e->KeyCode == Keys::D6)
+-        m_slicemask &= ~SLICEMASK_6;
+-    if (e->KeyCode == Keys::NumPad7 || e->KeyCode == Keys::D7)
+-        m_slicemask &= ~SLICEMASK_7;
+-}
+-
+-void CubeFrame::SetParameter(CubeParameter param, int value) {
+-    switch (param) {
+-        case CubeParameter::Puzzle:
+-            m_renderer->m_cube.setPuzzleType((int)value);
+-            updateSolvedInfo(m_renderer->m_cube, m_frame);
+-            break;
+-        case CubeParameter::Perspective5d:
+-            m_renderer->m_cube.m_settings.m_projection5Distance = (double)value;
+-            break;
+-        case CubeParameter::Perspective4d:
+-            m_renderer->m_cube.m_settings.m_projection4Distance = (double)value;
+-            break;
+-        case CubeParameter::FaceSeparation:
+-            m_renderer->m_cube.m_settings.m_faceOffset = (double)value / 5;
+-            break;
+-        case CubeParameter::StickerSeparation:
+-            m_renderer->m_cube.m_settings.m_stickerOffset = (double)value / 10;
+-            break;
+-        case CubeParameter::StickerSize:
+-            m_renderer->m_cube.m_settings.m_stickerSize = (double)value / 25;
+-            break;
+-        case CubeParameter::RotationRate:
+-            m_renderer->m_cube.m_settings.m_rotationStep = 0.1 + (double)value / 10;
+-            break;
+-        case CubeParameter::StereoMode: {
+-            m_renderer->m_cube.m_settings.m_stereoMode = (EStereoMode)value;
+-
+-            // Alter the viewing distance depending on the mode.
+-            CVector3D viewVector = m_renderer->m_viewLookfrom;
+-            viewVector.normalize();
+-            if (m_renderer->m_cube.m_settings.m_stereoMode == STEREO_CROSS_EYED)
+-                viewVector *= 170;
+-            else
+-                viewVector *= 85;
+-            m_renderer->m_viewLookfrom = viewVector;
+-
+-            break;
+-        }
+-        case CubeParameter::StereoSeparation:
+-            m_renderer->m_cube.m_settings.m_stereoSeparation = (double)value / 20;
+-            break;
+-    }
+-
+-    Redraw(true);
+-}
+-
+-bool CubeFrame::EnableRedraw::get() { return m_enableRedraw; }
+-
+-void CubeFrame::EnableRedraw::set(bool val) {
+-    m_enableRedraw = val;
+-    if (val) Redraw(false);
+-}
+-
+-void CubeFrame::CycleStickerAccent(int colors) {
+-    switch (colors) {
+-        case 1:
+-            m_renderer->m_cube.m_settings.cycleAccentSetting(
+-                    m_renderer->m_cube.m_settings.m_accent1Colored);
+-            break;
+-        case 2:
+-            m_renderer->m_cube.m_settings.cycleAccentSetting(
+-                    m_renderer->m_cube.m_settings.m_accent2Colored);
+-            break;
+-        case 3:
+-            m_renderer->m_cube.m_settings.cycleAccentSetting(
+-                    m_renderer->m_cube.m_settings.m_accent3Colored);
+-            break;
+-        case 4:
+-            m_renderer->m_cube.m_settings.cycleAccentSetting(
+-                    m_renderer->m_cube.m_settings.m_accent4Colored);
+-            break;
+-        case 5:
+-            m_renderer->m_cube.m_settings.cycleAccentSetting(
+-                    m_renderer->m_cube.m_settings.m_accent5Colored);
+-            break;
+-    }
+-
+-    Redraw(true);
+-}
+-
+-void CubeFrame::EnableFace(int face, bool enable) {
+-    m_renderer->m_cube.setFaceVisible(face, enable);
+-    Redraw(true);
+-}
+-
+-void CubeFrame::ColorFace(int face, System::Drawing::Color c) {
+-
+-    // Setting background color?
+-    CColor color((float)c.R / 255, (float)c.G / 255, (float)c.B / 255,
+-                 (float)c.A / 255);
+-    if (face == 10)
+-        m_renderer->setBackgroundColor(color);
+-    else
+-        m_renderer->m_cube.setFaceColor(face, color);
+-}
+-
+-void CubeFrame::Rotate(int a1, int a2, int face, int dummy) {
+-    if (m_animating) return;
+-
+-    STwist twist;
+-    twist.m_rotationAxis1 = a1;
+-    twist.m_rotationAxis2 = a2;
+-    twist.m_rotationFace = face;
+-    twist.m_slicemask = m_slicemask == 0 ? 1 : m_slicemask;
+-    internalRotate(twist);
+-}
+-
+-void CubeFrame::internalRotate(const STwist& twist) {
+-    m_currentAngle = 0;
+-    m_renderer->m_cube.startRotate(twist);
+-    m_animating = true;
+-    m_timer->Enabled = true;
+-}
+-
+-void CubeFrame::showSolvedMessage() {
+-    String ^ text =
+-            "Congratulations!  You have achieved ultimate super-nerd status.\n\n"
+-            "Take a few moments and space-out on the ridiculousness of what you have "
+-            "just accomplished, then "
+-            "send your logfile to roice@gravitation3d.com to get your name listed in "
+-            "the MagicCube5D Hall of Insanity.";
+-    String ^ caption = "MagicCube5D Conquered!";
+-    MessageBox::Show(text, caption, MessageBoxButtons::OK, MessageBoxIcon::Exclamation);
+-}
+-
+-void CubeFrame::Save(bool saveas) {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.save(saveas);
+-}
+-
+-void CubeFrame::Load() {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.load();
+-    updateSolvedInfo(m_renderer->m_cube, m_frame);
+-    Redraw(true);
+-}
+-
+-void CubeFrame::Scramble(int number) {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.scramble(number);
+-    updateSolvedInfo(m_renderer->m_cube, m_frame);
+-    Redraw(true);
+-}
+-
+-void CubeFrame::Solve() {
+-    if (m_animating) return;
+-
+-    // Start the first undo.
+-    STwist undo;
+-    if (m_renderer->m_cube.getUndoParams(undo)) {
+-        m_solving = true;
+-        internalRotate(undo);
+-    }
+-}
+-
+-void CubeFrame::Undo() {
+-    if (m_animating) return;
+-
+-    STwist undo;
+-    if (m_renderer->m_cube.getUndoParams(undo)) internalRotate(undo);
+-}
+-
+-void CubeFrame::Redo() {
+-    if (m_animating) return;
+-
+-    STwist redo;
+-    if (m_renderer->m_cube.getRedoParams(redo)) internalRotate(redo);
+-}
+-
+-void CubeFrame::Reset() {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.reset();
+-    updateSolvedInfo(m_renderer->m_cube, m_frame);
+-}
+-
+-void CubeFrame::HighlightCubies(List<int> ^ colors) {
+-    std::vector<int> tempColors;
+-    for (int i = 0; i < colors->Count; i++) tempColors.push_back(colors[i]);
+-
+-    m_renderer->m_cube.highlightCubies(tempColors);
+-}
+-
+-array<String ^> ^ CubeFrame::GetMacroNames() {
+-    std::vector<std::string> macroNames;
+-    m_renderer->m_cube.getMacroNames(macroNames);
+-    array<String ^> ^ names = gcnew array<String ^>(macroNames.size());
+-    for (uint i = 0; i < macroNames.size(); i++)
+-        names[i] = gcnew String(macroNames[i].c_str());
+-    return names;
+-}
+-
+-// XXX - make these return a bool so we are sure to stay synced with macro file.
+-//		 e.g. changing a name could update the UI but not the macro file as it
+-// is now.
+-void CubeFrame::StartMacroRecord() {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.startMacroRecord();
+-}
+-
+-void CubeFrame::StopMacroRecord() {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.stopMacroRecord();
+-}
+-
+-void CubeFrame::RenameMacro(int index, String ^ name) {
+-    if (m_animating) return;
+-
+-    std::string newName = systemStringToStdString(name);
+-    m_renderer->m_cube.renameMacro(index, newName);
+-}
+-
+-void CubeFrame::DeleteMacro(int index) {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.deleteMacro(index);
+-}
+-
+-void CubeFrame::ExecuteMacro(int index, bool reverse) {
+-    if (m_animating) return;
+-
+-    m_renderer->m_cube.executeMacro(index, reverse);
+-    Redraw(true);
+-
+-    updateSolvedInfo(m_renderer->m_cube, m_frame);
+-
+-    // Show a congratulatory message if they've solved it.
+-    if (m_renderer->m_cube.showSolvedMessage()) showSolvedMessage();
+-}
+-
+-void CubeFrame::Redraw(bool force) {
+-    if (force || m_enableRedraw) m_frame->DrawSurface->Invalidate();
+-}
+-
+-void CubeFrame::DoRender() {
+-    Graphics ^ g = Graphics::FromHwnd(m_frame->DrawSurface->Handle);
+-    DoRender(g);
+-    g->~Graphics();
+-}
+-
+-void CubeFrame::DoRender(Graphics ^ g) {
+-    static int foo = 0;
+-
+-    m_renderer->m_cube.m_settings.m_showAllCubieStickers = ShiftDown();
+-    m_renderer->renderScene(m_frame->DrawSurface->ClientRectangle.Width,
+-                            m_frame->DrawSurface->ClientRectangle.Height);
+-
+-    IntPtr hdc = g->GetHdc();
+-    SwapBuffers((HDC)hdc.ToPointer());
+-    g->ReleaseHdc(hdc);
+-}
+-
+-bool CubeFrame::ShiftDown() {
+-    return (Form::ModifierKeys & Keys::Shift) == Keys::Shift;
+-}
+-
+-bool CubeFrame::CtrlDown() {
+-    return (Form::ModifierKeys & Keys::Control) == Keys::Control;
+-}
+-
+-void CubeFrame::internalSelectSticker() {
+-    CVector3D linep1, linep2;
+-    CSelector::unProjectMousePoint(m_mouseLastX, m_mouseLastY, linep1, linep2);
+-    m_renderer->m_cube.selectSticker(linep1, linep2, ShiftDown());
+-}
+-}  // namespace MagicCube5D
+diff --git a/src/MagicCube5D/cubeFrame.h b/src/MagicCube5D/cubeFrame.h
+deleted file mode 100644
+index dafc5b7..0000000
+--- a/src/MagicCube5D/cubeFrame.h
++++ /dev/null
+@@ -1,120 +0,0 @@
+-#pragma once
+-
+-#include "workFiles/renderer.h"
+-
+-using namespace System;
+-using namespace System::Collections::Generic;
+-using namespace System::Windows::Forms;
+-
+-namespace MagicCube5D {
+-public
+-ref class CubeFrame : ICube {
+-public:
+-    CubeFrame();
+-    ~CubeFrame();
+-    !CubeFrame();
+-
+-    // run the application
+-    void Run();
+-
+-protected:
+-
+-    // event handers
+-    void FrameLoad(Object ^ sender, EventArgs ^ args);
+-    void Paint(Object ^ sender, System::Windows::Forms::PaintEventArgs ^ args);
+-    void TimerTick(System::Object ^ sender, System::EventArgs ^ e);
+-    void MouseDown(Object ^ sender, System::Windows::Forms::MouseEventArgs ^ args);
+-    void MouseMove(Object ^ sender, System::Windows::Forms::MouseEventArgs ^ args);
+-    void MouseUp(Object ^ sender, System::Windows::Forms::MouseEventArgs ^ args);
+-    void KeyDown(Object ^ sender, System::Windows::Forms::KeyEventArgs ^ args);
+-    void KeyUp(Object ^ sender, System::Windows::Forms::KeyEventArgs ^ args);
+-    void SliceDown(Object ^ sender, System::Windows::Forms::KeyEventArgs ^ args);
+-    void SliceUp(Object ^ sender, System::Windows::Forms::KeyEventArgs ^ args);
+-
+-    // drag helpers
+-    void StartDrag();
+-    void PerformDrag(int x, int y, MouseButtons btn);
+-    void FinishDrag();
+-
+-    // paint helpers
+-    void Redraw(bool force);
+-    void DoRender(System::Drawing::Graphics ^ g);
+-    void DoRender();
+-
+-    // keyboard helpers
+-    static bool ShiftDown();
+-    static bool CtrlDown();
+-
+-    // Helper to select a sticker.
+-    void internalSelectSticker();
+-
+-public:
+-
+-    // ICube methods
+-    virtual void SetParameter(CubeParameter param, int value);
+-    virtual void EnableFace(int face, bool enable);
+-    virtual void ColorFace(int face, System::Drawing::Color c);
+-    virtual void Rotate(int a1, int a2, int face, int slicemask);
+-    virtual property bool EnableRedraw {
+-        bool get();
+-        void set(bool);
+-    }
+-    virtual void CycleStickerAccent(int colors);
+-    virtual void Save(bool saveas);
+-    virtual void Load();
+-    virtual void Scramble(int number);
+-    virtual void Solve();
+-    virtual void Undo();
+-    virtual void Redo();
+-    virtual void Reset();
+-    virtual void HighlightCubies(List<int> ^ colors);
+-    virtual array<String ^> ^ GetMacroNames();
+-    virtual void StartMacroRecord();
+-    virtual void StopMacroRecord();
+-    virtual void RenameMacro(int index, String ^ name);
+-    virtual void DeleteMacro(int index);
+-    virtual void ExecuteMacro(int index, bool reverse);
+-
+-private:
+-
+-    // Internal rotation method
+-    // NOTE: This will always rotate, even if the puzzle is in the animating state.
+-    //		 You'll want to consider using the ICube rotate method instead.
+-    void internalRotate(const STwist& twist);
+-
+-    // Show a congratulatory solved message.
+-    void showSolvedMessage();
+-
+-private:
+-
+-    // The main frame of our UI
+-    MainFrame ^ m_frame;
+-
+-    // Additional managed component bits.
+-    System::ComponentModel::IContainer ^ m_components;
+-    Timer ^ m_timer;
+-
+-    // The cube renderer.
+-    CRenderer* m_renderer;
+-    bool m_enableRedraw;
+-
+-    // Whether or not we are solving.
+-    bool m_solving;
+-
+-    // Rotation stuff.
+-    double m_currentAngle;
+-
+-    // Animating?
+-    bool m_animating;
+-
+-    // Mouse moving.
+-    int m_mouseDownX;
+-    int m_mouseDownY;
+-    bool m_dragging;
+-    int m_mouseLastX;
+-    int m_mouseLastY;
+-
+-    // Our current slicemask;
+-    int m_slicemask;
+-};
+-}  // namespace MagicCube5D
+diff --git a/src/MagicCube5D/stdafx.h b/src/MagicCube5D/stdafx.h
+index e8b778d..5fd5ca1 100644
+--- a/src/MagicCube5D/stdafx.h
++++ b/src/MagicCube5D/stdafx.h
+@@ -6,8 +6,8 @@
+ // TODO: reference additional headers your program requires here
+ 
+ #include "windows.h"
+-#include "gl\gl.h"
+-#include "gl\glu.h"
++#include "GL/gl.h"
++#include "GL/glu.h"
+ 
+ #include <assert.h>
+ #include <math.h>
+diff --git a/src/MagicCube5D/workFiles/cube5D.cpp b/src/MagicCube5D/workFiles/cube5D.cpp
+index a516169..eb845d7 100644
+--- a/src/MagicCube5D/workFiles/cube5D.cpp
++++ b/src/MagicCube5D/workFiles/cube5D.cpp
+@@ -488,15 +488,15 @@ void CCube5D::getGotoStickers() {
+     assert(m_gotoStickers.size() == 6);
+ }
+ 
+-void CCube5D::save(bool saveas) {
++void CCube5D::save(const wchar_t* fileName) {
+     StateMatrix state;
+     m_transformer.stickersToMatrix(m_stickers, state);
+-    m_loader.saveToFile(state, m_twists, saveas, m_scrambled);
++    m_loader.saveToFile(state, m_twists, fileName, m_scrambled);
+ }
+ 
+-void CCube5D::load() {
++void CCube5D::load(const wchar_t* fileName) {
+     StateMatrix state;
+-    if (!m_loader.loadFromFile(state, m_twists, &m_scrambled)) return;
++    if (!m_loader.loadFromFile(fileName, state, m_twists, &m_scrambled)) return;
+ 
+     // Use the loaded state to determine our puzzle type.
+     assert(state.size());
+diff --git a/src/MagicCube5D/workFiles/cube5D.h b/src/MagicCube5D/workFiles/cube5D.h
+index 44775f6..eb89f75 100644
+--- a/src/MagicCube5D/workFiles/cube5D.h
++++ b/src/MagicCube5D/workFiles/cube5D.h
+@@ -103,8 +103,8 @@ public:
+     //
+ 
+     // Save/load.
+-    void save(bool saveas);
+-    void load();
++    void save(const wchar_t* fileName);
++    void load(const wchar_t* fileName);
+ 
+     // Select a sticker based on a line.
+     void selectSticker(const CVector3D& linep1, const CVector3D& linep2, bool shift);
+diff --git a/src/MagicCube5D/workFiles/helper.h b/src/MagicCube5D/workFiles/helper.h
+index 5878d2f..5bffd4f 100644
+--- a/src/MagicCube5D/workFiles/helper.h
++++ b/src/MagicCube5D/workFiles/helper.h
+@@ -69,15 +69,3 @@ inline CColor::CColor(double r, double g, double b, double a) {
+ }
+ 
+ #pragma managed(pop)
+-
+-#pragma managed(push, on)
+-
+-inline std::string systemStringToStdString(System::String ^ input) {
+-
+-    // There has got to be a better way to do this!
+-    std::string returnString;
+-    for (int i = 0; i < input->Length; i++) returnString.push_back((char)input[i]);
+-    return returnString;
+-}
+-
+-#pragma managed(pop)
+diff --git a/src/MagicCube5D/workFiles/loader.cpp b/src/MagicCube5D/workFiles/loader.cpp
+index b55740c..41c41b0 100644
+--- a/src/MagicCube5D/workFiles/loader.cpp
++++ b/src/MagicCube5D/workFiles/loader.cpp
+@@ -2,145 +2,175 @@
+ 
+ #include <stdafx.h>
+ 
+-#include "vectorND.h"
++#include <stdio.h>
++#include <stdlib.h>
+ 
+-using namespace System::Collections;
+-using System::Char;
+-using System::String;
+-using System::IO::File;
++#include "vectorND.h"
+ 
+ #define VERSION_STRING "Version1"
+ 
+-CLoader::CLoader() {}
++// Line-based text file I/O matching what the original System::IO code did:
++// lines are written with CRLF, and read lines may end in CRLF, LF or CR.
++class CLineReader {
++public:
++    bool open(const wchar_t* fileName) {
++        FILE* f = _wfopen(fileName, L"rb");
++        if (!f) return false;
++        char buf[4096];
++        size_t n;
++        while ((n = fread(buf, 1, sizeof(buf), f)) > 0) m_data.append(buf, n);
++        fclose(f);
++
++        // Skip a UTF-8 byte order mark, as StreamReader does.
++        if (m_data.compare(0, 3, "\xEF\xBB\xBF") == 0) m_pos = 3;
++        return true;
++    }
+ 
+-void CLoader::saveToFile(const StateMatrix& state, const std::vector<STwist>& twists,
+-                         bool saveas, bool scrambled) {
++    // Like StreamReader::Peek() >= 0.
++    bool more() const { return m_pos < m_data.size(); }
++
++    std::string readLine() {
++        size_t end = m_data.find_first_of("\r\n", m_pos);
++        if (end == std::string::npos) end = m_data.size();
++        std::string line = m_data.substr(m_pos, end - m_pos);
++        m_pos = end;
++        if (m_pos < m_data.size() && m_data[m_pos] == '\r') m_pos++;
++        if (m_pos < m_data.size() && m_data[m_pos] == '\n') m_pos++;
++        return line;
++    }
++
++private:
++    std::string m_data;
++    size_t m_pos = 0;
++};
++
++namespace {
++// Like String::Split with a tab delimiter.
++std::vector<std::string> split(const std::string& line) {
++    std::vector<std::string> result;
++    size_t start = 0, tab;
++    while ((tab = line.find('\t', start)) != std::string::npos) {
++        result.push_back(line.substr(start, tab - start));
++        start = tab + 1;
++    }
++    result.push_back(line.substr(start));
++    return result;
++}
++
++// Like System::Convert::ToInt32, but returns false instead of throwing.
++bool toInt(const std::string& s, int& value) {
++    const char* begin = s.c_str();
++    char* end;
++    long l = strtol(begin, &end, 10);
++    while (*end == ' ' || *end == '\t') end++;
++    if (end == begin || *end != '\0') return false;
++    value = (int)l;
++    return true;
++}
++
++bool writeFile(const wchar_t* fileName, const std::string& contents) {
++    FILE* f = _wfopen(fileName, L"wb");
++    if (!f) return false;
++    fwrite(contents.data(), 1, contents.size(), f);
++    fclose(f);
++    return true;
++}
+ 
+-    // Get the filename to save to.
+-    String ^ fileName = getSaveFileName(saveas);
+-    if ("" == fileName) return;
++void writeLine(std::string& out, const std::string& line) {
++    out += line;
++    out += "\r\n";
++}
++}  // namespace
+ 
+-    System::IO::StreamWriter ^ sw = File::CreateText(fileName);
++CLoader::CLoader() {}
++
++void CLoader::saveToFile(const StateMatrix& state, const std::vector<STwist>& twists,
++                         const wchar_t* fileName, bool scrambled) {
++    std::string sw;
+ 
+     // Write the header.
+-    String ^ header = "MagicCube5D\t" + VERSION_STRING + "\t" +
+-                      System::Convert::ToString(twists.size());
++    std::string header = "MagicCube5D\t" VERSION_STRING "\t" +
++                         std::to_string(twists.size());
+ 
+     // Append a simple "s" if the cube has been scrambled.
+     if (scrambled) header += "\ts";
+ 
+-    sw->WriteLine(header);
++    writeLine(sw, header);
+ 
+     // Now write out the state.
+-    String ^ line;
++    std::string line;
+     for (uint f = 0; f < state.size(); f++) {
+         line = "";
+-        for (uint s = 0; s < state[f].size(); s++)
+-            line += System::Convert::ToString(state[f][s]);
+-        sw->WriteLine(line);
++        for (uint s = 0; s < state[f].size(); s++) line += std::to_string(state[f][s]);
++        writeLine(sw, line);
+     }
+ 
+     // Now write out all the twists.
+     saveTwists(sw, twists);
+ 
+-    // Close the file.
+-    sw->Close();
++    // Write the file.
++    writeFile(fileName, sw);
+ }
+ 
+-bool CLoader::loadFromFile(StateMatrix& state, std::vector<STwist>& twists,
+-                           bool* scrambled) {
+-    String ^ fileName = getLoadFileName();
+-    if (!File::Exists(fileName)) return false;
+-
+-    System::IO::StreamReader ^ sr = gcnew System::IO::StreamReader(fileName);
+-
+-    // Delimiters (just tabs).
+-    array<Char> ^ delimiter = {'\t'};
++bool CLoader::loadFromFile(const wchar_t* fileName, StateMatrix& state,
++                           std::vector<STwist>& twists, bool* scrambled) {
++    CLineReader sr;
++    if (!sr.open(fileName)) return false;
+ 
+     // Read the header.
+     // Fail if unexpected format.
+-    String ^ line = sr->ReadLine();
+-    array<String ^> ^ split = line->Split(delimiter);
+-    IEnumerator ^ myEnum = split->GetEnumerator();
+-
+-    myEnum->MoveNext();
+-    String ^ tempString = safe_cast<String ^>(myEnum->Current);
+-    if (!tempString->Equals("MagicCube5D")) return false;
+-
+-    myEnum->MoveNext();
+-    tempString = safe_cast<String ^>(myEnum->Current);
+-    if (!tempString->Equals(VERSION_STRING)) return false;
++    std::vector<std::string> split = ::split(sr.readLine());
++    if (split.size() < 3) return false;
++    if (split[0] != "MagicCube5D") return false;
++    if (split[1] != VERSION_STRING) return false;
++    int numTwists;
++    if (!toInt(split[2], numTwists)) return false;
+ 
+-    myEnum->MoveNext();
+-    tempString = safe_cast<String ^>(myEnum->Current);
+-    int numTwists = System::Convert::ToInt32(tempString);
+-
+-    if (scrambled != NULL) *scrambled = split->Length >= 4 && split[3]->Equals("s");
++    if (scrambled != NULL) *scrambled = split.size() >= 4 && split[3] == "s";
+ 
+     // Now read the state.
+     state.resize(10);
+     for (uint f = 0; f < state.size(); f++) {
+-        line = sr->ReadLine();
+-        state[f].resize(line->Length);
+-        for (int s = 0; s < line->Length; s++)
+-            state[f][s] = System::Convert::ToInt32(line->Substring(s, 1));
++        std::string line = sr.readLine();
++        state[f].resize(line.length());
++        for (uint s = 0; s < line.length(); s++)
++            if (!toInt(line.substr(s, 1), state[f][s])) return false;
+     }
+ 
+     // Now read all the twists.
+     loadTwists(sr, twists);
+ 
+-    // Close the file.
+-    sr->Close();
+-
+     return true;
+ }
+ 
+ void CLoader::saveMacrosToFile(const std::vector<SMacro>& macros) {
+-    String ^ fileName = "MagicCube5D.macros";
+-    System::IO::StreamWriter ^ sw = File::CreateText(fileName);
+-
++    std::string sw;
+     for (uint m = 0; m < macros.size(); m++) {
+-        String ^ line = "Macro\t" + gcnew String(macros[m].m_name.c_str()) + "\t" +
+-                        System::Convert::ToString(macros[m].m_twists.size());
+-        sw->WriteLine(line);
++        std::string line = "Macro\t" + macros[m].m_name + "\t" +
++                           std::to_string(macros[m].m_twists.size());
++        writeLine(sw, line);
+         saveTwists(sw, macros[m].m_twists);
+     }
+ 
+-    sw->Close();
++    writeFile(L"MagicCube5D.macros", sw);
+ }
+ 
+ bool CLoader::loadMacrosFromFile(std::vector<SMacro>& macros) {
+     macros.clear();
+ 
+-    String ^ fileName = "MagicCube5D.macros";
+-    if (!File::Exists(fileName)) return false;
+-
+-    System::IO::StreamReader ^ sr = gcnew System::IO::StreamReader(fileName);
+-
+-    // Delimiters (just tabs).
+-    array<Char> ^ delimiter = {'\t'};
++    CLineReader sr;
++    if (!sr.open(L"MagicCube5D.macros")) return false;
+ 
+-    String ^ line = "";
+-    while (sr->Peek() >= 0) {
++    while (sr.more()) {
+         SMacro macro;
+ 
+         // Read the macro name and number of twists.
+-        line = sr->ReadLine();
+-        array<String ^> ^ split = line->Split(delimiter);
+-        IEnumerator ^ myEnum = split->GetEnumerator();
+-
+-        myEnum->MoveNext();
+-        String ^ tempString = safe_cast<String ^>(myEnum->Current);
+-        if (!tempString->Equals("Macro")) return false;
+-
+-        myEnum->MoveNext();
+-        tempString = safe_cast<String ^>(myEnum->Current);
+-        for (int i = 0; i < tempString->Length; i++)
+-            macro.m_name.push_back((char)tempString[i]);
+-
+-        myEnum->MoveNext();
+-        tempString = safe_cast<String ^>(myEnum->Current);
+-        int numTwists = System::Convert::ToInt32(tempString);
++        std::vector<std::string> split = ::split(sr.readLine());
++        if (split.size() < 3) return false;
++        if (split[0] != "Macro") return false;
++        macro.m_name = split[1];
++        int numTwists;
++        if (!toInt(split[2], numTwists)) return false;
+ 
+         // Read the twists.
+         int numLines = (int)ceil((double)numTwists / 10);
+@@ -149,29 +179,25 @@ bool CLoader::loadMacrosFromFile(std::vector<SMacro>& macros) {
+         macros.push_back(macro);
+     }
+ 
+-    sr->Close();
+-
+     return true;
+ }
+ 
+-void CLoader::saveTwists(System::IO::StreamWriter ^ sw,
+-                         const std::vector<STwist>& twists) {
+-    String ^ line = "";
++void CLoader::saveTwists(std::string& sw, const std::vector<STwist>& twists) {
++    std::string line = "";
+     int count = 0;
+     for (uint t = 0; t < twists.size(); t++) {
+-        String ^ twistString =
+-                twists[t].m_rotationFace == -1
+-                        ? "v"
+-                        : System::Convert::ToString(twists[t].m_rotationFace);
+-        twistString += System::Convert::ToString(twists[t].m_rotationAxis1) +
+-                       System::Convert::ToString(twists[t].m_rotationAxis2);
++        std::string twistString = twists[t].m_rotationFace == -1
++                                          ? "v"
++                                          : std::to_string(twists[t].m_rotationFace);
++        twistString += std::to_string(twists[t].m_rotationAxis1) +
++                       std::to_string(twists[t].m_rotationAxis2);
+         if (1 != twists[t].m_slicemask)
+-            twistString += ":" + System::Convert::ToString(twists[t].m_slicemask);
++            twistString += ":" + std::to_string(twists[t].m_slicemask);
+         line += twistString;
+         count++;
+ 
+         if (count >= 10 || t == twists.size() - 1) {
+-            sw->WriteLine(line);
++            writeLine(sw, line);
+             line = "";
+             count = 0;
+         } else {
+@@ -180,44 +206,34 @@ void CLoader::saveTwists(System::IO::StreamWriter ^ sw,
+     }
+ }
+ 
+-bool CLoader::loadTwists(System::IO::StreamReader ^ sr, std::vector<STwist>& twists,
+-                         int numLines) {
++bool CLoader::loadTwists(CLineReader& sr, std::vector<STwist>& twists, int numLines) {
+     twists.clear();
+ 
+-    // Delimiters (just tabs).
+-    array<Char> ^ delimiter = {'\t'};
+-
+-    String ^ line = "";
+     int linesRead = 0;
+-    while (sr->Peek() >= 0) {
++    while (sr.more()) {
+ 
+         // Were there a specific number of lines specified to read?
+         if (-1 != numLines)
+             if (linesRead == numLines) return true;
+ 
+-        line = sr->ReadLine();
++        std::vector<std::string> split = ::split(sr.readLine());
+         linesRead++;
+-        array<String ^> ^ split = line->Split(delimiter);
+-        IEnumerator ^ myEnum = split->GetEnumerator();
+ 
+-        while (myEnum->MoveNext()) {
+-            String ^ tempString = safe_cast<String ^>(myEnum->Current);
+-            if (tempString->Length < 3 || tempString->Length > 6) return false;
++        for (uint i = 0; i < split.size(); i++) {
++            const std::string& tempString = split[i];
++            if (tempString.length() < 3 || tempString.length() > 6) return false;
+ 
+             STwist twist;
+-            twist.m_rotationFace =
+-                    "v" == tempString->Substring(0, 1)
+-                            ? -1
+-                            : System::Convert::ToInt32(tempString->Substring(0, 1));
+-            twist.m_rotationAxis1 =
+-                    System::Convert::ToInt32(tempString->Substring(1, 1));
+-            twist.m_rotationAxis2 =
+-                    System::Convert::ToInt32(tempString->Substring(2, 1));
++            if ("v" == tempString.substr(0, 1))
++                twist.m_rotationFace = -1;
++            else if (!toInt(tempString.substr(0, 1), twist.m_rotationFace))
++                return false;
++            if (!toInt(tempString.substr(1, 1), twist.m_rotationAxis1)) return false;
++            if (!toInt(tempString.substr(2, 1), twist.m_rotationAxis2)) return false;
+ 
+             // Handle loading a slicemask.
+-            if (tempString->Length > 3)
+-                twist.m_slicemask = System::Convert::ToInt32(
+-                        tempString->Substring(4, tempString->Length - 4));
++            if (tempString.length() > 3)
++                if (!toInt(tempString.substr(4), twist.m_slicemask)) return false;
+ 
+             twists.push_back(twist);
+         }
+@@ -225,31 +241,3 @@ bool CLoader::loadTwists(System::IO::StreamReader ^ sr, std::vector<STwist>& twi
+ 
+     return true;
+ }
+-
+-#define FILTER "MagicCube5D log files (*.log)|*.log|All files (*.*)|*.*"
+-
+-System::String ^ CLoader::getSaveFileName(bool forcePrompt) {
+-    if (m_filename.length() == 0 || forcePrompt) {
+-        System::Windows::Forms::SaveFileDialog ^ dlg =
+-                gcnew System::Windows::Forms::SaveFileDialog();
+-        dlg->AddExtension = true;
+-        dlg->OverwritePrompt = true;
+-        dlg->Filter = FILTER;
+-        if (System::Windows::Forms::DialogResult::OK != dlg->ShowDialog()) return "";
+-        m_filename = systemStringToStdString(dlg->FileName);
+-    }
+-
+-    return gcnew String(m_filename.c_str());
+-}
+-
+-System::String ^ CLoader::getLoadFileName() {
+-    System::Windows::Forms::OpenFileDialog ^ dlg =
+-            gcnew System::Windows::Forms::OpenFileDialog();
+-    dlg->CheckFileExists = true;
+-    dlg->Filter = FILTER;
+-    if (System::Windows::Forms::DialogResult::OK != dlg->ShowDialog()) return "";
+-    m_filename = systemStringToStdString(dlg->FileName);
+-    return dlg->FileName;
+-}
+-
+-#undef FILTER
+diff --git a/src/MagicCube5D/workFiles/loader.h b/src/MagicCube5D/workFiles/loader.h
+index e2aa10a..cec6d45 100644
+--- a/src/MagicCube5D/workFiles/loader.h
++++ b/src/MagicCube5D/workFiles/loader.h
+@@ -8,10 +8,11 @@ public:
+     CLoader();
+ 
+     // Save/Load the entire puzzle.
++    // The GUI prompts for the file name.
+     void saveToFile(const StateMatrix& state, const std::vector<STwist>& twists,
+-                    bool saveas, bool scrambled = false);
+-    bool loadFromFile(StateMatrix& state, std::vector<STwist>& twists,
+-                      bool* scrambled = NULL);
++                    const wchar_t* fileName, bool scrambled = false);
++    bool loadFromFile(const wchar_t* fileName, StateMatrix& state,
++                      std::vector<STwist>& twists, bool* scrambled = NULL);
+ 
+     // Save/Load macros.
+     void saveMacrosToFile(const std::vector<SMacro>& macros);
+@@ -20,14 +21,7 @@ public:
+ private:
+ 
+     // Save/Load twists.
+-    void saveTwists(System::IO::StreamWriter ^ sw, const std::vector<STwist>& twists);
+-    bool loadTwists(System::IO::StreamReader ^ sr, std::vector<STwist>& twists,
++    void saveTwists(std::string& out, const std::vector<STwist>& twists);
++    bool loadTwists(class CLineReader& sr, std::vector<STwist>& twists,
+                     int numLines = -1);
+-
+-    // Prompt for filenames.
+-    System::String ^ getSaveFileName(bool forcePrompt);
+-    System::String ^ getLoadFileName();
+-
+-    // The last filename we saved.
+-    std::string m_filename;
+ };
+diff --git a/src/MagicCube5D/workFiles/renderer.h b/src/MagicCube5D/workFiles/renderer.h
+index bbd826c..62a9823 100644
+--- a/src/MagicCube5D/workFiles/renderer.h
++++ b/src/MagicCube5D/workFiles/renderer.h
+@@ -1,7 +1,6 @@
+ #pragma once
+ #pragma managed(push, off)
+ 
+-#include <atltypes.h>
+ 
+ #include "cube5D.h"
+ 
+diff --git a/src/MagicCubeGui/CubeFrame.cs b/src/MagicCubeGui/CubeFrame.cs
+new file mode 100644
+index 0000000..8ed1ef4
+--- /dev/null
++++ b/src/MagicCubeGui/CubeFrame.cs
+@@ -0,0 +1,688 @@
++namespace MagicCube5D
++{
++    using System;
++    using System.Collections.Generic;
++    using System.ComponentModel;
++    using System.Drawing;
++    using System.Runtime.InteropServices;
++    using System.Windows.Forms;
++
++    /// <summary>
++    /// Connects the GUI to the native puzzle core (MagicCube5DCore.dll).
++    /// This was the C++/CLI CubeFrame class; it moved here so no part of the program is mixed-mode.
++    /// </summary>
++    public class CubeFrame : ICube
++    {
++        // The main frame of our UI
++        private MainFrame frame;
++
++        // Additional managed component bits.
++        private IContainer components;
++        private Timer timer;
++
++        // The cube renderer.
++        private IntPtr renderer;
++        private bool enableRedraw = true;
++
++        // Whether or not we are solving.
++        private bool solving;
++
++        // Rotation stuff.
++        private double currentAngle;
++
++        // Animating?
++        private bool animating;
++
++        // Mouse moving.
++        private int mouseDownX = -1;
++        private int mouseDownY = -1;
++        private bool dragging;
++        private int mouseLastX;
++        private int mouseLastY;
++
++        // Our current slicemask;
++        private int slicemask;
++
++        // The last filename we saved or loaded.
++        private string fileName = "";
++
++        public bool EnableRedraw
++        {
++            get
++            {
++                return enableRedraw;
++            }
++            set
++            {
++                enableRedraw = value;
++                if (value)
++                {
++                    Redraw(false);
++                }
++            }
++        }
++
++        // run the application
++        public void Run()
++        {
++            frame = new MainFrame(this);
++
++            components = new Container();
++            timer = new Timer(components) { Interval = 20 };
++            timer.Tick += TimerTick;
++
++            frame.Load += FrameLoad;
++
++            frame.DrawSurface.Paint += Paint;
++            frame.DrawSurface.KeyDown += KeyDown;
++            frame.DrawSurface.KeyUp += KeyUp;
++            frame.KeyDown += SliceDown;
++            frame.KeyUp += SliceUp;
++            frame.DrawSurface.MouseDown += MouseDown;
++            frame.DrawSurface.MouseMove += MouseMove;
++            frame.DrawSurface.MouseUp += MouseUp;
++
++            renderer = Core.MC5D_Create();
++
++            UpdateSolvedInfo();
++
++            Application.Run(frame);
++
++            components.Dispose();
++            Core.MC5D_Destroy(renderer);
++        }
++
++        private void UpdateSolvedInfo()
++        {
++            var si = new int[14];
++            Core.MC5D_GetSolvedInfo(renderer, si);
++            frame.UpdateProgressPage(si[0], si[1], si[2], si[3], si[4], si[5], si[6],
++                si[7], si[8], si[9], si[10], si[11], si[12], si[13]);
++        }
++
++        private void FrameLoad(object sender, EventArgs args)
++        {
++            Core.MC5D_InitGL(frame.DrawSurface.Handle);
++        }
++
++        private void Paint(object sender, PaintEventArgs args)
++        {
++            DoRender(args.Graphics);
++        }
++
++        private void TimerTick(object sender, EventArgs e)
++        {
++            if (currentAngle + Core.MC5D_GetRotationStep(renderer) >= 90)
++            {
++                Core.MC5D_FinishRotate(renderer);
++                UpdateSolvedInfo();
++                var showMessage = false;
++
++                // Special handling if we are solving.
++                if (solving)
++                {
++                    // Start the next undo.
++                    if (Core.MC5D_StartUndo(renderer) != 0)
++                    {
++                        RotationStarted();
++                        return;
++                    }
++                    else
++                    {
++                        solving = false;
++                    }
++                }
++                else
++                {
++                    showMessage = Core.MC5D_ShowSolvedMessage(renderer) != 0;
++                }
++
++                timer.Enabled = false;
++                animating = false;
++
++                // We need to select a sticker.
++                InternalSelectSticker();
++
++                Redraw(false);
++
++                // Show a congratulatory message if they've solved it.
++                if (showMessage)
++                {
++                    ShowSolvedMessage();
++                }
++
++                return;
++            }
++
++            // Do the drawing.
++            Core.MC5D_IterationMade(renderer);
++            DoRender();
++
++            currentAngle += Core.MC5D_GetRotationStep(renderer);
++        }
++
++        private void MouseMove(object sender, MouseEventArgs e)
++        {
++            // Make sure we have the focus.
++            frame.DrawSurface.Select();
++
++            // Are we starting a drag?
++            // NOTE: The mousedown checks makes sure we had a mouse down call and fixes a problem I was seeing
++            //       where the view would reset when you loaded in a log file.
++            if (!dragging && e.Button != MouseButtons.None && -1 != mouseDownX && -1 != mouseDownY
++                && ((Math.Abs(e.X - mouseDownX) > SystemInformation.DragSize.Width / 2)
++                    || (Math.Abs(e.Y - mouseDownY) > SystemInformation.DragSize.Height / 2)))
++            {
++                StartDrag();
++
++                // Fake the original mouse position so we will get some drag motion immediately.
++                mouseLastX = mouseDownX;
++                mouseLastY = mouseDownY;
++            }
++
++            // Are we dragging?
++            if (dragging)
++            {
++                PerformDrag(e.X, e.Y, e.Button);
++            }
++
++            mouseLastX = e.X;
++            mouseLastY = e.Y;
++
++            // We don't need to continue past here if we are animating.
++            if (animating)
++            {
++                return;
++            }
++
++            // Select a sticker based on the new mouse position.
++            InternalSelectSticker();
++
++            Redraw(true);
++        }
++
++        private void StartDrag()
++        {
++            dragging = true;
++            frame.DrawSurface.Capture = true;
++        }
++
++        private void PerformDrag(int x, int y, MouseButtons btn)
++        {
++            var rect = frame.DrawSurface.ClientRectangle;
++            Core.MC5D_PerformDrag(renderer, x - mouseLastX, y - mouseLastY, rect.Width, rect.Height,
++                btn == MouseButtons.Left ? 1 : 0, btn == MouseButtons.Right ? 1 : 0);
++        }
++
++        private void FinishDrag()
++        {
++            frame.DrawSurface.Capture = false;
++            dragging = false;
++        }
++
++        private void MouseDown(object sender, MouseEventArgs e)
++        {
++            mouseDownX = e.X;
++            mouseDownY = e.Y;
++        }
++
++        private void MouseUp(object sender, MouseEventArgs e)
++        {
++            mouseDownX = mouseDownY = -1;
++
++            // Figure out if we were dragging, and if the drag is done.
++            if (dragging)
++            {
++                if (Control.MouseButtons == MouseButtons.None)
++                {
++                    FinishDrag();
++                }
++
++                return;
++            }
++
++            if (animating)
++            {
++                return;
++            }
++
++            // Past here, the mouse-up represents a click.
++
++            // Left button click.
++            if (e.Button == MouseButtons.Left)
++            {
++                if (Core.MC5D_HandleClick(renderer, CtrlDown() ? 1 : 0, slicemask == 0 ? 1 : slicemask) != 0)
++                {
++                    RotationStarted();
++                }
++            }
++        }
++
++        private void KeyDown(object sender, KeyEventArgs e)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            // Reset click handling.
++            if (e.KeyCode == Keys.Escape)
++            {
++                Core.MC5D_ResetClickState(renderer);
++            }
++
++            // Cycle through click stickers.
++            if (e.KeyCode == Keys.Left)
++            {
++                Core.MC5D_CycleSelectedGotoSticker(renderer, 1);
++            }
++
++            if (e.KeyCode == Keys.Right)
++            {
++                Core.MC5D_CycleSelectedGotoSticker(renderer, 0);
++            }
++
++            // Shift
++            if (e.KeyCode == Keys.ShiftKey)
++            {
++                // We need to select a sticker.
++                InternalSelectSticker();
++            }
++
++            Redraw(true);
++        }
++
++        private void KeyUp(object sender, KeyEventArgs e)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            // Shift
++            if (e.KeyCode == Keys.ShiftKey)
++            {
++                // We need to select a sticker.
++                InternalSelectSticker();
++            }
++
++            Redraw(true);
++        }
++
++        private static int SliceBit(Keys key)
++        {
++            switch (key)
++            {
++                case Keys.NumPad1: case Keys.D1: return 0x01;
++                case Keys.NumPad2: case Keys.D2: return 0x02;
++                case Keys.NumPad3: case Keys.D3: return 0x04;
++                case Keys.NumPad4: case Keys.D4: return 0x08;
++                case Keys.NumPad5: case Keys.D5: return 0x10;
++                case Keys.NumPad6: case Keys.D6: return 0x20;
++                case Keys.NumPad7: case Keys.D7: return 0x40;
++                default: return 0;
++            }
++        }
++
++        private void SliceDown(object sender, KeyEventArgs e)
++        {
++            // Update our slicemask;
++            slicemask |= SliceBit(e.KeyCode);
++        }
++
++        private void SliceUp(object sender, KeyEventArgs e)
++        {
++            // Update our slicemask;
++            slicemask &= ~SliceBit(e.KeyCode);
++        }
++
++        public void SetParameter(CubeParameter param, int value)
++        {
++            Core.MC5D_SetParameter(renderer, (int)param, value);
++            if (param == CubeParameter.Puzzle)
++            {
++                UpdateSolvedInfo();
++            }
++
++            Redraw(true);
++        }
++
++        public void CycleStickerAccent(int colors)
++        {
++            Core.MC5D_CycleStickerAccent(renderer, colors);
++            Redraw(true);
++        }
++
++        public void EnableFace(int face, bool enable)
++        {
++            Core.MC5D_EnableFace(renderer, face, enable ? 1 : 0);
++            Redraw(true);
++        }
++
++        public void ColorFace(int face, Color c)
++        {
++            // Face 10 sets the background color.
++            Core.MC5D_ColorFace(renderer, face, c.R, c.G, c.B, c.A);
++        }
++
++        public void Rotate(int a1, int a2, int face, int dummy)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_StartRotate(renderer, a1, a2, face, slicemask == 0 ? 1 : slicemask);
++            RotationStarted();
++        }
++
++        // Called after the core has started a rotation (was internalRotate).
++        private void RotationStarted()
++        {
++            currentAngle = 0;
++            animating = true;
++            timer.Enabled = true;
++        }
++
++        // Show a congratulatory solved message.
++        private void ShowSolvedMessage()
++        {
++            var text = "Congratulations!  You have achieved ultimate super-nerd status.\n\n"
++                + "Take a few moments and space-out on the ridiculousness of what you have just accomplished, then "
++                + "send your logfile to roice@gravitation3d.com to get your name listed in the MagicCube5D Hall of Insanity.";
++            var caption = "MagicCube5D Conquered!";
++            MessageBox.Show(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
++        }
++
++        public void Save(bool saveas)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            var name = GetSaveFileName(saveas);
++            if (name == "")
++            {
++                return;
++            }
++
++            Core.MC5D_Save(renderer, name);
++        }
++
++        public void Load()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_Load(renderer, GetLoadFileName());
++            UpdateSolvedInfo();
++            Redraw(true);
++        }
++
++        private const string Filter = "MagicCube5D log files (*.log)|*.log|All files (*.*)|*.*";
++
++        private string GetSaveFileName(bool forcePrompt)
++        {
++            if (fileName.Length == 0 || forcePrompt)
++            {
++                var dlg = new SaveFileDialog
++                {
++                    AddExtension = true,
++                    OverwritePrompt = true,
++                    Filter = Filter
++                };
++                if (DialogResult.OK != dlg.ShowDialog())
++                {
++                    return "";
++                }
++
++                fileName = dlg.FileName;
++            }
++
++            return fileName;
++        }
++
++        private string GetLoadFileName()
++        {
++            var dlg = new OpenFileDialog
++            {
++                CheckFileExists = true,
++                Filter = Filter
++            };
++            if (DialogResult.OK != dlg.ShowDialog())
++            {
++                return "";
++            }
++
++            fileName = dlg.FileName;
++            return dlg.FileName;
++        }
++
++        public void Scramble(int number)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_Scramble(renderer, number);
++            UpdateSolvedInfo();
++            Redraw(true);
++        }
++
++        public void Solve()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            // Start the first undo.
++            if (Core.MC5D_StartUndo(renderer) != 0)
++            {
++                solving = true;
++                RotationStarted();
++            }
++        }
++
++        public void Undo()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            if (Core.MC5D_StartUndo(renderer) != 0)
++            {
++                RotationStarted();
++            }
++        }
++
++        public void Redo()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            if (Core.MC5D_StartRedo(renderer) != 0)
++            {
++                RotationStarted();
++            }
++        }
++
++        public void Reset()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_Reset(renderer);
++            UpdateSolvedInfo();
++        }
++
++        public void HighlightCubies(List<int> colors)
++        {
++            Core.MC5D_HighlightCubies(renderer, colors.ToArray(), colors.Count);
++        }
++
++        public string[] GetMacroNames()
++        {
++            var names = new List<string>();
++            Core.MC5D_GetMacroNames(renderer, names.Add);
++            return names.ToArray();
++        }
++
++        // XXX - make these return a bool so we are sure to stay synced with macro file.
++        //       e.g. changing a name could update the UI but not the macro file as it is now.
++        public void StartMacroRecord()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_StartMacroRecord(renderer);
++        }
++
++        public void StopMacroRecord()
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_StopMacroRecord(renderer);
++        }
++
++        public void RenameMacro(int index, string name)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_RenameMacro(renderer, index, name);
++        }
++
++        public void DeleteMacro(int index)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_DeleteMacro(renderer, index);
++        }
++
++        public void ExecuteMacro(int index, bool reverse)
++        {
++            if (animating)
++            {
++                return;
++            }
++
++            Core.MC5D_ExecuteMacro(renderer, index, reverse ? 1 : 0);
++            Redraw(true);
++
++            UpdateSolvedInfo();
++
++            // Show a congratulatory message if they've solved it.
++            if (Core.MC5D_ShowSolvedMessage(renderer) != 0)
++            {
++                ShowSolvedMessage();
++            }
++        }
++
++        private void Redraw(bool force)
++        {
++            if (force || enableRedraw)
++            {
++                frame.DrawSurface.Invalidate();
++            }
++        }
++
++        private void DoRender()
++        {
++            using (var g = Graphics.FromHwnd(frame.DrawSurface.Handle))
++            {
++                DoRender(g);
++            }
++        }
++
++        private void DoRender(Graphics g)
++        {
++            Core.MC5D_RenderScene(renderer, frame.DrawSurface.ClientRectangle.Width,
++                frame.DrawSurface.ClientRectangle.Height, ShiftDown() ? 1 : 0);
++
++            var hdc = g.GetHdc();
++            Core.SwapBuffers(hdc);
++            g.ReleaseHdc(hdc);
++        }
++
++        private static bool ShiftDown()
++        {
++            return (Control.ModifierKeys & Keys.Shift) == Keys.Shift;
++        }
++
++        private static bool CtrlDown()
++        {
++            return (Control.ModifierKeys & Keys.Control) == Keys.Control;
++        }
++
++        // Helper to select a sticker.
++        private void InternalSelectSticker()
++        {
++            Core.MC5D_SelectSticker(renderer, mouseLastX, mouseLastY, ShiftDown() ? 1 : 0);
++        }
++
++        // The native core's C API (coreApi.cpp).
++        private static class Core
++        {
++            private const string Dll = "MagicCube5DCore.dll";
++
++            [UnmanagedFunctionPointer(CallingConvention.StdCall)]
++            public delegate void NameCallback([MarshalAs(UnmanagedType.LPStr)] string name);
++
++            [DllImport("gdi32.dll")]
++            public static extern bool SwapBuffers(IntPtr hdc);
++
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr MC5D_Create();
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_Destroy(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_InitGL(IntPtr hwnd);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_GetSolvedInfo(IntPtr r, [Out] int[] info);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_RenderScene(IntPtr r, int width, int height, int shiftDown);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_IterationMade(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern double MC5D_GetRotationStep(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_FinishRotate(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int MC5D_ShowSolvedMessage(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_StartRotate(IntPtr r, int a1, int a2, int face, int slicemask);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int MC5D_StartUndo(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int MC5D_StartRedo(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_PerformDrag(IntPtr r, int dx, int dy, int width, int height, int leftButton, int rightButton);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern int MC5D_HandleClick(IntPtr r, int ctrlDown, int slicemask);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_ResetClickState(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_CycleSelectedGotoSticker(IntPtr r, int left);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_SelectSticker(IntPtr r, int x, int y, int shiftDown);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_SetParameter(IntPtr r, int param, int value);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_CycleStickerAccent(IntPtr r, int colors);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_EnableFace(IntPtr r, int face, int enable);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_ColorFace(IntPtr r, int face, int red, int green, int blue, int alpha);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_Save(IntPtr r, [MarshalAs(UnmanagedType.LPWStr)] string fileName);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_Load(IntPtr r, [MarshalAs(UnmanagedType.LPWStr)] string fileName);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_Scramble(IntPtr r, int number);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_Reset(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_HighlightCubies(IntPtr r, int[] colors, int count);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_GetMacroNames(IntPtr r, NameCallback callback);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_StartMacroRecord(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_StopMacroRecord(IntPtr r);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_RenameMacro(IntPtr r, int index, [MarshalAs(UnmanagedType.LPStr)] string name);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_DeleteMacro(IntPtr r, int index);
++            [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] public static extern void MC5D_ExecuteMacro(IntPtr r, int index, int reverse);
++        }
++    }
++}
+diff --git a/src/MagicCubeGui/Program.cs b/src/MagicCubeGui/Program.cs
+new file mode 100644
+index 0000000..4a5177d
+--- /dev/null
++++ b/src/MagicCubeGui/Program.cs
+@@ -0,0 +1,19 @@
++namespace MagicCube5D
++{
++    using System;
++    using System.Windows.Forms;
++
++    internal static class Program
++    {
++        [STAThread]
++        private static void Main()
++        {
++            // Enabling Windows XP visual effects before any controls are created
++            Application.EnableVisualStyles();
++            Application.SetCompatibleTextRenderingDefault(false);
++
++            // Create the main window and run it
++            new CubeFrame().Run();
++        }
++    }
++}
+diff --git a/src/MagicCubeGui/Properties/AssemblyInfo.cs b/src/MagicCubeGui/Properties/AssemblyInfo.cs
+index 3b01191..d56e153 100644
+--- a/src/MagicCubeGui/Properties/AssemblyInfo.cs
++++ b/src/MagicCubeGui/Properties/AssemblyInfo.cs
+@@ -5,11 +5,11 @@
+ // General Information about an assembly is controlled through the following 
+ // set of attributes. Change these attribute values to modify the information
+ // associated with an assembly.
+-[assembly: AssemblyTitle( "magicCubeGui" )]
++[assembly: AssemblyTitle( "MagicCube5D" )]
+ [assembly: AssemblyDescription( "" )]
+ [assembly: AssemblyConfiguration( "" )]
+ [assembly: AssemblyCompany( "R3 Productions" )]
+-[assembly: AssemblyProduct( "magicCubeGui" )]
++[assembly: AssemblyProduct( "MagicCube5D" )]
+ [assembly: AssemblyCopyright( "Copyright © R3 Productions 2006" )]
+ [assembly: AssemblyTrademark( "" )]
+ [assembly: AssemblyCulture( "" )]
+diff --git a/src/MagicCubeGui/magicCubeGui.csproj b/src/MagicCubeGui/magicCubeGui.csproj
+index a8e7c85..b110437 100644
+--- a/src/MagicCubeGui/magicCubeGui.csproj
++++ b/src/MagicCubeGui/magicCubeGui.csproj
+@@ -1,108 +1,26 @@
+-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
++<Project Sdk="Microsoft.NET.Sdk">
++  <!-- The program's exe. The puzzle core is native code in MagicCube5DCore.dll (the MagicCube5D
++       C++ project), called via P/Invoke from CubeFrame.cs; that DLL must sit next to the exe. -->
+   <PropertyGroup>
+-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+-    <ProductVersion>8.0.50727</ProductVersion>
+-    <SchemaVersion>2.0</SchemaVersion>
+-    <ProjectGuid>{6B1A6B1E-6AD5-442D-A27D-7D4EADF1B8A9}</ProjectGuid>
+-    <OutputType>Library</OutputType>
+-    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <OutputType>WinExe</OutputType>
++    <TargetFramework>net48</TargetFramework>
+     <RootNamespace>MagicCube5D</RootNamespace>
+-    <AssemblyName>MagicCubeGui</AssemblyName>
++    <AssemblyName>MagicCube5D</AssemblyName>
++    <ApplicationIcon>..\MagicCube5D\app.ico</ApplicationIcon>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <Prefer32Bit>false</Prefer32Bit>
+     <SignAssembly>true</SignAssembly>
+     <AssemblyOriginatorKeyFile>mc5d.snk</AssemblyOriginatorKeyFile>
+-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+-    <FileUpgradeFlags>
+-    </FileUpgradeFlags>
+-    <UpgradeBackupLocation>
+-    </UpgradeBackupLocation>
+-    <OldToolsVersion>2.0</OldToolsVersion>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+-    <DebugSymbols>true</DebugSymbols>
+-    <DebugType>full</DebugType>
+-    <Optimize>false</Optimize>
+-    <OutputPath>bin\Debug\</OutputPath>
+-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+-    <DebugType>pdbonly</DebugType>
+-    <Optimize>true</Optimize>
+-    <OutputPath>bin\Release\</OutputPath>
+-    <DefineConstants>TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-    <UseVSHostingProcess>true</UseVSHostingProcess>
++    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
++    <LangVersion>latest</LangVersion>
++    <DebugType>none</DebugType>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="System" />
+-    <Reference Include="System.Data" />
+-    <Reference Include="System.Drawing" />
+     <Reference Include="System.Windows.Forms" />
+-    <Reference Include="System.Xml" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <Compile Include="FindDlg.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="FindDlg.Designer.cs">
+-      <DependentUpon>FindDlg.cs</DependentUpon>
+-    </Compile>
+-    <Compile Include="GuiSettings.cs" />
+-    <Compile Include="InputDlg.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="InputDlg.Designer.cs">
+-      <DependentUpon>InputDlg.cs</DependentUpon>
+-    </Compile>
+-    <Compile Include="MainFrame.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="MainFrame.Designer.cs">
+-      <DependentUpon>MainFrame.cs</DependentUpon>
+-    </Compile>
+-    <Compile Include="PersistableBase.cs" />
+-    <Compile Include="Properties\AssemblyInfo.cs" />
+-    <Compile Include="PropertyDlg.cs">
+-      <SubType>Form</SubType>
+-    </Compile>
+-    <Compile Include="PropertyDlg.Designer.cs">
+-      <DependentUpon>PropertyDlg.cs</DependentUpon>
+-    </Compile>
+-    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <EmbeddedResource Include="FindDlg.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>FindDlg.cs</DependentUpon>
+-    </EmbeddedResource>
+-    <EmbeddedResource Include="InputDlg.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>InputDlg.cs</DependentUpon>
+-    </EmbeddedResource>
+-    <EmbeddedResource Include="MainFrame.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>MainFrame.cs</DependentUpon>
+-    </EmbeddedResource>
+-    <EmbeddedResource Include="PropertyDlg.resx">
+-      <SubType>Designer</SubType>
+-      <DependentUpon>PropertyDlg.cs</DependentUpon>
+-    </EmbeddedResource>
++    <Reference Include="System.Drawing" />
+   </ItemGroup>
+   <ItemGroup>
+-    <None Include="mc5d.snk" />
++    <!-- Lets the project build without the .NET Framework targeting pack installed. -->
++    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+-       Other similar extension points exist, see Microsoft.Common.targets.
+-  <Target Name="BeforeBuild">
+-  </Target>
+-  <Target Name="AfterBuild">
+-  </Target>
+-  -->
+-  <PropertyGroup>
+-    <PostBuildEvent>copy "$(TargetPath)" ..</PostBuildEvent>
+-  </PropertyGroup>
+-</Project>
+\ No newline at end of file
++</Project>

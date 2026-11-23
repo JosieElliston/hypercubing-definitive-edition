@@ -1,0 +1,1 @@
+<!-- Stops shim/Directory.Build.props (net48, signing) from applying to build tools. --><Project />

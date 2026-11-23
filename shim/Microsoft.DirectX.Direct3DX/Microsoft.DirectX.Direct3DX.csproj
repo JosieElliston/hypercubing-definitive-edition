@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Microsoft.DirectX.Direct3DX</AssemblyName>
+    <RootNamespace>Microsoft.DirectX.Direct3D</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Microsoft.DirectX/Microsoft.DirectX.csproj" />
+    <ProjectReference Include="../Microsoft.DirectX.Direct3D/Microsoft.DirectX.Direct3D.csproj" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Compile Include="../Common/*.cs" />
+  </ItemGroup>
+</Project>

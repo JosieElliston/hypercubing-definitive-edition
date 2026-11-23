@@ -1,0 +1,202 @@
+Microsoft.DirectX | Microsoft.DirectX.DirectXException | (type)
+Microsoft.DirectX | Microsoft.DirectX.Matrix | (type)
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M11
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M12
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M13
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M21
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M22
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M23
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M31
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M32
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M33
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M41
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M42
+Microsoft.DirectX | Microsoft.DirectX.Matrix | field M43
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method get_Identity
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method Invert
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method LookAtLH
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method op_Multiply
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method OrthoLH
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method PerspectiveFovLH
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method RotationAxis
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method RotationQuaternion
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method RotationY
+Microsoft.DirectX | Microsoft.DirectX.Matrix | method Translation
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | (type)
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | field W
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | field X
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | field Y
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | field Z
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | method .ctor
+Microsoft.DirectX | Microsoft.DirectX.Quaternion | method RotationMatrix
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | (type)
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | field X
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | field Y
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | field Z
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method .ctor
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Add
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Cross
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Dot
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Length
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method LengthSq
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Multiply
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Normalize
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method op_Addition
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method op_Multiply
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method op_Subtraction
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Project
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Scale
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method Subtract
+Microsoft.DirectX | Microsoft.DirectX.Vector3 | method TransformCoordinate
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterInformation | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterInformation | method get_Adapter
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterInformation | method get_CurrentDisplayMode
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterInformation | method get_SupportedDisplayModes
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterListCollection | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterListCollection | method get_Count
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.AdapterListCollection | method get_Item
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Blend | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Caps | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Caps | method get_DeviceCaps
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.ClearFlags | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.ColorSource | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CreateFlags | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Cull | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionColored | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionColored | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionColored | method get_StrideSize
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionNormalColored | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionNormalColored | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.CustomVertex+PositionNormalColored | method get_StrideSize
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DepthFormat | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method add_DeviceResizing
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method BeginScene
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method Clear
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method DrawPrimitives
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method EndScene
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method get_DeviceCaps
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method get_Lights
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method get_RenderState
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method get_Transform
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method op_Inequality
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method Present
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method Reset
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method set_Material
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method set_VertexFormat
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method set_Viewport
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method SetStreamSource
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method SetTransform
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Device | method TestCooperativeLevel
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceCaps | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceCaps | method get_SupportsHardwareTransformAndLight
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceCaps | method get_SupportsPureDevice
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceLostException | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceNotResetException | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DeviceType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method get_Format
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method get_Height
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method get_Width
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method set_Format
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method set_Height
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method set_RefreshRate
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayMode | method set_Width
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayModeCollection | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayModeCollection | method get_Count
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.DisplayModeCollection | method GetEnumerator
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.FillMode | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Format | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Ambient
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Diffuse
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Direction
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Enabled
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Range
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Specular
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Light | method set_Type
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.LightsCollection | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.LightsCollection | method get_Item
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.LightType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.LockFlags | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | method CheckDepthStencilMatch
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | method CheckDeviceFormat
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | method CheckDeviceType
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | method get_Adapters
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Manager | method GetDeviceCaps
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Material | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Material | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Material | method set_Ambient
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Material | method set_Diffuse
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.MultiSampleType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Pool | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_AutoDepthStencilFormat
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_BackBufferCount
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_BackBufferFormat
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_BackBufferHeight
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_BackBufferWidth
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_DeviceWindow
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_EnableAutoDepthStencil
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_MultiSample
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_SwapEffect
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PresentParameters | method set_Windowed
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.PrimitiveType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_AlphaBlendEnable
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_Ambient
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_CullMode
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_DestinationBlend
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_FillMode
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_Lighting
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_PointScaleEnable
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_PointSize
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_SourceBlend
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_SpecularEnable
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_SpecularMaterialSource
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.RenderStateManager | method set_ZBufferEnable
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Resource | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Resource | method op_Equality
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Resource | method op_Inequality
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.ResourceType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.SwapEffect | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Transforms | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Transforms | method set_Projection
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Transforms | method set_View
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.TransformType | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Usage | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | method Dispose
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | method get_Description
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | method Lock
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBuffer | method Unlock
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBufferDescription | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexBufferDescription | method get_Size
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.VertexFormats | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | (type)
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method .ctor
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_Height
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_MaxZ
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_MinZ
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_Width
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_X
+Microsoft.DirectX.Direct3D | Microsoft.DirectX.Direct3D.Viewport | method set_Y
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | (type)
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | method DrawSubset
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | method LockIndexBuffer
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | method LockVertexBuffer
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | method UnlockIndexBuffer
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.BaseMesh | method UnlockVertexBuffer
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | (type)
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method .ctor
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method Box
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method Cylinder
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method Dispose
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method op_Inequality
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.Mesh | method Sphere
+Microsoft.DirectX.Direct3DX | Microsoft.DirectX.Direct3D.MeshFlags | (type)

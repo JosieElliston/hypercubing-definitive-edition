@@ -1,0 +1,10 @@
+bin/
+cache/
+checkouts/
+dist/
+experiments/mdx-shim/ref/
+obj/
+scripts/wl
+scripts/wlall
+scripts/wlany
+scripts/iconr

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Microsoft.DirectX</AssemblyName>
+    <RootNamespace>Microsoft.DirectX</RootNamespace>
+  </PropertyGroup>
+</Project>

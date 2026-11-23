@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Microsoft.DirectX.Direct3D</AssemblyName>
+    <RootNamespace>Microsoft.DirectX.Direct3D</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Microsoft.DirectX/Microsoft.DirectX.csproj" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.VisualC" />
+    <Compile Include="../Common/*.cs" />
+  </ItemGroup>
+  <!-- Add the C++/CLI modopts C# can't emit (see tools/AddModOpt/Program.cs), before the
+       compiled assembly is copied to bin/. -->
+  <Target Name="AddModOpts" AfterTargets="CoreCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; run --project &quot;$(MSBuildThisFileDirectory)../tools/AddModOpt/AddModOpt.csproj&quot; -c Release -v q -- &quot;@(IntermediateAssembly->'%(FullPath)')&quot;" />
+  </Target>
+</Project>

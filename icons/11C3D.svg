@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<path d="M49.05,8.54 Q44.36,27.98 59.58,40.96 Q39.64,42.52 32.00,61.00 Q24.36,42.52 4.42,40.96 Q19.64,27.98 14.95,8.54 Q32.00,19.00 49.05,8.54 Z" fill="#00b000" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M32.00,2.00 Q40.23,20.67 60.53,22.73 Q45.31,36.33 49.63,56.27 Q32.00,46.00 14.37,56.27 Q18.69,36.33 3.47,22.73 Q23.77,20.67 32.00,2.00 Z" fill="#00ff00" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<line x1="32" y1="32" x2="32.00" y2="2.00" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<line x1="32" y1="32" x2="60.53" y2="22.73" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<line x1="32" y1="32" x2="49.63" y2="56.27" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<line x1="32" y1="32" x2="14.37" y2="56.27" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+<line x1="32" y1="32" x2="3.47" y2="22.73" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+</svg>
