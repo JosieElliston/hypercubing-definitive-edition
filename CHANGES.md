@@ -3,6 +3,8 @@
 ## Unreleased
 
 circleguy now runs natively on x86-64 Linux and requires glibc 2.28 or newer.
+ElevenCell3D uses native macOS dialogs so opening or dismissing a file picker
+does not freeze the puzzle window.
 
 ## 1.0
 

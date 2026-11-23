@@ -355,9 +355,34 @@ payload_elevencell() {
   java_payload "Eleven Cell" elevencell "$(fetch https://superliminal.com/cube/ElevenCell.jar "" bb8876e7d8530f2086e6bf665a0db36a15f681c97052f92fc872216b5c13de6d)" "$HERE/icons/NM11C.svg" -- -jar '$JAR'
 }
 
-payload_elevencell3d() {
+elevencell3d_payload() {
   log "ElevenCell3D"
-  APP_VERSION=0.2.0 java_payload "ElevenCell3D" elevencell3d "$(fetch https://github.com/SuperSnowman16/ElevenCell3D/releases/download/v0.2.0/ElevenCell3D-v0.2.0.jar)" "$HERE/icons/11C3D.svg" -- --enable-native-access=ALL-UNNAMED -jar '$JAR'
+  APP_VERSION=0.2.0 java_payload "ElevenCell3D" elevencell3d "$(fetch https://github.com/SuperSnowman16/ElevenCell3D/releases/download/v0.2.0/ElevenCell3D-v0.2.0.jar)" "$HERE/icons/11C3D.svg" -- --enable-native-access=ALL-UNNAMED "$@"
+}
+
+payload_elevencell3d() {
+  elevencell3d_payload -jar '$JAR'
+}
+
+payload_elevencell3d_mac() {
+  # Invoke Main directly so the launcher owns the GLFW process.
+  elevencell3d_payload -XstartOnFirstThread -cp '$JAR' Main
+  local tmp scala_version=2.13.16 scala_url component compiler_cp=
+  tmp=$(mktemp -d)
+  scala_url=https://repo.maven.apache.org/maven2/org/scala-lang
+  for component in scala-compiler scala-library scala-reflect; do
+    compiler_cp="${compiler_cp:+$compiler_cp:}$(fetch "$scala_url/$component/$scala_version/$component-$scala_version.jar")"
+  done
+  mkdir -p "$tmp/src/main/scala" "$tmp/classes"
+  cp "$(fetch https://raw.githubusercontent.com/SuperSnowman16/ElevenCell3D/de47b1853c92d0e4ef126c38c61199af6cc1728c/src/main/scala/Main.scala ElevenCell3D-v0.2.0-Main.scala)" "$tmp/src/main/scala/Main.scala"
+  patch -s -d "$tmp" -p1 <"$HERE/patches/ElevenCell3D-macos-dialogs.patch"
+  "$JDK_HOME/bin/java" -cp "$compiler_cp" scala.tools.nsc.Main \
+    -release:17 -classpath "$P/res/app.jar" -d "$tmp/classes" "$tmp/src/main/scala/Main.scala"
+  "$JDK_HOME/bin/jar" uf "$P/res/app.jar" -C "$tmp/classes" .
+  clang -O2 -arch arm64 -mmacosx-version-min=11.0 -fobjc-arc -dynamiclib -framework AppKit \
+    -I"$JDK_HOME/include" -I"$JDK_HOME/include/darwin" \
+    "$LIB/elevencell3d-dialog.m" -o "$P/res/libelevencell3d-dialog.dylib"
+  rm -rf "$tmp"
 }
 
 payload_mc3d() {

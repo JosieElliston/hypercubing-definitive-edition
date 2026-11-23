@@ -1,0 +1,331 @@
+diff --git a/src/main/scala/Main.scala b/src/main/scala/Main.scala
+index 4f2945b..47c087a 100644
+--- a/src/main/scala/Main.scala
++++ b/src/main/scala/Main.scala
+@@ -41,16 +41,8 @@ import scala.util.Random
+ import Maths3D.Mobius.mobiusScalarMultiply
+ import com.badlogic.gdx.graphics.glutils.HdpiMode
+ import com.badlogic.gdx.utils.viewport.FitViewport
+-import javax.swing.JOptionPane
+-import javax.swing.SwingUtilities
+ import Maths3D.Mobius.PoincareToOrthographic
+-import java.lang.reflect.InvocationTargetException
+-import javax.swing.JFileChooser
+-import java.nio.file.{Files, Paths, StandardOpenOption}
+-import java.nio.charset.StandardCharsets
+-import java.awt.Toolkit
+-import javax.swing.JDialog
+-import java.util.concurrent.Executors
++import java.nio.file.{Files, Paths}
+ import Hyperboloid._
+ import CellMeshes.CellMesh
+ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader
+@@ -58,13 +50,15 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
+ import LorentzPolar.polarProject
+ import scala.collection.mutable.ArrayBuffer
+ import Permutations.Cell11
++import scala.util.control.NonFatal
+ 
+ 
+ object Main {
+ 
++	System.load(Paths.get(getClass.getProtectionDomain.getCodeSource.getLocation.toURI)
++		.resolveSibling("libelevencell3d-dialog.dylib").toString)
++
+ 	@volatile var isDirty = false
+-	// flag used to prevent multiple choosers at once
+-	@volatile private var isExitDialogOpen = false
+ 	private val defaultDir = Paths.get("Saves")
+ 	Files.createDirectories(defaultDir)
+ 
+@@ -116,7 +110,7 @@ class Main extends ApplicationAdapter {
+ 		new Color(c.getRed / 255f, c.getGreen / 255f, c.getBlue / 255f, transparency)
+ 	}
+ 
+-	private val saveExecutor = Executors.newSingleThreadExecutor()
++	private var dialogOpen = false
+ 
+ 	var hTransform = IdMatrix
+ 
+@@ -600,130 +594,46 @@ class Main extends ApplicationAdapter {
+ 
+ 	
+ 
++	@native private def runDialog(mode: String, saves: String, details: String): String
++
++	// Run AppKit dialogs on the first thread, outside GLFW's event callbacks.
++	// Starting Swing here would take over the Cocoa event loop from GLFW.
++	private def showDialog(mode: String)(onResult: String => Unit): Unit = {
++		if (dialogOpen) return
++		dialogOpen = true
++		Gdx.input.setInputProcessor(new InputAdapter {})
++		Gdx.app.postRunnable(() => {
++			try {
++				val result = runDialog(mode, defaultDir.toAbsolutePath.toString, "")
++				if (result != null) onResult(result)
++			} catch {
++				case NonFatal(error) =>
++					error.printStackTrace()
++					runDialog("error", "", error.toString)
++			} finally {
++				dialogOpen = false
++				Gdx.input.setInputProcessor(defaultInputProcessor)
++			}
++		})
++	}
++
++	private def chooseFile(save: Boolean): Unit = {
++		showDialog(if (save) "save" else "open") { path =>
++			if (save) state.saveState(path)
++			else state.loadState(path)
++		}
++	}
++
+ 	/** Called by Lwjgl3WindowAdapter.closeRequested(). */
+ 	def handleCloseRequest(): Boolean = {
+-    if (!isDirty) return true
+-    if (isExitDialogOpen) return false
+-
+-    isExitDialogOpen = true
+-
+-    // Install modal input blocker on the libGDX thread
+-    Gdx.app.postRunnable(new Runnable {
+-      override def run(): Unit = {
+-        Gdx.input.setInputProcessor(modalInputBlocker)
+-      }
+-    })
+-
+-    // Run Swing confirm + modal JFileChooser on the EDT
+-    SwingUtilities.invokeLater(new Runnable {
+-      override def run(): Unit = {
+-        try {
+-          // 1) Confirm dialog
+-          val choice = JOptionPane.showConfirmDialog(
+-            null,
+-            "You have unsaved changes. Save before exiting?",
+-            "Unsaved Changes",
+-            JOptionPane.YES_NO_CANCEL_OPTION
+-          )
+-
+-          choice match {
+-            case JOptionPane.YES_OPTION =>
+-              // 2) Modal JDialog containing JFileChooser
+-              val dialog = new JDialog(null: java.awt.Frame, "Choose save file", java.awt.Dialog.ModalityType.APPLICATION_MODAL)
+-              val chooser = new JFileChooser()
+-              chooser.setCurrentDirectory(defaultDir.toFile)
+-
+-              chooser.addActionListener(new java.awt.event.ActionListener {
+-                override def actionPerformed(e: java.awt.event.ActionEvent): Unit = {
+-                  val cmd = e.getActionCommand
+-                  if ("ApproveSelection" == cmd || "CancelSelection" == cmd) {
+-                    dialog.setVisible(false)
+-                    dialog.dispose()
+-                  }
+-                }
+-              })
+-
+-              dialog.getContentPane.add(chooser)
+-              dialog.pack()
+-              dialog.setAlwaysOnTop(true)
+-              dialog.setLocationRelativeTo(null)
+-              dialog.setVisible(true) // blocks EDT until chooser closed
+-
+-              val selected = chooser.getSelectedFile
+-              if (selected != null) {
+-                // write off the EDT
+-                saveExecutor.submit(new Runnable {
+-                  override def run(): Unit = {
+-                    try {
+-                      state.saveState(selected.getPath())
+-                      isDirty = false
+-
+-                      // restore input & exit on libGDX thread
+-                      Gdx.app.postRunnable(new Runnable {
+-                        override def run(): Unit = {
+-                          Gdx.input.setInputProcessor(defaultInputProcessor)
+-                          isExitDialogOpen = false
+-                          Gdx.app.exit()
+-                        }
+-                      })
+-                    } catch {
+-                      case ex: Exception =>
+-                        ex.printStackTrace()
+-                        // show error on EDT then restore input
+-                        JOptionPane.showMessageDialog(null, s"Save failed: ${ex.getMessage}", "Save Error", JOptionPane.ERROR_MESSAGE)
+-                        Gdx.app.postRunnable(new Runnable {
+-                          override def run(): Unit = {
+-                            Gdx.input.setInputProcessor(defaultInputProcessor)
+-                            isExitDialogOpen = false
+-                          }
+-                        })
+-                    }
+-                  }
+-                })
+-              } else {
+-                // chooser cancelled -> restore input on libGDX thread
+-                Gdx.app.postRunnable(new Runnable {
+-                  override def run(): Unit = {
+-                    Gdx.input.setInputProcessor(defaultInputProcessor)
+-                    isExitDialogOpen = false
+-                  }
+-                })
+-              }
+-
+-            case JOptionPane.NO_OPTION =>
+-              // Don't save -> restore input + exit
+-              Gdx.app.postRunnable(new Runnable {
+-                override def run(): Unit = {
+-                  Gdx.input.setInputProcessor(defaultInputProcessor)
+-                  isExitDialogOpen = false
+-                  Gdx.app.exit()
+-                }
+-              })
+-
+-            case _ => // CANCEL or closed
+-              Gdx.app.postRunnable(new Runnable {
+-                override def run(): Unit = {
+-                  Gdx.input.setInputProcessor(defaultInputProcessor)
+-                  isExitDialogOpen = false
+-                }
+-              })
+-          }
+-        } catch {
+-          case t: Throwable =>
+-            t.printStackTrace()
+-            Gdx.app.postRunnable(new Runnable {
+-              override def run(): Unit = {
+-                Gdx.input.setInputProcessor(defaultInputProcessor)
+-                isExitDialogOpen = false
+-              }
+-            })
+-        }
+-      }
+-    })
+-
+-    // Cancel the native close now; we'll exit later if requested
+-    false
+-  }
++		if (dialogOpen) return false
++		if (!isDirty) return true
++		showDialog("close") { path =>
++			if (path.nonEmpty) state.saveState(path)
++			Gdx.app.exit()
++		}
++		false
++	}
+ 
+ 	// def dispose(): Unit = {
+ 	// 	// cleanup
+@@ -970,68 +880,18 @@ class Main extends ApplicationAdapter {
+ 			if (keycode >= Keys.F1 && keycode <= Keys.F12 && !Gdx.input.isKeyPressed(Keys.ALT_LEFT) && !Gdx.input.isKeyPressed(Keys.ALT_RIGHT)) {
+ 				val n = keycode - Keys.F1 + 1
+ 				n match {
+-					case x if x <= 6 => 
+-
+-
+-						SwingUtilities.invokeLater(new Runnable {
+-							override def run(): Unit = {
+-
+-								val confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to scramble?", "Scramble?", JOptionPane.YES_NO_OPTION)
+-								if (confirm == JOptionPane.YES_OPTION){
+-									state.ResetState
+-
+-									if (x == 6){
+-										for (i <- 0 until 1000){
+-											randomMove
+-										}
+-									}else{
+-										for (i <- 0 until x){
+-											randomMove
+-										}
+-									}
+-
+-									// println(state.scrambleList)
+-									isDirty = true
+-								}
+-								// Gdx.app.postRunnable(new Runnable {
+-								// 	override def run(): Unit = {
+-								// 		updateColors
+-								// 	}
+-								// })
+-								
+-							}
+-						})
+-
+-					case 12 => 
+-						SwingUtilities.invokeLater(new Runnable {
+-							override def run(): Unit = {
+-								val confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to reset?", "Reset?", JOptionPane.YES_NO_OPTION)
+-								if (confirm == JOptionPane.YES_OPTION){
+-									state.ResetState
+-									isDirty = false
+-									
+-								
+-								}
+-								// Gdx.app.postRunnable(new Runnable {
+-								// 	override def run(): Unit = {
+-								// 		updateColors
+-								// 	}
+-								// })
+-							}
+-						})
+-
+-
+-					// case 8 => 
+-					// 	println(hTransform)
+-					// 	hTransform = normalizeHMatrix(hTransform)
+-					// 	println(hTransform)
+-						
+-						
+-
+-						
+-
+-						
+-					
++					case x if x <= 6 =>
++						showDialog("scramble") { _ =>
++							state.ResetState
++							val count = if (x == 6) 1000 else x
++							for (_ <- 0 until count) randomMove
++							isDirty = true
++						}
++					case 12 =>
++						showDialog("reset") { _ =>
++							state.ResetState
++							isDirty = false
++						}
+ 					case _ => ()
+ 				}
+ 				
+@@ -1043,8 +903,8 @@ class Main extends ApplicationAdapter {
+ 				|| Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)
+ 				|| Gdx.input.isKeyPressed(Keys.SYM)){
+ 				keycode match {
+-					case Keys.S => state.runFileChooser(true)
+-					case Keys.O => state.runFileChooser(false)
++					case Keys.S => chooseFile(true)
++					case Keys.O => chooseFile(false)
+ 					case Keys.Z =>
+ 						if (Gdx.input.isKeyPressed(Keys.SHIFT_LEFT) 
+ 							|| Gdx.input.isKeyPressed(Keys.SHIFT_RIGHT)){
+@@ -1063,20 +923,6 @@ class Main extends ApplicationAdapter {
+ 
+ 	}
+ 
+-	val modalInputBlocker: InputProcessor = new InputAdapter {
+-
+-		
+-
+-		override def keyDown(k: Int) = { Toolkit.getDefaultToolkit.beep(); true }
+-		override def keyUp(k: Int) = { Toolkit.getDefaultToolkit.beep(); true }
+-		override def keyTyped(c: Char) = { Toolkit.getDefaultToolkit.beep(); true }
+-		override def touchDown(x: Int, y: Int, p: Int, b: Int) = { Toolkit.getDefaultToolkit.beep(); true }
+-		override def touchUp(x: Int, y: Int, p: Int, b: Int) = { true }
+-		override def touchDragged(x: Int, y: Int, p: Int) = { Toolkit.getDefaultToolkit.beep(); true }
+-
+-		
+-	}
+-	
+ }
+ 
+ 
