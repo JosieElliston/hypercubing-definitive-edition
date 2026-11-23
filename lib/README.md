@@ -1,4 +1,4 @@
-# Hypercubing Definitive Edition 1.0 (for Mac)
+# Hypercubing Definitive Edition @VERSION@ (for Mac)
 
 This folder has the main hypercubing programs, ready to run on a Mac.
 The Windows ones run through a bundled copy of Wine,

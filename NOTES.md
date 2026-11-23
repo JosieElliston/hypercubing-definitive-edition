@@ -31,6 +31,8 @@ upkeep. This is not a public release, so redistribution licensing is not a gate.
 - Windows apps set `LSUIElement` because the launcher process never becomes a GUI
   app; without it, the Dock shows a second icon that bounces until it times out.
   The Dock entry is Wine's process, named after the exe (e.g. `MS5D.exe`).
+- `VERSION`: the bundle's version (see "Versioning"). `CHANGES.md`: what each version changed,
+  written for the recipients.
 - `checkouts/`: clones of the programs' source (gitignored; each is its own repo).
 - `patches/`: our changes to upstream sources, which `build.sh` applies to fresh clones. The
   program's section says how each patch is kept in sync with its checkout.
@@ -216,6 +218,23 @@ Constraints that will bite:
   hypercubing.xyz page's definitions (`scripts/mpu-merge-puzzles.py`; multi-word
   names get underscores, because MPU cuts the name at the first space). That file is
   overwritten on update, so puzzles a user adds there are lost.
+
+## Versioning
+
+- The bundle is x.y, in `VERSION`. Bump y for any change to a program's pin, or for adding
+  or removing a program. Bump x for changes every app shares or that touch users' files: the
+  launchers, the Wine engine, the Java runtime, the MDX shim, or the layout under
+  `~/Library/Application Support/Hypercubing`. Why x for those? They can break every app at
+  once, or people's settings and saves.
+- Each release: a line per change in `CHANGES.md`, `./build.sh zip`, and a git tag `vX.Y`.
+- `VERSION` only appears in the shipped README's title (`@VERSION@` in `lib/README.md`) and
+  the zip's name. Each app's Get Info version (`CFBundleShortVersionString`) is the
+  program's own, from `APP_VERSION` in its build function; apps with no upstream version
+  leave it out. Why not the bundle version? The user wanted each program to show its own.
+- Pins: every program is pinned in `build.sh` by a version in its URL, a sha256 (for URLs that
+  don't change on a new release), or a commit (for checkouts). Why? So two builds of one
+  version ship the same programs, and an upstream change shows up as a failed build, not
+  silently.
 
 ## Building
 

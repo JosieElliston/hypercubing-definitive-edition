@@ -4,9 +4,14 @@
 #   ./build.sh                 build everything
 #   ./build.sh magictile pcubes   build only these (plus shared parts they need)
 #   ./build.sh install         copy dist/hypercubing/* into /Applications/hypercubing
+#   ./build.sh zip             zip dist/hypercubing into dist/hypercubing-<VERSION>.zip
 #   ./build.sh list            list program names
 #
 # Downloads are cached in cache/ (delete a file to refetch). Source checkouts live in checkouts/.
+#
+# Every program is pinned: a version in its URL, a sha256 for downloads whose URL has no version,
+# or a commit for source checkouts. Updating a program means changing its pin, rebuilding, testing,
+# then bumping VERSION and adding a line to CHANGES.md (see NOTES.md, "Versioning").
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 DIST="$HERE/dist/hypercubing"
@@ -14,6 +19,7 @@ CACHE="$HERE/cache"
 CO="$HERE/checkouts"
 LIB="$HERE/lib"
 INSTALL_DIR="/Applications/hypercubing"
+HDE_VERSION=$(cat "$HERE/VERSION")
 mkdir -p "$DIST" "$CACHE" "$CO"
 
 # Pinned versions. Bump here.
@@ -29,12 +35,19 @@ GP_PIP=(pygame==2.6.1 pygame-widgets==1.3.2 pyperclip==1.11.0 pyinstaller==6.22.
 
 log() { printf '\033[1m==> %s\033[0m\n' "$*"; }
 
-# fetch <url> [<cache name>]: download once into cache/, print the path.
+# fetch <url> [<cache name>] [<sha256>]: download once into cache/, print the path. With a sha256,
+# also check the file (cached or not) against it, for URLs that don't change when upstream
+# releases a new version.
 fetch() {
-  local url=$1 name=${2:-$(basename "$1")}
+  local url=$1 name=${2:-$(basename "$1")} sum=${3:-}
   if [ ! -s "$CACHE/$name" ]; then
     curl -fsSL --retry 3 -o "$CACHE/$name.part" "$url" >&2
     mv "$CACHE/$name.part" "$CACHE/$name"
+  fi
+  if [ -n "$sum" ] && ! printf '%s  %s\n' "$sum" "$CACHE/$name" | shasum -a 256 -c --status; then
+    echo "cache/$name doesn't match its pinned sha256: upstream probably released a new version." >&2
+    echo "Test the new file, then update the sha256 in build.sh (and VERSION, CHANGES.md)." >&2
+    exit 1
   fi
   printf '%s' "$CACHE/$name"
 }
@@ -60,6 +73,8 @@ make_icns() {
 lbicon() { fetch "https://assets.hypercubing.xyz/img/icons/programs/$1.svg" "lb-icon-$1.svg"; }
 
 # new_app <App Name> <launcher template> <id slug>: create an empty bundle, print Contents path.
+# APP_VERSION (set it on the build function's call, e.g. `APP_VERSION=4.3 java_app ...`) is the
+# program's own version, shown in Finder's Get Info. Leave it unset when upstream has none.
 new_app() {
   local name=$1 launcher=$2 slug=$3 c="$DIST/$1.app/Contents"
   rm -rf "$DIST/$name.app"
@@ -76,9 +91,9 @@ new_app() {
   <key>CFBundleDisplayName</key><string>$name</string>
   <key>CFBundleIconFile</key><string>app</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>1.0</string>
   <key>NSHighResolutionCapable</key><true/>
 EOF
+  [ -n "${APP_VERSION:-}" ] && echo "  <key>CFBundleShortVersionString</key><string>$APP_VERSION</string>" >>"$c/Info.plist"
   # Windows apps: the launcher process never becomes a GUI app (Wine's own process shows the
   # window and Dock icon), so hide it, or the Dock shows a second icon bouncing until timeout.
   [ "$launcher" = wine-launcher.sh ] && echo '  <key>LSUIElement</key><true/>' >>"$c/Info.plist"
@@ -134,7 +149,9 @@ wine_app() {
 build_magictile() {
   log "MagicTile"
   local tmp; tmp=$(mktemp -d)
-  unzip -q "$(fetch https://github.com/roice3/MagicTile/releases/download/latest/MagicTile_v2.zip)" -d "$tmp"
+  # The release tag is "latest" and the exe says 1.0.0.0, so it has no version to show.
+  unzip -q "$(fetch https://github.com/roice3/MagicTile/releases/download/latest/MagicTile_v2.zip "" \
+    4a40c8c1f1cae3b87d08344e3d454406f85987298796838313516282e7df78dc)" -d "$tmp"
   local dir; dir=$(dirname "$(find "$tmp" -name MagicTile.exe | head -1)")
   # Upstream builds x86; run it 64-bit so OpenGL calls avoid Wine's slow wow64 thunks.
   python3 -I "$HERE/scripts/corflags.py" "$dir/MagicTile.exe" anycpu
@@ -152,8 +169,8 @@ build_pcubes() {
     fetch "$href" pCubes.zip >/dev/null
   fi
   tmp=$(mktemp -d)
-  unzip -q "$CACHE/pCubes.zip" -d "$tmp"
-  wine_app pCubes pcubes pCubes pCubes.exe "$tmp"
+  unzip -q "$(fetch unused pCubes.zip c78c45cd547e7339d73d19fb3ab31f9a0d30404de8a06efd232a411a39b06fb3)" -d "$tmp"
+  APP_VERSION=0.3.0.169 wine_app pCubes pcubes pCubes pCubes.exe "$tmp"
   rm -rf "$tmp"
 }
 
@@ -179,32 +196,34 @@ mdx_app() {
   wine_app "$name" "$slug" "$folder" "$exe" "$dir" "$icon"
 }
 
-# mdx_zip_app <zip url> <exe> <App Name> <slug> [icon]: unpack an upstream zip and build it with mdx_app.
-# The app's folder name in C:\Program Files is the app name.
+# mdx_zip_app <zip url> <exe> <App Name> <slug> [icon] [sha256]: unpack an upstream zip and build it
+# with mdx_app. The app's folder name in C:\Program Files is the app name.
 mdx_zip_app() {
-  local url=$1 exe=$2 name=$3 slug=$4 icon=${5:-} tmp
+  local url=$1 exe=$2 name=$3 slug=$4 icon=${5:-} sum=${6:-} tmp
   tmp=$(mktemp -d)
-  unzip -q "$(fetch "$url")" -d "$tmp"
+  unzip -q "$(fetch "$url" "" "$sum")" -d "$tmp"
   mdx_app "$name" "$slug" "$name" "$exe" "$(dirname "$(find "$tmp" -name "$exe" | head -1)")" "$icon"
   rm -rf "$tmp"
 }
 
 build_mc7dkb() {
   log "MC7D-KB"
-  mdx_zip_app https://github.com/Aegyo/mc7d-kb/releases/download/v0.8.4/MC7D-KB_v0.8.4_x86.zip mc7d.exe MC7D-KB mc7dkb "$(lbicon MC7D)"
+  APP_VERSION=0.8.4 mdx_zip_app https://github.com/Aegyo/mc7d-kb/releases/download/v0.8.4/MC7D-KB_v0.8.4_x86.zip mc7d.exe MC7D-KB mc7dkb "$(lbicon MC7D)"
 }
 
-# Andrey's three zips have unversioned URLs; delete the zip in cache/ to pick up a new release.
+# Andrey's three zips have unversioned URLs, hence the sha256 pins. Their only version numbers are
+# the exes' build-stamped file versions, so those are what APP_VERSION shows.
 build_mpu() {
   log "Magic Puzzle Ultimate"
   local tmp dir; tmp=$(mktemp -d)
-  unzip -q "$(fetch https://superliminal.com/andrey/mpu/MPUlt.zip)" -d "$tmp"
+  unzip -q "$(fetch https://superliminal.com/andrey/mpu/MPUlt.zip "" 3b5d2fbd26bf97b3e5ef9161e911a7246a34d953b8065e362392e31bf3813017)" -d "$tmp"
   dir=$(dirname "$(find "$tmp" -name MPUlt.exe | head -1)")
   # Add the definitions published on hypercubing.xyz's MPU page as a "hypercubing.xyz" menu.
-  # Delete cache/mpu-page.md to pick up page edits.
+  # Pinned to a commit of the site's repo; bump it to pick up page edits.
+  local page_rev=005024287726f8270f000272ced1c76086e598eb
   python3 -I "$HERE/scripts/mpu-merge-puzzles.py" "$dir/MPUlt_puzzles.txt" \
-    "$(fetch https://raw.githubusercontent.com/Hypercubers/hypercubing.xyz/main/docs/software/magicpuzzleultimate.md mpu-page.md)"
-  mdx_app "Magic Puzzle Ultimate" mpu "Magic Puzzle Ultimate" MPUlt.exe "$dir" "$(lbicon MPU)"
+    "$(fetch "https://raw.githubusercontent.com/Hypercubers/hypercubing.xyz/$page_rev/docs/software/magicpuzzleultimate.md" "mpu-page-$page_rev.md")"
+  APP_VERSION=1.0.6044.17726 mdx_app "Magic Puzzle Ultimate" mpu "Magic Puzzle Ultimate" MPUlt.exe "$dir" "$(lbicon MPU)"
   rm -rf "$tmp"
   # MPU saves its settings into this shipped file (SaveSettings in rubikHT.cs); don't clobber on update.
   echo 'KEEP=(MPUlt_settings.txt)' >>"$DIST/Magic Puzzle Ultimate.app/Contents/Resources/program.conf"
@@ -212,12 +231,14 @@ build_mpu() {
 
 build_ms5d() {
   log "Magic Simplex 5D"
-  mdx_zip_app https://superliminal.com/andrey/ms5d/Simplex5DBin.zip MS5D.exe "Magic Simplex 5D" ms5d
+  APP_VERSION=1.0.4048.40728 mdx_zip_app https://superliminal.com/andrey/ms5d/Simplex5DBin.zip MS5D.exe "Magic Simplex 5D" ms5d \
+    "" 9a435c594347b60e851d629dea63b6c45c7e7b402729a73a11d52757b4602684
 }
 
 build_mht633() {
   log "Magic Hyperbolic Tile"
-  mdx_zip_app https://superliminal.com/andrey/mht633/M3dHT633.zip m3dht633.exe "Magic Hyperbolic Tile" mht633
+  APP_VERSION=1.0.4010.35702 mdx_zip_app https://superliminal.com/andrey/mht633/M3dHT633.zip m3dht633.exe "Magic Hyperbolic Tile" mht633 \
+    "" 23f720f5dcfd19f986acf12b2a86f062ab2ff3956715a41756173c8c9f989547
 }
 
 # ---------------------------------------------------------------- Roice Nelson's C++/CLI programs
@@ -315,29 +336,30 @@ java_app() {
 
 build_mc4d() {
   log "Magic Cube 4D"
-  java_app "Magic Cube 4D" mc4d "$(fetch https://github.com/cutelyaware/magiccube4d/releases/download/v4.3.343/mc4d-4-3-343.jar)" "$(lbicon MC4D)" -- -jar '$JAR'
+  APP_VERSION=4.3.343 java_app "Magic Cube 4D" mc4d "$(fetch https://github.com/cutelyaware/magiccube4d/releases/download/v4.3.343/mc4d-4-3-343.jar)" "$(lbicon MC4D)" -- -jar '$JAR'
 }
 
 build_elevencell() {
   log "Eleven Cell (Nan Ma)"
-  java_app "Eleven Cell" elevencell "$(fetch https://superliminal.com/cube/ElevenCell.jar)" "$HERE/icons/NM11C.svg" -- -jar '$JAR'
+  # Unversioned URL, and the jar carries no version.
+  java_app "Eleven Cell" elevencell "$(fetch https://superliminal.com/cube/ElevenCell.jar "" bb8876e7d8530f2086e6bf665a0db36a15f681c97052f92fc872216b5c13de6d)" "$HERE/icons/NM11C.svg" -- -jar '$JAR'
 }
 
 build_elevencell3d() {
   log "ElevenCell3D"
-  java_app "ElevenCell3D" elevencell3d "$(fetch https://github.com/SuperSnowman16/ElevenCell3D/releases/download/v0.2.0/ElevenCell3D-v0.2.0.jar)" "$HERE/icons/11C3D.svg" -- --enable-native-access=ALL-UNNAMED -jar '$JAR'
+  APP_VERSION=0.2.0 java_app "ElevenCell3D" elevencell3d "$(fetch https://github.com/SuperSnowman16/ElevenCell3D/releases/download/v0.2.0/ElevenCell3D-v0.2.0.jar)" "$HERE/icons/11C3D.svg" -- --enable-native-access=ALL-UNNAMED -jar '$JAR'
 }
 
 build_mc3d() {
   log "Magic Cube 3D"
-  java_app "Magic Cube 3D" mc3d "$(fetch https://github.com/rzhao271/MC3D/releases/download/v1.0.0/mc3d.jar)" "$HERE/icons/MC3D.svg" -- -jar '$JAR'
+  APP_VERSION=1.0.0 java_app "Magic Cube 3D" mc3d "$(fetch https://github.com/rzhao271/MC3D/releases/download/v1.0.0/mc3d.jar)" "$HERE/icons/MC3D.svg" -- -jar '$JAR'
 }
 
 build_isocubesim() {
   log "IsoCubeSim"
   local tmp; tmp=$(mktemp -d)
   unzip -q "$(fetch https://mzrg.com/rubik/iso/IsoCubeSim_v4.1.zip)" -d "$tmp"
-  java_app "IsoCubeSim" isocubesim "$tmp/IsoCubeSim v4.1.jar" "$(lbicon MZRG)" -- -jar '$JAR'
+  APP_VERSION=4.1 java_app "IsoCubeSim" isocubesim "$tmp/IsoCubeSim v4.1.jar" "$(lbicon MZRG)" -- -jar '$JAR'
   rm -rf "$tmp"
 }
 
@@ -364,17 +386,25 @@ build_hsc2() {
   copy_upstream_app https://github.com/HactarCE/Hyperspeedcube/releases/download/v2.0.0-zeta.12/hyperspeedcube_macos.tar.gz hsc-2.0.0-zeta.12-macos.tar.gz "Hyperspeedcube 2"
 }
 
-# checkout <github owner/repo> <dir name>: clone or fast-forward into checkouts/.
+# checkout <github owner/repo> <dir name> <commit>: clone into checkouts/ and check out the pinned
+# commit (detached).
 checkout() {
-  if [ -d "$CO/$2/.git" ]; then git -C "$CO/$2" pull -q --ff-only; else git clone -q "https://github.com/$1" "$CO/$2"; fi
-  git -C "$CO/$2" submodule -q update --init --recursive
+  local g="$CO/$2"
+  [ -d "$g/.git" ] || git clone -q "https://github.com/$1" "$g"
+  git -C "$g" cat-file -e "$3^{commit}" 2>/dev/null || git -C "$g" fetch -q --tags origin
+  git -C "$g" -c advice.detachedHead=false checkout -q "$3"
+  git -C "$g" submodule -q update --init --recursive
 }
+
+# describe_version <checkout dir> <tag prefix>: the checkout's `git describe`, minus the tag prefix
+# (e.g. "0.7-14-ge76e7b3": 14 commits after tag v0.7).
+describe_version() { git -C "$CO/$1" describe --tags | sed "s/^$2//"; }
 
 build_circleguy() {
   log "circleguy"
-  checkout henrydukepickle/circleguy circleguy
+  checkout henrydukepickle/circleguy circleguy e76e7b3c83262df9836ac681e8af4fb5aaa71530
   (cd "$CO/circleguy" && cargo build -q --release)
-  local c; c=$(new_app circleguy native-launcher.sh circleguy)
+  local c; c=$(APP_VERSION=$(describe_version circleguy v) new_app circleguy native-launcher.sh circleguy)
   mkdir -p "$c/Resources/data"
   # The binary goes in Contents/MacOS so macOS treats it as this bundle's process (our name and
   # icon in the Dock). From Resources/bin it showed up as a generic "exec" icon.
@@ -390,7 +420,8 @@ build_3to4pp() {
   # gwstaten's fork of rayzchen/3to4pp. Upstream only ships Windows builds, but it's GLFW +
   # OpenGL 3.3 core + Dear ImGui, so it builds natively. GLFW is linked statically so the app
   # has no dependencies outside macOS.
-  checkout gwstaten/3to4pp 3to4pp
+  # No tags or version number upstream.
+  checkout gwstaten/3to4pp 3to4pp 3b031f95ec0bd4ff23789ce05811662c9e3023f6
   [ -d "$CO/glfw" ] || git clone -q --depth 1 --branch 3.4 https://github.com/glfw/glfw "$CO/glfw" 2>/dev/null
   cmake -S "$CO/glfw" -B "$CO/glfw/build" -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF \
     -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 >/dev/null
@@ -426,15 +457,14 @@ build_gelatinbrain() {
   # Build the GL2 rendering fallback against the exact game and JOGL jars we package.
   local game="$src/permuzzle/permuzzle.jar" jogl="$src/jogl"
   local game_url=https://zqjxkvby.com/permuzzle version=1.21058 game_archive images sources
-  game_archive=$(fetch "$game_url/permuzzle.jar" "gelatinbrain-$version-permuzzle.jar")
-  images=$(fetch "$game_url/images.zip" "gelatinbrain-$version-images.zip")
-  printf '%s  %s\n' d36f8c70a4894d09e387cdb650ce1daaf93c8ddc74ce2422f1ef60895bbf2b92 "$images" |
-    shasum -a 256 -c --status
+  game_archive=$(fetch "$game_url/permuzzle.jar" "gelatinbrain-$version-permuzzle.jar" \
+    1311f9fcb7c0e1da01cf5bce87836492974da005dac2f5416013c306684427ac)
+  images=$(fetch "$game_url/images.zip" "gelatinbrain-$version-images.zip" \
+    d36f8c70a4894d09e387cdb650ce1daaf93c8ddc74ce2422f1ef60895bbf2b92)
   unzip -oq "$images" -d "$src/permuzzle"
 
-  sources=$(fetch "$game_url/sources.zip" "gelatinbrain-$version-sources.zip")
-  printf '%s  %s\n' 914d9d72cd769224f0f754a1c5c3851d329b190c7e427cba329fb714843fd0e8 "$sources" |
-    shasum -a 256 -c --status
+  sources=$(fetch "$game_url/sources.zip" "gelatinbrain-$version-sources.zip" \
+    914d9d72cd769224f0f754a1c5c3851d329b190c7e427cba329fb714843fd0e8)
   mkdir -p "$src/renderer-source" "$src/empty"
   unzip -jq "$sources" 'permuzzle.java/jzzz/CGl192Cube.java' 'permuzzle.java/jzzz/CGl48TrianglesCube.java' \
     'permuzzle.java/jzzz/CGl8x24Cube.java' 'permuzzle.java/jzzz/CGlShaderCube.java' -d "$src/renderer-source"
@@ -445,7 +475,7 @@ build_gelatinbrain() {
   "$JDK_HOME/bin/java" "$LIB/gelatinbrain/PatchGelatinbrain.java" \
     "$game_archive" "$game" "$src/classes"
 
-  c=$(new_app Gelatinbrain java-launcher.sh gelatinbrain)
+  c=$(APP_VERSION=$version new_app Gelatinbrain java-launcher.sh gelatinbrain)
   # permuzzle.jar reads images/ and writes sessions/ next to itself, so it lives in the per-user
   # data folder (copied from Resources/data), not in the bundle.
   mkdir -p "$c/Resources/data" "$c/Resources/jogl"
@@ -468,7 +498,7 @@ build_geraniumspot() {
   # A pygame program. Upstream ships Windows (PyInstaller) builds only; we freeze its unmodified
   # Source/ with PyInstaller, through our own entry point lib/geraniumspot_main.py (its docstring
   # says what it changes). Python comes from uv (python-build-standalone, which includes Tk).
-  checkout grigorusha/GeraniumsPot GeraniumsPot
+  checkout grigorusha/GeraniumsPot GeraniumsPot 4bf9c31ea14be78f982ed8cff1256a7fe77084de
   local g="$CO/GeraniumsPot" b="$CO/GeraniumsPot-build" c tmp
   local pins="python $GP_PYTHON; ${GP_PIP[*]}"
   if [ "$(cat "$b/venv/.hde-pins" 2>/dev/null)" != "$pins" ]; then
@@ -492,7 +522,7 @@ build_geraniumspot() {
     "$LIB/geraniumspot_main.py" 2>&1 | grep -v -e '^pygame ' -e '^Hello from the pygame' >&2 || true
   local pyi="$b/dist/GeraniumsPot.app/Contents"
   [ -x "$pyi/MacOS/GeraniumsPot" ] || { echo "PyInstaller failed"; exit 1; }
-  c=$(new_app "Geraniums Pot" native-launcher.sh geraniumspot)
+  c=$(APP_VERSION=$(describe_version GeraniumsPot geranium) new_app "Geraniums Pot" native-launcher.sh geraniumspot)
   # The binary is in Contents/MacOS, so the Dock shows our name and icon.
   cp -R "$pyi/MacOS" "$pyi/Frameworks" "$pyi/Resources" "$c/"
   rm "$c/Resources/icon-windowed.icns"
@@ -532,6 +562,14 @@ case "${1:-all}" in
       cp -cR "$item" "$dest" 2>/dev/null || cp -R "$item" "$dest"
     done
     exit 0 ;;
+  zip)
+    zip="$HERE/dist/hypercubing-$HDE_VERSION.zip"
+    log "Zipping into $zip"
+    rm -f "$zip"
+    # ditto keeps symlinks and macOS metadata, which zip(1) would drop.
+    ditto -c -k --keepParent "$DIST" "$zip"
+    du -h "$zip"
+    exit 0 ;;
   all) targets=("${PROGRAMS[@]}"); shared=(engine jre mdxshim) ;;
   *)
     targets=("$@"); shared=()
@@ -541,7 +579,8 @@ case "${1:-all}" in
       [[ $MDX_PROGRAMS == *" $t "* ]] && shared+=(mdxshim)   # incremental, so always run
     done ;;
 esac
-cp "$LIB/README.md" "$DIST/README.md"   # keep its program list in sync with PROGRAMS
+# Keep its program list in sync with PROGRAMS. Its title says @VERSION@.
+sed "s/@VERSION@/$HDE_VERSION/" "$LIB/README.md" >"$DIST/README.md"
 for s in $(printf '%s\n' "${shared[@]}" | sort -u); do "build_$s"; done
 for t in "${targets[@]}"; do "build_$t"; done
 # Finder and the Dock cache icons per bundle path; without this, rebuilt apps can keep an old or
