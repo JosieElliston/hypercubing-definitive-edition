@@ -376,7 +376,7 @@ Constraints that will bite:
 - Gelatinbrain's **File → New** freeze (2026-11-23 00:00:08 EST) occurs when JOGL
   creates a new OpenGL canvas on the AWT event thread and waits for AppKit.
   AppKit is already waiting for an accessibility response from AWT. The bundle
-  takes JogAmp 2.7.0 RC from the pinned [Gelatinbrain fork commit](https://github.com/JosieElliston/gelatinbrain/commit/830fa61b4865a1b589916899c41f16808224857d),
+  takes JogAmp 2.7.0 RC from the pinned [commit on Hypercubers/gelatinbrain branch fix/macos-puzzle-switch](https://github.com/Hypercubers/gelatinbrain/commit/830fa61b4865a1b589916899c41f16808224857d),
   which includes the [JogAmp deadlock fix](https://github.com/sgothel/jogl/commit/e5bda67ab7296744cf4d4022356802a0c40a3c43).
   The launcher now keeps the session files so Gelatinbrain can restore its last puzzle.
 - Upgraded Gelatinbrain to v1.21058 (2026-11-23 01:31:39 EST) using the

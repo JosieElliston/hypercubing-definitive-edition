@@ -416,9 +416,10 @@ build_3to4pp() {
 
 build_gelatinbrain() {
   log "Gelatinbrain"
-  # The fork vendors the JogAmp build that fixes puzzle switching on macOS.
+  # Branch fix/macos-puzzle-switch on Hypercubers/gelatinbrain (PR #7) vendors the JogAmp build that
+  # fixes puzzle switching on macOS.
   local rev=830fa61b4865a1b589916899c41f16808224857d archive src c
-  archive=$(fetch "https://codeload.github.com/JosieElliston/gelatinbrain/tar.gz/$rev" "gelatinbrain-$rev.tar.gz")
+  archive=$(fetch "https://codeload.github.com/Hypercubers/gelatinbrain/tar.gz/$rev" "gelatinbrain-$rev.tar.gz")
   src=$(mktemp -d)
   tar -xzf "$archive" --strip-components 1 -C "$src"
 
