@@ -41,7 +41,7 @@ softwareupdate --install-rosetta --agree-to-license
     - Magic Cube 3D      a 3D Rubik's cube simulator
     - IsoCubeSim         isometric AxBxC cubes and N-layer megaminxes
     - Gelatinbrain       Virtual Magic Polyhedra: a huge, strange puzzle collection
-- Native Mac programs:
+- Native programs:
     - Hyperspeedcube 1   the recommended place to start (version 1.0.12)
     - Hyperspeedcube 2   the in-development successor (2.0.0-zeta.12)
     - circleguy          rotating-circle puzzles
@@ -92,6 +92,8 @@ behave like the originals, and their saves and logs are compatible.
   programs. If one of them draws something wrong, the stand-in is the likely cause.
 - Magic Cube 5D and Magic120Cell were partly written in C++/CLI, which only
   Microsoft's .NET can run. That part was rewritten.
+- Gelatinbrain uses fallback renderers for 11 puzzles that would otherwise
+  show a blank canvas because their shaders require GLSL 1.30.
 
 ## Uninstalling
 
