@@ -422,8 +422,8 @@ EOF
 }
 
 # ---------------------------------------------------------------- per-edition programs
-# Native builds on the Mac. On Linux, circleguy, 3to4++ and Geraniums Pot run as Windows builds
-# under Wine like the rest, so nothing depends on the distribution's glibc or libraries.
+# On Linux, Hyperspeedcube and circleguy run natively. 3to4++ and Geraniums Pot use Windows builds
+# under Wine to avoid depending on the Linux build host's glibc and libraries.
 
 # Hyperspeedcube: upstream's own builds for each platform.
 hsc_mac() {
@@ -468,17 +468,35 @@ payload_circleguy_mac() {
 }
 
 payload_circleguy_linux() {
-  log "circleguy (Windows build)"
+  local target=x86_64-unknown-linux-gnu glibc=2.28
+  local src="$CO/circleguy" bin logfile
+  bin="$src/target/$target/release/circleguy"
+  logfile="$src/target/linux-build.log"
+  log "circleguy (Linux x64, glibc $glibc)"
+  command -v zig >/dev/null && command -v cargo-zigbuild >/dev/null ||
+    { echo 'Building circleguy for Linux requires Zig and cargo-zigbuild on PATH.' >&2; exit 1; }
   checkout henrydukepickle/circleguy circleguy "$CIRCLEGUY_REV"
-  rustup target add x86_64-pc-windows-gnu >/dev/null 2>&1
-  (cd "$CO/circleguy" && CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=x86_64-w64-mingw32-gcc \
-    cargo build -q --release --target x86_64-pc-windows-gnu 2>target/win-build.log) ||
-    { cat "$CO/circleguy/target/win-build.log" >&2; exit 1; }   # upstream's warnings stay in the log otherwise
-  local tmp; tmp=$(mktemp -d)
-  cp "$CO/circleguy/target/x86_64-pc-windows-gnu/release/circleguy.exe" "$tmp/"
-  cp -R "$CO/circleguy/Puzzles" "$CO/circleguy/Configs" "$tmp/"
-  APP_VERSION=$(describe_version circleguy v) wine_payload circleguy circleguy circleguy.exe "$tmp" "$CO/circleguy/resources/icon.png"
-  rm -rf "$tmp"
+  rustup target add "$target"
+  mkdir -p "$src/target"
+  (cd "$src" && cargo zigbuild -q --locked --release --target "$target.$glibc") >"$logfile" 2>&1 ||
+    { cat "$logfile" >&2; exit 1; }
+  # Check the linked executable's version requirements before putting it in the bundle.
+  xcrun llvm-objdump --private-headers "$bin" | awk -v max_minor="${glibc#2.}" '
+    $NF ~ /^GLIBC_/ {
+      split(substr($NF, 7), version, /[.]/)
+      if (version[1] != 2 || version[2] > max_minor) {
+        print "circleguy requires unsupported " $NF > "/dev/stderr"
+        incompatible = 1
+      }
+    }
+    END { exit incompatible }
+  '
+  APP_VERSION=$(describe_version circleguy v) new_payload circleguy circleguy native
+  echo 'BIN=circleguy' >>"$P/manifest"
+  mkdir -p "$P/data"
+  cp "$bin" "$P/data/"
+  cp -R "$src/Puzzles" "$src/Configs" "$P/data/"
+  payload_icon "$src/resources/icon.png"
 }
 
 # 3to4++: gwstaten's fork of rayzchen/3to4pp. Upstream only ships Windows builds, but it's GLFW +

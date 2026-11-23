@@ -1,5 +1,9 @@
 # Changes
 
+## Unreleased
+
+circleguy now runs natively on x86-64 Linux and requires glibc 2.28 or newer.
+
 ## 1.0
 
 First release, for Mac and Linux, with 19 programs:

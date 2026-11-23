@@ -251,13 +251,17 @@ Decisions (2026-11-23, with the user):
   Updating means extracting over the folder, so shipped files a program saves settings into
   (`KEEP` in the manifest, e.g. MPU's `MPUlt_settings.txt`) ship as `<file>.default`, and the
   launcher copies one into place only when the real file is missing.
-- **3to4++, circleguy and Geraniums Pot ship as Windows builds under Wine**, not native Linux
-  builds. Why? Native binaries depend on the build host's glibc and libraries (cif-gpu is
-  Debian 13, glibc 2.41, newer than most users' distros), while Wine absorbs those
-  differences. 3to4++ and circleguy are cross-compiled with mingw (circleguy via rustup's
-  `x86_64-pc-windows-gnu` target); Geraniums Pot is upstream's own Windows build from the
-  pinned checkout. HSC ships its upstream Linux binaries, with the icon from each version's
-  app resources (the repo's `assets/icon-1024.png` has HSC 1's faces in other colors).
+- **3to4++ and Geraniums Pot run through Wine.** 3to4++ is cross-compiled with MinGW, and
+  Geraniums Pot ships upstream's Windows build from the pinned checkout. Version 1.0 used
+  Wine for circleguy too, because a build on cif-gpu (Debian 13, glibc 2.41) could require a
+  newer glibc than users have. circleguy now cross-compiles from the Mac with Zig for Linux
+  x86-64 and glibc 2.28. The build checks the ELF's glibc symbol versions before packaging.
+  HSC ships its upstream Linux binaries, with the icon from each version's app resources
+  (the repo's `assets/icon-1024.png` has HSC 1's faces in other colors).
+- **Native circleguy test (2026-11-23 12:18:48 EST).** A plain `cargo build --locked --release`
+  on cif-gpu required glibc 2.39. `./build.sh linux circleguy` produced an ELF whose newest
+  glibc symbol version is `GLIBC_2.28`. The packaged `run` opened the app under Xvfb on cif-gpu
+  with `WINE=/bin/false`. Pressing `f` turned the puzzle.
 - Gelatinbrain ships only the JogAmp natives for its edition (the payload's `mac/` and `linux/`
   parts); JogAmp finds them next to its jars.
 - The Linux JRE is linked by the Mac's jlink from Temurin's separate **jmods** tarball (the
@@ -309,7 +313,9 @@ Testing on `ssh cif-gpu` (Debian 13, headless, no sudo; set up 2026-11-23 in
   the pinned CPython into `cache/uv-python` and the venv into `checkouts/GeraniumsPot-build`),
   `rsvg-convert`, Pillow for `python3`, the .NET SDK (see below), rustup's cargo, cmake, a JDK,
   and `mingw-w64` (Homebrew, for the MC5D and Magic120Cell core DLLs and the Linux edition's
-  Windows builds). The build adds rustup's `x86_64-pc-windows-gnu` target itself.
+  Windows build). For native Linux circleguy, put `zig` and `cargo-zigbuild` on `PATH`
+  (tested with Zig 0.15.2 and cargo-zigbuild 0.23.4). The build adds rustup's
+  `x86_64-unknown-linux-gnu` target itself.
   The Python and pip pins for Geraniums Pot are `GP_PYTHON`/`GP_PIP` in `build.sh`; changing
   them rebuilds the venv.
 - The .NET SDK 11.0.100 is installed user-locally in `~/.dotnet`, so use

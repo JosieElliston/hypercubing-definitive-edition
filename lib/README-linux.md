@@ -4,7 +4,7 @@ The main hypercubing programs, ready to run on Linux. The Java ones run on a
 bundled Java runtime. The Windows ones run on your own copy of Wine, with the
 changes they need to work there already made (see below).
 
-Requires a 64-bit x86 PC. It should work on any distribution.
+Requires a 64-bit x86 PC and a glibc-based Linux distribution.
 
 ## Installing
 
@@ -30,7 +30,6 @@ To start a program without the menu, run the `run` file in its folder.
     - Magic Hyperbolic Tile  a puzzle on the {6,3,3} hyperbolic honeycomb
     - Magic Cube 5D      5D cubes, from 2^5 to 7^5
     - Magic120Cell       the 120-cell, a 4D megaminx
-    - circleguy          rotating-circle puzzles
     - 3to4++             the physical 3x3x3x3 design, simulated
     - Geraniums Pot      intersecting-circle puzzles, with photos of the real ones
 - Java programs:
@@ -43,6 +42,7 @@ To start a program without the menu, run the `run` file in its folder.
 - Native Linux programs:
     - Hyperspeedcube 1   the recommended place to start (version 1.0.12)
     - Hyperspeedcube 2   the in-development successor (2.0.0-zeta.12)
+    - circleguy          rotating-circle puzzles (requires glibc 2.28 or newer and OpenGL)
 - Shared parts, in "Support" (don't open these directly):
     - jre                Java, which runs the Java programs
     - launch             starts every program
@@ -87,8 +87,9 @@ behave like the originals, and their saves and logs are compatible.
 - Gelatinbrain has fallback renderers for 11 puzzles whose shaders need GLSL
   1.30. They're only used if your graphics driver can't run those shaders;
   most Linux drivers can.
-- circleguy and 3to4++ are Windows builds of their source, made for this bundle.
-  Geraniums Pot is its author's own Windows build.
+- circleguy is a native Linux build made from upstream source.
+- 3to4++ is a Windows build made from upstream source. Geraniums Pot is its
+  author's own Windows build.
 
 ## Uninstalling
 
