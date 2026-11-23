@@ -82,8 +82,8 @@ not in this folder.
 
 ## Changes made for this bundle
 
-Some Windows programs needed changes to run under Wine. They should look and
-behave like the originals, and their saves and logs are compatible.
+Some programs needed changes to run on a Mac. They should look and behave like
+the originals, and their saves and logs are compatible.
 
 - MagicTile runs as a 64-bit program; under Wine, the original is much slower.
 - MC7D-KB, Magic Puzzle Ultimate, Magic Simplex 5D and Magic Hyperbolic Tile
@@ -94,6 +94,10 @@ behave like the originals, and their saves and logs are compatible.
   Microsoft's .NET can run. That part was rewritten.
 - Gelatinbrain uses fallback renderers for 11 puzzles that would otherwise
   show a blank canvas because their shaders require GLSL 1.30.
+- Geraniums Pot is only released for Windows, we build from source,
+  with small fixes for a crash at startup and for black boxes on
+  markers while a ring turns. It remembers the last-opened puzzle in its
+  own folder, not in your home folder.
 
 ## Uninstalling
 
