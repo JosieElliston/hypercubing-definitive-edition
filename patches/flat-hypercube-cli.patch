@@ -1,0 +1,82 @@
+diff --git a/src/main.rs b/src/main.rs
+index 945b6aa..3c1f886 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -1,8 +1,13 @@
++use std::process::ExitCode;
++
+ use flat_hypercube::state::main_inner;
+ 
+-fn main() {
+-    let res = main_inner();
+-    if let Err(err) = res {
+-        println!("{}", err);
++fn main() -> ExitCode {
++    match main_inner() {
++        Ok(()) => ExitCode::SUCCESS,
++        Err(err) => {
++            eprintln!("{err}");
++            ExitCode::FAILURE
++        }
+     }
+ }
+diff --git a/src/state.rs b/src/state.rs
+index 3239323..7726cc4 100644
+--- a/src/state.rs
++++ b/src/state.rs
+@@ -858,7 +858,8 @@ impl Drop for StdoutManager {
+         let mut stdout = io::stdout();
+         let _ = stdout.execute(cursor::Show);
+         let _ = stdout.execute(crossterm::event::DisableMouseCapture);
+-        let _ = terminal::disable_raw_mode(); // does this help?
++        let _ = stdout.execute(terminal::LeaveAlternateScreen);
++        let _ = terminal::disable_raw_mode();
+     }
+ }
+ 
+@@ -897,7 +898,7 @@ struct Args {
+     boxes: bool,
+ 
+     /// Number of dimensions to cut by
+-    #[arg(short, long, default_value("0"))]
++    #[arg(long, default_value("0"))]
+     section: usize,
+ 
+     /// Preferences file
+@@ -907,13 +908,15 @@ struct Args {
+ 
+ pub fn main_inner() -> Result<(), Box<dyn std::error::Error>> {
+     let args = Args::parse();
+-    let prefs: Prefs = {
+-        let path = args
+-            .prefs
+-            .unwrap_or(PathBuf::from(prefs::DEFAULT_FILE_PATH_STR));
+-        let file = File::open(path)?;
+-        let reader = BufReader::new(file);
+-        serde_json::from_reader(reader)?
++    let prefs: Prefs = match args.prefs {
++        Some(path) => serde_json::from_reader(BufReader::new(File::open(path)?))?,
++        None => match File::open(prefs::DEFAULT_FILE_PATH_STR) {
++            Ok(file) => serde_json::from_reader(BufReader::new(file))?,
++            Err(err) if err.kind() == io::ErrorKind::NotFound => {
++                serde_json::from_str(include_str!("../default_prefs.json"))?
++            }
++            Err(err) => return Err(err.into()),
++        },
+     };
+ 
+     let mut state;
+@@ -956,12 +959,11 @@ pub fn main_inner() -> Result<(), Box<dyn std::error::Error>> {
+ 
+     let mut stdout = io::stdout();
+     terminal::enable_raw_mode()?;
++    let stdout_manager = StdoutManager;
+     stdout.execute(terminal::EnterAlternateScreen)?;
+     stdout.execute(cursor::Hide)?;
+     stdout.execute(crossterm::event::EnableMouseCapture)?;
+ 
+-    let stdout_manager = StdoutManager;
+-
+     let mut persistent_clicked_locs = HashMap::new();
+ 
+     'event: loop {

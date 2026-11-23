@@ -46,6 +46,8 @@ DOTNET="${DOTNET:-$(command -v dotnet || echo "$HOME/.dotnet/dotnet")}"   # .NET
 HSC1_TAG=v1.0.12
 HSC2_TAG=v2.0.0-zeta.12
 CIRCLEGUY_REV=e76e7b3c83262df9836ac681e8af4fb5aaa71530
+FLAT_HYPERCUBE_REV=5ef65e4999608c351de2bd9cf87a1eea6f854035
+LAMINATED_REV=8f303d5cccff6ae9651831048b066b02d0260956
 THREETOFOUR_REV=3b031f95ec0bd4ff23789ce05811662c9e3023f6
 GERANIUMSPOT_REV=4bf9c31ea14be78f982ed8cff1256a7fe77084de
 # Geraniums Pot for Mac: uv-managed CPython (downloaded into cache/uv-python) and its venv's
@@ -86,6 +88,11 @@ checkout() {
   git -C "$g" submodule -q update --init --recursive
 }
 
+apply_patch_once() {
+  local src="$CO/$1" patch="$HERE/patches/$2"
+  git -C "$src" apply --reverse --check "$patch" 2>/dev/null || git -C "$src" apply "$patch"
+}
+
 # describe_version <checkout dir> <tag prefix>: the checkout's `git describe`, minus the tag prefix
 # (e.g. "0.7-14-ge76e7b3": 14 commits after tag v0.7).
 describe_version() { git -C "$CO/$1" describe --tags | sed "s/^$2//"; }
@@ -97,7 +104,8 @@ describe_version() { git -C "$CO/$1" describe --tags | sed "s/^$2//"; }
 #              launchers source it): NAME (app or folder name; on Mac also the Windows program's
 #              folder in C:\Program Files and the Java/native program's data folder), SLUG, KIND
 #              (wine, java, native, or app for a prebuilt Mac .app), VERSION (optional), then
-#              EXE and KEEP for wine, JAVA_ARGS for java, BIN for native. JAVA_ARGS refers to res/
+#              EXE and KEEP for wine, JAVA_ARGS for java, BIN and optional TERMINAL=1 for native.
+#              JAVA_ARGS refers to res/
 #              files as "$RES/...", which each launcher sets.
 #   data/      files that go in the program's working directory, which it may write to. For wine
 #              programs, the program folder with the exe.
@@ -447,8 +455,9 @@ EOF
 }
 
 # ---------------------------------------------------------------- per-edition programs
-# On Linux, Hyperspeedcube and circleguy run natively. 3to4++ and Geraniums Pot use Windows builds
-# under Wine to avoid depending on the Linux build host's glibc and libraries.
+# On Linux, Hyperspeedcube, circleguy, Flat Hypercube and Laminated run natively. 3to4++ and
+# Geraniums Pot use Windows builds under Wine to avoid depending on the Linux build host's glibc
+# and libraries.
 
 # Hyperspeedcube: upstream's own builds for each platform.
 hsc_mac() {
@@ -492,37 +501,92 @@ payload_circleguy_mac() {
   payload_icon "$CO/circleguy/resources/icon.png"
 }
 
-payload_circleguy_linux() {
-  local target=x86_64-unknown-linux-gnu glibc=2.28
-  local src="$CO/circleguy" bin logfile
-  bin="$src/target/$target/release/circleguy"
-  logfile="$src/target/linux-build.log"
-  log "circleguy (Linux x64, glibc $glibc)"
+# rust_linux_build <checkout> <binary>: cross-compile and verify the executable's glibc baseline.
+RUST_LINUX_TARGET=x86_64-unknown-linux-gnu
+rust_linux_build() {
+  local src=$1 program=$2 glibc=2.28
+  local bin="$1/target/$RUST_LINUX_TARGET/release/$2" logfile="$1/target/linux-build.log"
+  log "$program (Linux x64, glibc $glibc)"
   command -v zig >/dev/null && command -v cargo-zigbuild >/dev/null ||
-    { echo 'Building circleguy for Linux requires Zig and cargo-zigbuild on PATH.' >&2; exit 1; }
-  checkout henrydukepickle/circleguy circleguy "$CIRCLEGUY_REV"
-  rustup target add "$target"
+    { echo "Building $program for Linux requires Zig and cargo-zigbuild on PATH." >&2; exit 1; }
+  rustup target add "$RUST_LINUX_TARGET"
   mkdir -p "$src/target"
-  (cd "$src" && cargo zigbuild -q --locked --release --target "$target.$glibc") >"$logfile" 2>&1 ||
+  (cd "$src" && cargo zigbuild -q --locked --release --target "$RUST_LINUX_TARGET.$glibc") >"$logfile" 2>&1 ||
     { cat "$logfile" >&2; exit 1; }
   # Check the linked executable's version requirements before putting it in the bundle.
-  xcrun llvm-objdump --private-headers "$bin" | awk -v max_minor="${glibc#2.}" '
+  xcrun llvm-objdump --private-headers "$bin" | awk -v program="$program" -v max_minor="${glibc#2.}" '
     $NF ~ /^GLIBC_/ {
       split(substr($NF, 7), version, /[.]/)
       if (version[1] != 2 || version[2] > max_minor) {
-        print "circleguy requires unsupported " $NF > "/dev/stderr"
+        print program " requires unsupported " $NF > "/dev/stderr"
         incompatible = 1
       }
     }
     END { exit incompatible }
   '
+}
+
+payload_circleguy_linux() {
+  local src="$CO/circleguy"
+  checkout henrydukepickle/circleguy circleguy "$CIRCLEGUY_REV"
+  rust_linux_build "$src" circleguy
   APP_VERSION=$(describe_version circleguy v) new_payload circleguy circleguy native
   echo 'BIN=circleguy' >>"$P/manifest"
   mkdir -p "$P/data"
-  cp "$bin" "$P/data/"
+  cp "$src/target/$RUST_LINUX_TARGET/release/circleguy" "$P/data/"
   cp -R "$src/Puzzles" "$src/Configs" "$P/data/"
   payload_icon "$src/resources/icon.png"
 }
+
+payload_flat-hypercube() {
+  local src="$CO/flat-hypercube" target=
+  checkout milojacquet/flat-hypercube flat-hypercube "$FLAT_HYPERCUBE_REV"
+  apply_patch_once flat-hypercube flat-hypercube-cli.patch
+  if [ "$PAYLOAD_PLAT" = mac ]; then
+    log "Flat Hypercube (Mac)"
+    (cd "$src" && cargo build -q --locked --release)
+  else
+    rust_linux_build "$src" flat-hypercube
+    target="$RUST_LINUX_TARGET/"
+  fi
+  APP_VERSION=$(describe_version flat-hypercube v) new_payload flat-hypercube 'Flat Hypercube' native
+  printf 'BIN=flat-hypercube\nTERMINAL=1\n' >>"$P/manifest"
+  mkdir "$P/res"
+  cp "$src/target/${target}release/flat-hypercube" "$P/res/"
+  if [ "$PAYLOAD_PLAT" = mac ]; then
+    cp "$LIB/mac-terminal.command" "$P/res/run.command"
+    chmod +x "$P/res/run.command"
+  fi
+  payload_icon "$(lbicon FHC)"
+}
+
+payload_flat-hypercube_mac() { payload_flat-hypercube; }
+payload_flat-hypercube_linux() { payload_flat-hypercube; }
+
+payload_laminated() {
+  local src="$CO/laminated"
+  log "Laminated"
+  checkout milojacquet/laminated laminated "$LAMINATED_REV"
+  apply_patch_once laminated laminated-dependencies.patch
+  cp "$HERE/patches/laminated.Cargo.lock" "$src/Cargo.lock"
+  APP_VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' "$src/Cargo.toml") new_payload laminated Laminated native
+  mkdir "$P/res"
+  cp "$src/LICENSE" "$P/res/LICENSE"
+  if [ "$PAYLOAD_PLAT" = mac ]; then
+    (cd "$src" && cargo build -q --locked --release)
+    echo 'BIN=../MacOS/laminated' >>"$P/manifest"
+    mkdir -p "$P/contents/MacOS"
+    cp "$src/target/release/laminated" "$P/contents/MacOS/"
+  else
+    rust_linux_build "$src" laminated
+    echo 'BIN=laminated' >>"$P/manifest"
+    cp "$src/target/$RUST_LINUX_TARGET/release/laminated" "$P/res/"
+  fi
+  payload_icon "$HERE/icons/Laminated.svg"
+}
+
+payload_laminated_mac() { payload_laminated; }
+payload_laminated_linux() { payload_laminated; }
 
 # 3to4++: gwstaten's fork of rayzchen/3to4pp. Upstream only ships Windows builds, but it's GLFW +
 # OpenGL 3.3 core + Dear ImGui, so it builds anywhere. GLFW is linked statically, so the program
@@ -806,7 +870,7 @@ linux_finish() { :; }
 
 # ================================================================ driver
 
-PROGRAMS=(magictile pcubes mc7dkb mpu ms5d mht633 mc5d m120c mc4d elevencell elevencell3d mc3d isocubesim hsc1 hsc2 circleguy 3to4pp gelatinbrain geraniumspot)
+PROGRAMS=(magictile pcubes mc7dkb mpu ms5d mht633 mc5d m120c mc4d elevencell elevencell3d mc3d isocubesim hsc1 hsc2 circleguy 3to4pp gelatinbrain geraniumspot flat-hypercube laminated)
 MDX_PROGRAMS=" mc7dkb mpu ms5d mht633 "
 
 # check_complete <edition>: fail unless the edition's folder has every program.

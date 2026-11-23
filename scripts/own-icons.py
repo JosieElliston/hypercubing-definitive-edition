@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write icons/{MC3D,NM11C,11C3D}.svg, for programs without a custom leaderboard icon.
+"""Write icons/{MC3D,NM11C,11C3D,Laminated}.svg for programs without a leaderboard icon.
 
 Run: python3 scripts/own-icons.py   (edit the numbers here, not the SVGs)
 """
@@ -72,6 +72,18 @@ def elevencell3d():
     return s + "</svg>\n"
 
 
+def laminated():
+    # An exploded view of a three-layer cube.
+    s = HEAD
+    for top in (32, 21, 10):
+        s += f'<g transform="translate(0 {top})" stroke="#191919" stroke-width="1.5" stroke-linejoin="round">\n'
+        s += '<path d="M10 12 32 24 32 31 10 19Z" fill="#40a45a"/>\n'
+        s += '<path d="M54 12 32 24 32 31 54 19Z" fill="#d74b3f"/>\n'
+        s += '<path d="M10 12 32 0 54 12 32 24Z" fill="#ffe277"/>\n'
+        s += '</g>\n'
+    return s + "</svg>\n"
+
+
 OUT.mkdir(exist_ok=True)
-for name, fn in [("MC3D", mc3d), ("NM11C", elevencell), ("11C3D", elevencell3d)]:
+for name, fn in [("MC3D", mc3d), ("NM11C", elevencell), ("11C3D", elevencell3d), ("Laminated", laminated)]:
     (OUT / f"{name}.svg").write_text(fn())

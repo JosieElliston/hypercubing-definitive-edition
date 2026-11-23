@@ -28,7 +28,11 @@ else
       echo "Exec=\"$(esc "$run")\""
       echo "Icon=$dir/icon.png"
       echo 'Categories=Game;LogicGame;'
-      echo 'Terminal=false'
+      if grep -qx 'TERMINAL=1' "$dir/app.conf"; then
+        echo 'Terminal=true'
+      else
+        echo 'Terminal=false'
+      fi
     } >"$APPS/hypercubing-$slug.desktop"
     n=$((n + 1))
   done

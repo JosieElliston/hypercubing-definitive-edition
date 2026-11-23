@@ -6,6 +6,9 @@ circleguy now runs natively on x86-64 Linux and requires glibc 2.28 or newer.
 ElevenCell3D uses native macOS dialogs so opening or dismissing a file picker
 does not freeze the puzzle window.
 
+Added Laminated and Flat Hypercube as native builds for Mac and Linux.
+Flat Hypercube takes its puzzle dimensions or a saved solve from the command line.
+
 ## 1.0
 
 First release, for Mac and Linux, with 19 programs:

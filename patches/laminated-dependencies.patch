@@ -1,0 +1,194 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index bc02295..2129657 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -8,11 +8,10 @@ edition = "2021"
+ [dependencies]
+ enum-map = "2.7.0"
+ itertools = "0.11.0"
+-three-d = { version = "0.16.3", features = ["egui-gui"] }
+-winit = "0.29.3"
++three-d = { git = "https://github.com/asny/three-d", rev = "0e5ece5fe124fa21b92fd96fe3e4bbb4357dbf03", features = ["egui-gui"] }
+ rand = "0.8.5"
+ serde = { version = "1.0.193", features = ["derive"] }
+ serde_json = "1.0.108"
+ eyre = "0.6.9"
+-rfd = "0.12.1"
++rfd = { version = "0.18.0", default-features = false, features = ["xdg-portal"] }
+ cgmath = "0.18.0"
+\ No newline at end of file
+diff --git a/src/key_label.rs b/src/key_label.rs
+index cfefe0e..236b9d9 100644
+--- a/src/key_label.rs
++++ b/src/key_label.rs
+@@ -58,12 +58,7 @@ impl Widget for KeyLabel {
+                         width: 1.0,
+                         color: Color32::from_rgb(60, 60, 60),
+                     },
+-                    rounding: Rounding {
+-                        nw: 2.0,
+-                        ne: 2.0,
+-                        sw: 2.0,
+-                        se: 2.0,
+-                    },
++                    corner_radius: CornerRadius::same(2),
+                     fg_stroke: Stroke {
+                         width: 1.0,
+                         color: Color32::from_rgb(192, 222, 255),
+@@ -81,13 +76,14 @@ impl Widget for KeyLabel {
+ 
+                 ui.painter().rect(
+                     rect,
+-                    visuals.rounding,
++                    visuals.corner_radius,
+                     visuals.weak_bg_fill,
+                     visuals.bg_stroke,
++                    StrokeKind::Inside,
+                 );
+             }
+ 
+-            text.paint_with_visuals(ui.painter(), text_pos, &visuals);
++            ui.painter().galley(text_pos, text, visuals.text_color());
+         }
+ 
+         response
+diff --git a/src/main.rs b/src/main.rs
+index 07da298..d44f72e 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -98,8 +98,9 @@ fn shortcut_button(
+     key: egui::Key,
+ ) -> egui::Response {
+     let mut button = egui::Button::new(text);
+-    button = button
+-        .shortcut_text(gui_context.format_shortcut(&egui::KeyboardShortcut { modifiers, key }));
++    button = button.shortcut_text(
++        gui_context.format_shortcut(&egui::KeyboardShortcut::new(modifiers, key)),
++    );
+ 
+     ui.add(button)
+ }
+@@ -154,17 +155,6 @@ fn color_picker_grid<Ray: ConcreteRaySystem>(
+     });
+ }
+ 
+-// polyfill from egui 0.24.1
+-fn selected_button(button: egui::Button, ui: &egui::Ui, selected: bool) -> egui::Button {
+-    if selected {
+-        let selection = ui.visuals().selection;
+-        button.fill(selection.bg_fill).stroke(selection.stroke)
+-    } else {
+-        button
+-    }
+-}
+-
+-/// Mutable objects that have to persist through making a new session
+ struct PersistentObjects {
+     keys_down: HashSet<Key>,
+     keys_clicked: HashSet<Key>,
+@@ -402,11 +392,7 @@ fn run_render_loop<Ray: ConcreteRaySystem + std::fmt::Display>(
+                     });
+ 
+                     if ui
+-                        .add(selected_button(
+-                            Button::new("Settings"),
+-                            ui,
+-                            persistent.settings_open,
+-                        ))
++                        .add(Button::new("Settings").selected(persistent.settings_open))
+                         .clicked()
+                     {
+                         persistent.settings_open = !persistent.settings_open;
+@@ -548,17 +534,14 @@ fn run_render_loop<Ray: ConcreteRaySystem + std::fmt::Display>(
+             } if !handled => {
+                 match session.mouse_press_location {
+                     Some((conjugate, Some((press_position, _)))) => {
+-                        let distance_moved = f32::hypot(
+-                            position.x - press_position.x,
+-                            position.y - press_position.y,
+-                        );
+-                        if distance_moved > TURN_DISTANCE_THRESHOLD {
++                        let scale = frame_input.device_pixel_ratio;
++                        let dx = (position.x - press_position.x) / scale;
++                        // Physical points measure y from the bottom. Motion deltas measure it from the top.
++                        let dy = (press_position.y - position.y) / scale;
++                        if dx.hypot(dy) > TURN_DISTANCE_THRESHOLD {
+                             persistent.status_message = None;
+ 
+-                            session.camera_facings[conjugate].orbit((
+-                                position.x - press_position.x,
+-                                position.y - press_position.y,
+-                            ));
++                            session.camera_facings[conjugate].orbit((dx, dy));
+                             session.mouse_press_location = Some((conjugate, None));
+                         }
+                     }
+@@ -711,7 +694,10 @@ fn run_render_loop<Ray: ConcreteRaySystem + std::fmt::Display>(
+         &session.camera_facings,
+     );
+ 
+-    frame_input.screen().write(|| persistent.gui.render());
++    frame_input
++        .screen()
++        .write(|| persistent.gui.render())
++        .expect("should render the GUI");
+ 
+     response
+ }
+diff --git a/src/render/common.rs b/src/render/common.rs
+index f518eec..012150b 100644
+--- a/src/render/common.rs
++++ b/src/render/common.rs
+@@ -306,7 +306,11 @@ pub struct CameraFacing {
+ 
+ impl CameraFacing {
+     pub fn orbit(&mut self, (dx, dy): (f32, f32)) {
+-        // (dx, dy) will never both be zero
++        // A mouse release can report another motion event at the same position.
++        if dx == 0.0 && dy == 0.0 {
++            return;
++        }
++
+         let pointing = -1.0 * self.position;
+         // camera.up() does not have to be perpendicular to the view vector
+         let local_x_axis = pointing.cross(self.up).normalize();
+@@ -329,6 +333,26 @@ impl CameraFacing {
+     }
+ }
+ 
++#[cfg(test)]
++mod camera_tests {
++    use super::*;
++
++    #[test]
++    fn stationary_pointer_preserves_the_rotated_camera() {
++        let mut camera = CameraFacing {
++            position: Vec3::new(5.0, -10.0, 4.0),
++            target: Vec3::new(0.0, 0.0, 0.0),
++            up: Vec3::new(0.0, 0.0, 1.0),
++        };
++
++        camera.orbit((24.0, -12.0));
++        let rotated = (camera.position, camera.target, camera.up);
++        camera.orbit((0.0, 0.0));
++
++        assert_eq!((camera.position, camera.target, camera.up), rotated);
++    }
++}
++
+ pub struct PuzzleViewport<Ray>
+ where
+     Ray: ConcreteRaySystem,
+diff --git a/src/session.rs b/src/session.rs
+index 0875cbb..6de3d53 100644
+--- a/src/session.rs
++++ b/src/session.rs
+@@ -22,7 +22,7 @@ pub struct Session<Ray: ConcreteRaySystem> {
+     // Some((conj, Some((loc, button)))): the mouse is being held from a viewport with conjugation conj, and camera orbiting has not yet started. the mouse was pressed at loc with button.
+     pub mouse_press_location: Option<(
+         Ray::Conjugate,
+-        Option<(three_d::LogicalPoint, three_d::MouseButton)>,
++        Option<(three_d::PhysicalPoint, three_d::MouseButton)>,
+     )>,
+     pub save_path: Option<std::path::PathBuf>,
+     pub version: String,

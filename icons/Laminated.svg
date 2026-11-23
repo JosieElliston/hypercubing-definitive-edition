@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<g transform="translate(0 32)" stroke="#191919" stroke-width="1.5" stroke-linejoin="round">
+<path d="M10 12 32 24 32 31 10 19Z" fill="#40a45a"/>
+<path d="M54 12 32 24 32 31 54 19Z" fill="#d74b3f"/>
+<path d="M10 12 32 0 54 12 32 24Z" fill="#ffe277"/>
+</g>
+<g transform="translate(0 21)" stroke="#191919" stroke-width="1.5" stroke-linejoin="round">
+<path d="M10 12 32 24 32 31 10 19Z" fill="#40a45a"/>
+<path d="M54 12 32 24 32 31 54 19Z" fill="#d74b3f"/>
+<path d="M10 12 32 0 54 12 32 24Z" fill="#ffe277"/>
+</g>
+<g transform="translate(0 10)" stroke="#191919" stroke-width="1.5" stroke-linejoin="round">
+<path d="M10 12 32 24 32 31 10 19Z" fill="#40a45a"/>
+<path d="M54 12 32 24 32 31 54 19Z" fill="#d74b3f"/>
+<path d="M10 12 32 0 54 12 32 24Z" fill="#ffe277"/>
+</g>
+</svg>

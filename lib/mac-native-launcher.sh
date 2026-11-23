@@ -6,6 +6,13 @@ set -u
 CONTENTS="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck source=/dev/null
 . "$CONTENTS/Resources/program.conf"   # NAME, BIN (relative to Contents/Resources), optional TERMINAL (0/1)
+if [ "${TERMINAL:-0}" = 1 ]; then
+  if [ $# -eq 0 ] && [ ! -t 0 ]; then
+    exec open -a Terminal "$CONTENTS/Resources/run.command"
+  fi
+  exec "$CONTENTS/Resources/$BIN" "$@"
+fi
+
 DATA="$HOME/Library/Application Support/Hypercubing"
 WORK="$DATA/$NAME"
 mkdir -p "$DATA/logs" "$WORK"
@@ -16,11 +23,4 @@ if [ -d "$CONTENTS/Resources/data" ] && [ "$(cat "$WORK/.hde-stamp" 2>/dev/null)
   echo "$STAMP" >"$WORK/.hde-stamp"
 fi
 cd "$WORK" || exit 1
-if [ "${TERMINAL:-0}" = 1 ]; then
-  # Terminal programs: open a Terminal window running the program in the data folder.
-  CMD="$WORK/.run.command"
-  printf '#!/bin/bash\ncd %q && exec %q\n' "$WORK" "$CONTENTS/Resources/$BIN" >"$CMD"
-  chmod +x "$CMD"
-  exec open -a Terminal "$CMD"
-fi
 exec "$CONTENTS/Resources/$BIN" "$@" >"$DATA/logs/$NAME.log" 2>&1

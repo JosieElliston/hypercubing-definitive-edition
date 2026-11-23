@@ -5,16 +5,21 @@
 #   launch <program folder> [args...]
 #
 # Everything a program writes stays inside this "hypercubing" folder: the Wine prefix and logs in
-# Support/, and each program's own files next to it in its folder.
+# Support/, and each GUI program's own files next to it in its folder.
 set -u
 APPDIR=$(cd "$1" && pwd); shift
 ROOT=$(cd "$APPDIR/.." && pwd)
 NAME=$(basename "$APPDIR")
 RES=$APPDIR   # JAVA_ARGS refers to the program's files as $RES/...
 # KIND (wine, java or native), then EXE and optional KEEP (wine), JAVA_ARGS (java, an array) or BIN
-# (native). See "Payloads" in the build's build.sh.
+# (native), with optional TERMINAL=1. See "Payloads" in the build's build.sh.
 # shellcheck source=/dev/null
 . "$APPDIR/app.conf"
+
+if [ "$KIND" = native ] && [ "${TERMINAL:-0}" = 1 ]; then
+  # Preserve the user's terminal and working directory for relative command-line paths.
+  exec "$APPDIR/$BIN" "$@"
+fi
 
 say() {
   echo "$NAME: $1" >&2

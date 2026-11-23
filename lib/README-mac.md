@@ -23,6 +23,15 @@ xattr -dr com.apple.quarantine /Applications/hypercubing
 softwareupdate --install-rosetta --agree-to-license
 ```
 
+## Flat Hypercube
+
+Run Flat Hypercube from Terminal with the layer count and dimension, or with
+`--log` to resume a solve. Opening its icon starts it without arguments, so it
+reports the missing arguments and exits. For the full list of flags, run
+`"/Applications/hypercubing/Flat Hypercube.app/Contents/MacOS/launcher" --help`.
+Relative paths for logs, filters, and preferences are resolved from your current
+directory, which is also where new solve logs are written.
+
 ## Contents
 
 - Windows programs, run through Wine:
@@ -45,6 +54,8 @@ softwareupdate --install-rosetta --agree-to-license
     - Hyperspeedcube 1   the recommended place to start (version 1.0.12)
     - Hyperspeedcube 2   the in-development successor (2.0.0-zeta.12)
     - circleguy          rotating-circle puzzles
+    - Flat Hypercube     terminal simulator for hypercubes up to 10D
+    - Laminated          laminated cube, octahedron, and dodecahedron puzzles
     - 3to4++             the physical 3x3x3x3 design, simulated
     - Geraniums Pot      610 intersecting-circle puzzles, with photos of the real ones
 - Shared parts (in "Support"; don't open these directly):
@@ -55,8 +66,8 @@ Sharing one copy of Wine and one of Java keeps the folder to about 800 MB.
 
 ## Where your stuff goes
 
-Settings, saved puzzles, and logs go in `~/Library/Application Support/Hypercubing/`,
-not in this folder.
+Most programs store settings, saved puzzles, and logs in
+`~/Library/Application Support/Hypercubing/`.
 
 - The Windows programs share one simulated Windows computer, stored in the "prefix"
   folder there. It's created the first time you open any Windows program, which
@@ -125,6 +136,8 @@ changes listed above.
 - Gelatinbrain       gelatinbrain; packaged by Luna and Hactar  github.com/Hypercubers/gelatinbrain
 - 3to4++             rayzchen; fork by gwstaten  github.com/gwstaten/3to4pp
 - circleguy          henrydukepickle             github.com/henrydukepickle/circleguy
+- Flat Hypercube     Milo Jacquet               github.com/milojacquet/flat-hypercube
+- Laminated          Milo Jacquet               github.com/milojacquet/laminated
 - Geraniums Pot      grigorusha                  github.com/grigorusha/GeraniumsPot
 - Wine engine        WineHQ, CodeWeavers, and the Sikarugir project
 - Java runtime       Eclipse Temurin (Adoptium)

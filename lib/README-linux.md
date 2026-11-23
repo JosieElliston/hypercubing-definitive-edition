@@ -19,6 +19,15 @@ Requires a 64-bit x86 PC and a glibc-based Linux distribution.
 
 To start a program without the menu, run the `run` file in its folder.
 
+## Flat Hypercube
+
+Run `"./Flat Hypercube/run" --help` from the extracted hypercubing folder for the
+full list of flags. Supply the layer count and dimension to start a puzzle, or
+use `--log` to resume a solve. The app menu starts it in a terminal without
+arguments, so it reports the missing arguments and exits. Relative paths for
+logs, filters, and preferences are resolved from your current directory, which
+is also where new solve logs are written.
+
 ## Contents
 
 - Windows programs, run through Wine:
@@ -43,13 +52,16 @@ To start a program without the menu, run the `run` file in its folder.
     - Hyperspeedcube 1   the recommended place to start (version 1.0.12)
     - Hyperspeedcube 2   the in-development successor (2.0.0-zeta.12)
     - circleguy          rotating-circle puzzles (requires glibc 2.28 or newer and OpenGL)
+    - Flat Hypercube     terminal simulator for hypercubes up to 10D (glibc 2.28 or newer)
+    - Laminated          laminated cube, octahedron, and dodecahedron puzzles (glibc 2.28 or newer and OpenGL)
 - Shared parts, in "Support" (don't open these directly):
     - jre                Java, which runs the Java programs
     - launch             starts every program
 
 ## Where your stuff goes
 
-Everything stays inside this folder.
+GUI programs keep their settings and saves inside this folder by default.
+Flat Hypercube writes its solve logs relative to the terminal's current directory.
 
 - Each program keeps its settings and saves in its own folder.
 - The Windows programs share one simulated Windows computer, in
@@ -71,6 +83,8 @@ kept.
   command, e.g. `WINE=~/wine-11.0/bin/wine ./MagicTile/run`.
 - Magic Puzzle Ultimate's Puzzle menu has an extra "hypercubing.xyz" submenu
   with the puzzle definitions from hypercubing.xyz's MPU page.
+- Laminated uses the desktop file chooser portal or `zenity` for its Open and
+  Save As dialogs.
 
 ## Changes made for this bundle
 
@@ -116,6 +130,8 @@ changes listed above.
 - Gelatinbrain       gelatinbrain; packaged by Luna and Hactar  github.com/Hypercubers/gelatinbrain
 - 3to4++             rayzchen; fork by gwstaten  github.com/gwstaten/3to4pp
 - circleguy          henrydukepickle             github.com/henrydukepickle/circleguy
+- Flat Hypercube     Milo Jacquet               github.com/milojacquet/flat-hypercube
+- Laminated          Milo Jacquet               github.com/milojacquet/laminated
 - Geraniums Pot      grigorusha                  github.com/grigorusha/GeraniumsPot
 - Java runtime       Eclipse Temurin (Adoptium)
 
