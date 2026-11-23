@@ -756,9 +756,9 @@ EOF
   printf '%s' "$c"
 }
 
-# Add the names that Spotlight's application importer indexes alongside the display name.
+# Spotlight indexes alternate names, and Alfred can match application keywords.
 mac_spotlight_aliases() {
-  local slug=$1 plist=$2 aliases
+  local slug=$1 plist=$2 aliases keywords
   case $slug in
     magictile) aliases='["MT"]' ;;
     mc7dkb) aliases='["MC7D"]' ;;
@@ -779,7 +779,9 @@ mac_spotlight_aliases() {
     flat-hypercube) aliases='["FHC"]' ;;
     *) return 0 ;;
   esac
+  keywords=$(python3 -I -c 'import json, sys; print(", ".join(json.loads(sys.argv[1])))' "$aliases")
   plutil -replace CFBundleAlternateNames -json "$aliases" "$plist"
+  plutil -replace MDItemKeywords -string "$keywords" "$plist"
 }
 
 # package_mac <payload dir>: make <NAME>.app. Bundle layout: Contents/Resources holds program.conf
