@@ -1,7 +1,7 @@
 # Hypercubing Definitive Edition: notes
 
-The goal is one Mac bundle of the important hypercubing programs for a few people
-in the community. It should use as little storage as possible and need little
+The goal is one Mac bundle, plus a Linux edition (see "Linux edition"), of the
+important hypercubing programs for a few people in the community. It should use as little storage as possible and need little
 upkeep. This is not a public release, so redistribution licensing is not a gate.
 
 ## Layout
@@ -12,9 +12,11 @@ upkeep. This is not a public release, so redistribution licensing is not a gate.
 - `lib/`: launcher templates (wine, java, native), one per app kind, plus
   `exe2ico.py` (pulls the icon out of a Windows exe) and `geraniumspot_main.py` (Geraniums
   Pot's PyInstaller entry point).
-- `lib/README.md`: the readme that ships at the top of the distributed folder,
-  written for the recipients. When you add, drop or re-version a program in
-  `build.sh`, update its program list, sizes and credits too.
+- `build-linux.sh`: builds the Linux edition from the Mac build (see "Linux edition").
+  Program pins it repeats from `build.sh` are marked `keep in sync`.
+- `lib/README-mac.md` and `lib/README-linux.md`: the readmes that ship at the top of the
+  distributed folders, written for the recipients. When you add, drop or re-version a
+  program in `build.sh`, update both program lists, sizes and credits too.
 - Icons: `lbicon <ABBR>` fetches the leaderboard's SVG from
   `https://assets.hypercubing.xyz/img/icons/programs/<ABBR>.svg` (as of
   2026-11-22, those exist for HSC1, HSC2, MC4D, MC5D, MC7D, MPU, MT, MZRG, CG, FHC,
@@ -219,6 +221,61 @@ Constraints that will bite:
   names get underscores, because MPU cuts the name at the first space). That file is
   overwritten on update, so puzzles a user adds there are lost.
 
+## Linux edition
+
+`./build-linux.sh` (on the Mac, after `./build.sh zip`) builds `dist/linux/hypercubing` and
+`dist/hypercubing-linux-<VERSION>.tar.gz`. One folder per program, each with `run`, `app.conf`
+and `icon.png`; `Support/launch` (`lib/linux-launch.sh`) starts all of them, and `install.sh`
+(`lib/linux-install.sh`) writes `.desktop` files into `~/.local/share/applications`.
+
+Decisions (2026-11-23, with the user):
+- **Users bring their own Wine; no engine ships.** Why? Linux users span many distros, and
+  every distro packages Wine. What makes the Windows programs hard is wine-mono, not the OS:
+  the MDX shim, the C++/CLI ports and the 64-bit flag patches are needed on any Wine. So the
+  Linux edition ships those payloads unchanged, taken from the Mac release zip (or
+  `dist/hypercubing`), which also guarantees both editions ship the same payloads.
+- **Everything is written inside the extracted folder**: the Wine prefix and logs in
+  `Support/`, each program's files next to it. Why? The user's preference, matching the usual
+  convention outside macOS (HSC does it too). Programs run straight from their folder (Wine
+  maps `/` to `Z:`), so the Mac launcher's stamp/rsync copy into `C:\Program Files` is gone.
+  Updating means extracting over the folder, so shipped files a program saves settings into
+  (the Mac's `KEEP`, e.g. MPU's `MPUlt_settings.txt`) ship as `<file>.default`, and the launcher
+  copies one into place only when the real file is missing.
+- **3to4++, circleguy and Geraniums Pot ship as Windows builds under Wine**, not native Linux
+  builds. Why? Native binaries depend on the build host's glibc and libraries (cif-gpu is
+  Debian 13, glibc 2.41, newer than most users' distros), while Wine absorbs those
+  differences. 3to4++ and circleguy are cross-compiled with mingw (circleguy via rustup's
+  `x86_64-pc-windows-gnu` target); Geraniums Pot is upstream's own Windows build from the
+  pinned checkout. HSC ships its upstream Linux binaries.
+- Build dependencies beyond the Mac build's: rustup (the build adds the `x86_64-pc-windows-gnu`
+  target itself). The Mac zip is extracted with `ditto -x -k`, not `unzip`: the zip stores
+  extended attributes as `._` AppleDouble entries, unzip writes them out as files, and
+  Magic120Cell crashed parsing `._Rings.settings` (it loads every `*.settings` in its folder).
+- The Linux JRE is linked by the Mac's jlink from Temurin's separate **jmods** tarball (the
+  Linux JDK tarball has no jmods), at the same build as `$JDK_HOME`. Given no Linux
+  `java.base`, jlink silently links the Mac's own modules instead, so the build checks that
+  `Support/jre/bin/java` is an x86-64 ELF.
+
+Testing on `ssh cif-gpu` (Debian 13, headless, no sudo; set up 2026-11-23 in
+`~/hde-linux-test`):
+- Wine: Kron4ek's portable builds in `wine/` (9.0, 10.0 and 11.0 wow64), each with the
+  matching wine-mono symlinked into its `share/wine/mono/` (10.0 wants 9.4.0, 11.0 wants
+  10.4.1; the version is in `strings -el appwiz.cpl`). X: Xvfb, xdotool, x11-utils and
+  Xtigervnc from `apt-get download` + `dpkg-deb -x` into `x/`; `env.sh` sets the paths and
+  `xstart` starts Xvfb on `:77`. `run.sh <wine ver> <app folder> <exe> <seconds> [shot.png]`
+  runs one program; `e2e.sh` runs every program of an extracted tarball in `e2e/`.
+- **Don't screenshot with `xwd -root`.** It returned Wine's windows with colors split into a
+  repeating R/G/B pixel cycle and squeezed to 3/4 width, while non-Wine windows came out
+  right, and it cost an hour of blaming Wine. Read Xvfb's framebuffer instead
+  (`Xvfb -fbdir /tmp/hde-fb`, then `xwd2png.py < /tmp/hde-fb/Xvfb_screen0`), which matches
+  a VNC capture. The cause wasn't isolated.
+- There's no window manager, so `xdotool windowactivate` doesn't give keyboard focus: use
+  `windowfocus --sync`, then click an empty spot. Unlike `poke` on the Mac, xdotool sends real
+  input, so drags, held keys and modifiers work. MC7D-KB keybinds are a held key plus a press:
+  `xdotool keydown d key i keyup d`.
+- Wine's X11 driver doesn't have the Mac driver's z-order bug: menus show without FillFix,
+  which stays harmless.
+
 ## Versioning
 
 - The bundle is x.y, in `VERSION`. Bump y for any change to a program's pin, or for adding
@@ -226,8 +283,8 @@ Constraints that will bite:
   launchers, the Wine engine, the Java runtime, the MDX shim, or the layout under
   `~/Library/Application Support/Hypercubing`. Why x for those? They can break every app at
   once, or people's settings and saves.
-- Each release: a line per change in `CHANGES.md`, `./build.sh zip`, and a git tag `vX.Y`.
-- `VERSION` only appears in the shipped README's title (`@VERSION@` in `lib/README.md`) and
+- Each release: a line per change in `CHANGES.md`, `./build.sh zip`, `./build-linux.sh`, and a git tag `vX.Y`.
+- `VERSION` only appears in the shipped README's title (`@VERSION@` in `lib/README-mac.md` and `lib/README-linux.md`) and
   the zip's name. Each app's Get Info version (`CFBundleShortVersionString`) is the
   program's own, from `APP_VERSION` in its build function; apps with no upstream version
   leave it out. Why not the bundle version? The user wanted each program to show its own.
@@ -337,6 +394,16 @@ Constraints that will bite:
   `pygame.display.update()`. This also makes `GP_DEBUG_SHOT` pngs come out right.
 
 ## Status
+
+- 2026-11-23 04:20 EST: The Linux edition (`./build-linux.sh`, tarball 128 MB, 283 MB unpacked) was
+  extracted fresh on cif-gpu and run with Kron4ek Wine 11.0 on PATH: `install.sh` wrote 19
+  desktop entries, and every program's `run` opened its main window and rendered correctly
+  (framebuffer screenshots). Earlier, all eight Mac-derived Windows payloads also rendered
+  under Wine 10.0 (and MC7D-KB under 9.0 to 11.0). Verified with real input: a drag rotates
+  Magic120Cell, a held-key twist works in MC7D-KB, MPU's settings file is created from its
+  `.default`. Not verified: a distro-packaged Wine (Debian's wouldn't run extracted without
+  install), the wine-mono download prompt on distros that don't package it, real GPUs and
+  Wayland, Gelatinbrain past its puzzle chooser, and anything by a real user.
 
 - 2026-11-23 01:55 EST: Magic Cube 5D and Magic120Cell are ported and built by
   `./build.sh mc5d m120c` (about 400 KB and 1.6 MB). Launched from `dist/`, in the real

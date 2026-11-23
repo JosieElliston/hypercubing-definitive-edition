@@ -1,5 +1,10 @@
 # Changes
 
+## 1.0 for Linux
+
+First Linux release, with the same 19 programs as 1.0 for Mac. It needs Wine installed on your
+system; see its README. circleguy, 3to4++ and Geraniums Pot run as their Windows versions there.
+
 ## 1.0
 
 First release, with 19 programs:

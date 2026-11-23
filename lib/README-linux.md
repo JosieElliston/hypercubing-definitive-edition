@@ -1,27 +1,23 @@
-# Hypercubing Definitive Edition @VERSION@ (for Mac)
+# Hypercubing Definitive Edition @VERSION@ (for Linux)
 
-The main hypercubing programs, ready to run on a Mac. The Windows ones run
-through a bundled copy of Wine, and the Java ones on a bundled Java runtime,
-so you don't need to install either.
+The main hypercubing programs, ready to run on Linux. The Java ones run on a
+bundled Java runtime. The Windows ones run on your own copy of Wine, with the
+changes they need to work there already made (see below).
 
-Requires an Apple Silicon Mac.
+Requires a 64-bit x86 PC. It should work on any distribution.
 
 ## Installing
 
-1. Move this whole "hypercubing" folder into Applications. You can put it
-   somewhere else, but keep the "Support" folder next to the apps: every app
-   uses it.
-2. macOS blocks downloaded apps that aren't signed by a registered Apple
-   developer, and these aren't. To allow them, open Terminal and run this
-   (with the folder's real location, if you put it somewhere else):
-```
-xattr -dr com.apple.quarantine /Applications/hypercubing
-```
-3. The Windows programs need Rosetta, Apple's Intel translator. If you've never
-   installed it, run this in Terminal:
-```
-softwareupdate --install-rosetta --agree-to-license
-```
+1. Extract this "hypercubing" folder somewhere your user can write to, such as
+   your home folder. Programs save their settings inside it, so a system folder
+   like /opt won't work.
+2. Install Wine with your distribution's package manager, if you haven't already.
+   The package is usually called "wine". Version 9 or newer is recommended.
+3. Optionally, run `./install.sh` in this folder to add the programs to your
+   application menu. Run it again if you move the folder, or run
+   `./install.sh --uninstall` to remove them from the menu.
+
+To start a program without the menu, run the `run` file in its folder.
 
 ## Contents
 
@@ -34,6 +30,9 @@ softwareupdate --install-rosetta --agree-to-license
     - Magic Hyperbolic Tile  a puzzle on the {6,3,3} hyperbolic honeycomb
     - Magic Cube 5D      5D cubes, from 2^5 to 7^5
     - Magic120Cell       the 120-cell, a 4D megaminx
+    - circleguy          rotating-circle puzzles
+    - 3to4++             the physical 3x3x3x3 design, simulated
+    - Geraniums Pot      intersecting-circle puzzles, with photos of the real ones
 - Java programs:
     - Magic Cube 4D      the classic 4D puzzle program
     - Eleven Cell        Nan Ma's 11-cell
@@ -41,49 +40,42 @@ softwareupdate --install-rosetta --agree-to-license
     - Magic Cube 3D      a 3D Rubik's cube simulator
     - IsoCubeSim         isometric AxBxC cubes and N-layer megaminxes
     - Gelatinbrain       Virtual Magic Polyhedra: a huge, strange puzzle collection
-- Native programs:
+- Native Linux programs:
     - Hyperspeedcube 1   the recommended place to start (version 1.0.12)
     - Hyperspeedcube 2   the in-development successor (2.0.0-zeta.12)
-    - circleguy          rotating-circle puzzles
-    - 3to4++             the physical 3x3x3x3 design, simulated
-    - Geraniums Pot      610 intersecting-circle puzzles, with photos of the real ones
-- Shared parts (in "Support"; don't open these directly):
-    - engine             Wine, which runs the Windows programs (about 490 MB)
-    - jre                Java, which runs the Java programs (about 51 MB)
-
-Sharing one copy of Wine and one of Java keeps the folder to about 800 MB.
+- Shared parts, in "Support" (don't open these directly):
+    - jre                Java, which runs the Java programs
+    - launch             starts every program
 
 ## Where your stuff goes
 
-Settings, saved puzzles, and logs go in `~/Library/Application Support/Hypercubing/`,
-not in this folder.
+Everything stays inside this folder.
 
-- The Windows programs share one simulated Windows computer, stored in the "prefix"
-  folder there. It's created the first time you open any Windows program, which
-  takes about 30 seconds. After that, they start in a few seconds.
-- Inside Windows programs, C:\users\crossover\Desktop, Documents and Downloads
-  are your real Mac Desktop, Documents and Downloads folders. Save logs there to
-  find them easily.
-- The other programs keep their files in a folder named after the program,
-  except Hyperspeedcube, which uses its usual `~/Library/Application Support/Hyperspeedcube/`.
-- Installing a newer version of this folder keeps your settings and saves.
+- Each program keeps its settings and saves in its own folder.
+- The Windows programs share one simulated Windows computer, in
+  "Support/wineprefix". It's created the first time you open any Windows
+  program, which can take a minute. Wine may offer to download "Wine Mono"
+  then: accept, since most of these programs need it.
+- Inside the Windows programs, your Linux files are on drive Z:.
+- Logs are in "Support/logs".
+
+To update, extract a newer version over this folder. Settings and saves are
+kept.
 
 ## Tips and known issues
 
-- Windows programs show up in the Dock under their Windows name (for example "MagicTile.exe").
-- If a program doesn't open, look at its log in the "logs" folder (see above).
-- To start the Windows programs over, quit them all, then delete the "prefix"
-  folder. This loses their settings, and any saves you kept inside the simulated
-  Windows computer.
+- If a program doesn't open, look at its log in "Support/logs".
+- To start the Windows programs over, quit them all, then delete
+  "Support/wineprefix".
+- To use a different Wine than the one on your PATH, set `WINE` to its `wine`
+  command, e.g. `WINE=~/wine-11.0/bin/wine ./MagicTile/run`.
 - Magic Puzzle Ultimate's Puzzle menu has an extra "hypercubing.xyz" submenu
   with the puzzle definitions from hypercubing.xyz's MPU page.
-- Geraniums Pot's puzzle files are in the "Garden" folder in its folder. F7 saves
-  a screenshot there, but doesn't copy it to the clipboard as it does on Windows.
 
 ## Changes made for this bundle
 
-Some programs needed changes to run on a Mac. They should look and behave like
-the originals, and their saves and logs are compatible.
+Some Windows programs needed changes to run under Wine. They should look and
+behave like the originals, and their saves and logs are compatible.
 
 - MagicTile runs as a 64-bit program; under Wine, the original is much slower.
 - MC7D-KB, Magic Puzzle Ultimate, Magic Simplex 5D and Magic Hyperbolic Tile
@@ -92,16 +84,15 @@ the originals, and their saves and logs are compatible.
   programs. If one of them draws something wrong, the stand-in is the likely cause.
 - Magic Cube 5D and Magic120Cell were partly written in C++/CLI, which only
   Microsoft's .NET can run. That part was rewritten.
-- Gelatinbrain uses fallback renderers for 11 puzzles that would otherwise
-  show a blank canvas because their shaders require GLSL 1.30.
-- Geraniums Pot is only released for Windows, we build from source,
-  with small fixes for a crash at startup and for black boxes on
-  markers while a ring turns. It remembers the last-opened puzzle in its
-  own folder, not in your home folder.
+- Gelatinbrain has fallback renderers for 11 puzzles whose shaders need GLSL
+  1.30. They're only used if your graphics driver can't run those shaders;
+  most Linux drivers can.
+- circleguy and 3to4++ are Windows builds of their source, made for this bundle.
+  Geraniums Pot is its author's own Windows build.
 
 ## Uninstalling
 
-Delete this folder and `~/Library/Application Support/Hypercubing/`.
+Run `./install.sh --uninstall`, then delete this folder.
 
 ## Credits
 
@@ -125,7 +116,6 @@ changes listed above.
 - 3to4++             rayzchen; fork by gwstaten  github.com/gwstaten/3to4pp
 - circleguy          henrydukepickle             github.com/henrydukepickle/circleguy
 - Geraniums Pot      grigorusha                  github.com/grigorusha/GeraniumsPot
-- Wine engine        WineHQ, CodeWeavers, and the Sikarugir project
 - Java runtime       Eclipse Temurin (Adoptium)
 
 More hypercubing software and resources: hypercubing.xyz

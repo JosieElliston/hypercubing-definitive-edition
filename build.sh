@@ -551,6 +551,9 @@ JAVA_PROGRAMS=" mc4d elevencell elevencell3d mc3d isocubesim gelatinbrain "
 WINE_PROGRAMS=" magictile pcubes mc7dkb mpu ms5d mht633 mc5d m120c "
 MDX_PROGRAMS=" mc7dkb mpu ms5d mht633 "
 
+# build-linux.sh sources this file for its helpers (fetch, checkout, lbicon...); stop here then.
+[[ ${BASH_SOURCE[0]} == "$0" ]] || return 0
+
 case "${1:-all}" in
   list) printf '%s\n' "${PROGRAMS[@]}"; exit 0 ;;
   install)
@@ -580,7 +583,7 @@ case "${1:-all}" in
     done ;;
 esac
 # Keep its program list in sync with PROGRAMS. Its title says @VERSION@.
-sed "s/@VERSION@/$HDE_VERSION/" "$LIB/README.md" >"$DIST/README.md"
+sed "s/@VERSION@/$HDE_VERSION/" "$LIB/README-mac.md" >"$DIST/README.md"
 for s in $(printf '%s\n' "${shared[@]}" | sort -u); do "build_$s"; done
 for t in "${targets[@]}"; do "build_$t"; done
 # Finder and the Dock cache icons per bundle path; without this, rebuilt apps can keep an old or
