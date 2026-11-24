@@ -4,7 +4,7 @@
 
 markdown readme formatting.
 better Magic120Cell icon.
-spotlight search aliases.
+spotlight search aliases/keywords.
 
 ## 1.1
 

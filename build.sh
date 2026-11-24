@@ -764,7 +764,7 @@ mac_spotlight_aliases() {
     mc7dkb) aliases='["MC7D"]' ;;
     mpu) aliases='["MPUlt"]' ;;
     ms5d) aliases='["MS5D"]' ;;
-    mht633) aliases='["MHT633"]' ;;
+    mht633) aliases='["MHT633", "633"]' ;;
     mc5d) aliases='["MC5D"]' ;;
     m120c) aliases='["M120C"]' ;;
     mc4d) aliases='["MC4D"]' ;;
